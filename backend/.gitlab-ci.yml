@@ -1,0 +1,32 @@
+image: tiangolo/uvicorn-gunicorn:python3.11
+
+stages:
+  - test
+  - deploiement
+
+.preparer_contexte: &preparer_contexte
+    - apt update && apt install -y ca-certificates openssh-client
+    - mkdir ~/.ssh && cp $ID_RSA_PRIV ~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa
+    - echo -e "Host *\n  StrictHostKeyChecking no" > ~/.ssh/config
+
+before_script:
+  - pip install --no-cache-dir -r requirements.txt
+
+testing:
+  stage: test
+  script:
+    - pytest -q
+
+deploiement:
+  stage: deploiement
+  needs:
+    - job: testing
+  before_script:
+    - *preparer_contexte
+  script:
+    - ssh $USER@$HOST mkdir -p /home/$USER/fastapi
+    - scp -r ./* $USER@$HOST:/home/$USER/fastapi
+    - ssh $USER@$HOST bash -c "true && export PORT=$PORT && docker compose -f /home/$USER/fastapi/docker-compose.yml build api"
+    - ssh $USER@$HOST bash -c "true && export PORT=$PORT && docker compose -f /home/$USER/fastapi/docker-compose.yml up --force-recreate -d api"
+  only:
+    - master
