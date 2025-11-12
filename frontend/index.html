@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mrcodage - Portfolio Terminal</title>
+    <!-- <link href="./main.css" /> -->
+    <link rel="stylesheet" href="./main.css">
+</head>
+
+<body>
+    <nav>
+        <div class="logo">mrcodage</div>
+        <a href="#" onclick="executeCommand('about'); return false;">About</a>
+        <a href="#" onclick="executeCommand('projects'); return false;">Projects</a>
+        <a href="#" onclick="executeCommand('skills'); return false;">Skills</a>
+        <a href="#" onclick="executeCommand('contact'); return false;">Contact</a>
+    </nav>
+
+    <div class="container">
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-button"></div>
+                <div class="terminal-button"></div>
+                <div class="terminal-button"></div>
+            </div>
+            <div class="terminal-body" id="terminal-output">
+
+                <div class="terminal-line">Bienvenue sur le portfolio de <span class="success">mrcodage</span></div>
+                <div class="terminal-line">Tapez <span class="info">'help'</span> pour voir les commandes disponibles
+                </div>
+                <div class="terminal-line"></div>
+            </div>
+            <div class="input-line" style="padding: 0 1.5rem 1.5rem;">
+                <span class="prompt">visitor@mrcodage:~$</span>
+                <input type="text" id="terminal-input" autofocus>
+            </div>
+        </div>
+    </div>
+
+    <script src="./main.js"></script>
+</body>
+
+</html>
