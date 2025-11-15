@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.config.env import settings
-from app.interface.routers import router_station
+from app.routers import project_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -14,4 +14,4 @@ def root():
     return {"message": "Bonjour, API!"}
 
 
-app.include_router(router_station.router)
+app.include_router(project_router.router)

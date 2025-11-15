@@ -1,16 +1,30 @@
 services:
   db:
-    image: mariadb:12.0.2
+    image: mysql:8.0
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - ${MYSQL_PORT:-3308}:3306
+    command: --log-bin-trust-function-creators=1
     volumes:
       - db_data:/var/lib/mysql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/00-init.sql
     healthcheck:
-      test: [ "CMD", "mariadb-admin", "ping", "-h", "127.0.0.1", "-u", "root", "--password=${MYSQL_ROOT_PASSWORD}" ]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "127.0.0.1",
+          "-u",
+          "root",
+          "--password=${MYSQL_ROOT_PASSWORD}",
+        ]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -18,7 +32,7 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL}
       API_DB_HOST: db
-      PORT: $PORT
+      # PORT: $PORT
       SECRET_KEY: ${SECRET_KEY}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
       PROJECT_NAME: ${PROJECT_NAME}
@@ -29,6 +43,18 @@ services:
         condition: service_healthy
     restart: always
     ports:
-      - ${PORT:-8080}:8080
+      - ${PORT:-8079}:8080
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /app
+          ignore:
+            - "**/__pycache__"
+            - "**/*.pyc"
+            - "**/.pytest_cache"
+        - action: rebuild
+          path: ./requirements.txt
+
 volumes:
   db_data:
