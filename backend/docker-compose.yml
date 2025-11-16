@@ -12,7 +12,8 @@ services:
     command: --log-bin-trust-function-creators=1
     volumes:
       - db_data:/var/lib/mysql
-      - ./scripts/init.sql:/docker-entrypoint-initdb.d/00-init.sql
+    #      - ./scripts/init.sql:/docker-entrypoint-initdb.d/00-init.sql ------ A ne pas decommenter -> Executer les scripts apres le lancement du conteneur
+    #      - ./scripts/seed.sql:/docker-entrypoint-initdb.d/01-seed.sql ------ A ne pas decommenter
     healthcheck:
       test:
         [
