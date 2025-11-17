@@ -1,6 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from starlette import status
 from starlette.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
+
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 

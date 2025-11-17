@@ -6,7 +6,7 @@ from app.schemas.project_schema import Status, Visibility
 
 
 # --- Project
-class Project(Base):
+class ProjectModel(Base):
     __tablename__ = "projects"
 
     pid = Column(String(50), primary_key=True, index=True, server_default="uuid()")
@@ -44,7 +44,7 @@ class Project(Base):
     )
 
 
-class Technology(Base):
+class TechnologyModel(Base):
     __tablename__ = "technologies"
     id = Column(String(50), primary_key=True, server_default="uuid()")
     name = Column(String(255), nullable=False)
@@ -57,7 +57,7 @@ class Technology(Base):
     )
 
 
-class Collaborator(Base):
+class CollaboratorModel(Base):
     __tablename__ = "collaborators"
     id = Column(String(50), primary_key=True, server_default="uuid()")
     first_name = Column(String(100), nullable=False)
@@ -72,7 +72,7 @@ class Collaborator(Base):
     )
 
 
-class ProjectImage(Base):
+class ProjectImageModel(Base):
     __tablename__ = "project_image"
     id = Column(String(50), primary_key=True, server_default="uuid()")
     image_url = Column(String, nullable=False)
@@ -85,7 +85,7 @@ class ProjectImage(Base):
     project = relationship("Project", back_populates="project_images")
 
 
-class CollaboratorProject(Base):
+class CollaboratorProjectModel(Base):
     __tablename__ = "collaborator_project"
     project_pid = Column(
         String(50), ForeignKey("projects.pid"), primary_key=True, nullable=False
@@ -95,7 +95,7 @@ class CollaboratorProject(Base):
     )
 
 
-class TechnologiesProject(Base):
+class TechnologiesProjectModel(Base):
     __tablename__ = "technologies_project"
     project_pid = Column(
         String(50), ForeignKey("projects.pid"), primary_key=True, nullable=False

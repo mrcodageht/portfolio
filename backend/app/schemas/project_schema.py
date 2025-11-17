@@ -14,7 +14,7 @@ class Visibility(str, Enum):
     PRIVATE = "private"
 
 
-class Portfolio(BaseModel):
+class Project(BaseModel):
     pid: str
     title: str
     slug: str
@@ -29,7 +29,7 @@ class Portfolio(BaseModel):
 
 
     def __eq__( self, other ):
-        if not isinstance( other, Portfolio ):
+        if not isinstance( other, Project ):
             return NotImplemented
         return(
                 self.pid == other.pid and
