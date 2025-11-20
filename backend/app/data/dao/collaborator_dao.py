@@ -3,7 +3,6 @@ from typing import Any, Optional, List
 from app.data.dao.dao_interface import DAOInterface, T
 from app.models.project_model import CollaboratorModel
 from app.schemas.collaborator_schema import Collaborator
-from app.schemas.project_schema import Project
 
 
 class CollaboratorDao(DAOInterface[CollaboratorModel]):

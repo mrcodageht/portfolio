@@ -2,7 +2,6 @@ from typing import Any, Optional, List
 
 from app.data.dao.dao_interface import DAOInterface, T
 from app.models.project_model import TechnologyModel
-from app.schemas.project_schema import Project
 
 
 class TechnologyDao(DAOInterface[TechnologyModel]):

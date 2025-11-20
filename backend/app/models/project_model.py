@@ -1,15 +1,76 @@
-from sqlalchemy import Column, String, TIMESTAMP, ForeignKey, func, Enum as SQLEnum
-from sqlalchemy.orm import relationship
-from data.database import Base
+from typing import List
+
+from sqlalchemy import Column, String, TIMESTAMP, ForeignKey, func, Enum as SQLEnum, Table
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from app.data.database import Base
 from app.schemas.project_image_schema import Kind
 from app.schemas.project_schema import Status, Visibility
+from app.schemas.technology_schema import Type
 
+technologies_project = Table(
+    "technologies_project",
+    Base.metadata,
+    Column(
+        "project_pid", ForeignKey("projects.pid"), primary_key=True, nullable=False
+    ),
+    Column(
+        "technology_id", ForeignKey("technologies.id"), primary_key=True, nullable=False
+    )
+)
+
+collaborator_project= Table(
+    "collaborator_project",
+    Base.metadata,
+    Column("collaborator_id",ForeignKey("collaborators.id")),
+    Column("project_pid", ForeignKey("projects.pid"))
+)
+
+class CollaboratorModel(Base):
+    __tablename__ = "collaborators"
+    id = Column(String(50), primary_key=True, server_default="uuid()")
+    first_name = Column(String(100), nullable=False)
+    last_name = Column(String(100), nullable=False)
+    role = Column(String, nullable=True)
+    portfolio_url = Column(String, nullable=True)
+    github_url = Column(String, nullable=True)
+    linkedin_url = Column(String, nullable=True)
+
+    projects = relationship(
+        "ProjectModel", secondary="collaborator_project", back_populates="collaborators"
+    )
+
+
+class TechnologyModel(Base):
+    __tablename__ = "technologies"
+    id = Column(String(50), primary_key=True, server_default="uuid()")
+    name = Column(String(255), nullable=False)
+    slug = Column(String(150), unique=True)
+    type = Column(
+        SQLEnum(Type, native_enum=False),
+        nullable=False
+    )
+    icon_url = Column(String)
+
+    projects = relationship(
+        "ProjectModel", secondary="technologies_project", back_populates="technologies"
+    )
+
+class ProjectImageModel(Base):
+    __tablename__ = "project_image"
+    id : Mapped[str] = mapped_column(primary_key=True)
+    image_url = Column(String, nullable=False)
+    alt_text = Column(String, nullable=False)
+    kind = Column(
+        SQLEnum(Kind, native_enum=False), nullable=False, default=Kind.SCREENSHOT
+    )
+
+    project_pid : Mapped[str] = mapped_column(ForeignKey("projects.pid"))
 
 # --- Project
 class ProjectModel(Base):
     __tablename__ = "projects"
 
-    pid = Column(String(50), primary_key=True, index=True, server_default="uuid()")
+    pid : Mapped[str] =  mapped_column(primary_key=True)
     title = Column(String(255), nullable=False)
     slug = Column(String(150), unique=True, index=True)
     description = Column(String(1000))  # augmenter la taille
@@ -29,77 +90,20 @@ class ProjectModel(Base):
     repoUrl = Column(String)
 
     # relations
-    project_images = relationship(
-        "ProjectImage", back_populates="project", cascade="all, delete-orphan"
+    images: Mapped[List[ProjectImageModel]] = relationship()
+
+    collaborators : Mapped[List[CollaboratorModel]] = relationship(
+        secondary=collaborator_project
     )
-    collaborators = relationship(
-        "Collaborator",
-        secondary="collaborator_project",
-        back_populates="projects",
-    )
-    technologies = relationship(
-        "Technology",
-        secondary="technologies_project",
-        back_populates="projects",
+    technologies : Mapped[List[TechnologyModel]] = relationship(
+        secondary=technologies_project
     )
 
 
-class TechnologyModel(Base):
-    __tablename__ = "technologies"
-    id = Column(String(50), primary_key=True, server_default="uuid()")
-    name = Column(String(255), nullable=False)
-    slug = Column(String(150), unique=True)
-    type = Column(String(150))
-    icon_url = Column(String)
-
-    projects = relationship(
-        "Project", secondary="technologies_project", back_populates="technologies"
-    )
 
 
-class CollaboratorModel(Base):
-    __tablename__ = "collaborators"
-    id = Column(String(50), primary_key=True, server_default="uuid()")
-    first_name = Column(String(100), nullable=False)
-    last_name = Column(String(100), nullable=False)
-    role = Column(String, nullable=True)
-    portfolio_url = Column(String, nullable=True)
-    github_url = Column(String, nullable=True)
-    linkedin_url = Column(String, nullable=True)
-
-    projects = relationship(
-        "Project", secondary="collaborator_project", back_populates="collaborators"
-    )
 
 
-class ProjectImageModel(Base):
-    __tablename__ = "project_image"
-    id = Column(String(50), primary_key=True, server_default="uuid()")
-    image_url = Column(String, nullable=False)
-    alt_text = Column(String, nullable=False)
-    kind = Column(
-        SQLEnum(Kind, native_enum=False), nullable=False, default=Kind.SCREENSHOT
-    )
-
-    project_pid = Column(String(50), ForeignKey("projects.pid"), nullable=False)
-    project = relationship("Project", back_populates="project_images")
 
 
-class CollaboratorProjectModel(Base):
-    __tablename__ = "collaborator_project"
-    project_pid = Column(
-        String(50), ForeignKey("projects.pid"), primary_key=True, nullable=False
-    )
-    collaborator_id = Column(
-        String(50), ForeignKey("collaborators.id"), primary_key=True, nullable=False
-    )
 
-
-class TechnologiesProjectModel(Base):
-    __tablename__ = "technologies_project"
-    project_pid = Column(
-        String(50), ForeignKey("projects.pid"), primary_key=True, nullable=False
-    )
-    technology_id = Column(
-        String(50), ForeignKey("technologies.id"), primary_key=True, nullable=False
-    )

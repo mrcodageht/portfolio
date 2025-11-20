@@ -1,6 +1,6 @@
 from enum import Enum
 
-from app.services.project_service import Project
+from app.schemas.project_schema import Project
 
 
 class Kind(str, Enum):

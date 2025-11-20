@@ -7,3 +7,7 @@ pydantic
 pydantic-settings
 mysql-connector-python
 python-dotenv
+sqlalchemy
+pymysql
+cryptography
+requests

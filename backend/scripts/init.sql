@@ -37,12 +37,12 @@ CREATE TABLE IF NOT EXISTS projects (
     end_at TIMESTAMP NULL DEFAULT NULL,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     status ENUM(
-        'in_progress',
-        'finished',
-        'archived',
-        'planning'
-    ) NOT NULL DEFAULT 'in_progress',
-    visibility ENUM('published', 'private') NOT NULL DEFAULT 'private',
+        'IN_PROGRESS',
+        'FINISHED',
+        'ARCHIVED',
+        'PLANNING'
+    ) NOT NULL DEFAULT 'IN_PROGRESS',
+    visibility ENUM('PUBLISHED', 'PRIVATE') NOT NULL DEFAULT 'PRIVATE',
     cover_image_url TEXT,
     liveUrl TEXT,
     repoUrl TEXT,
@@ -57,13 +57,13 @@ CREATE TABLE IF NOT EXISTS technologies (
     name VARCHAR(255) NOT NULL,
     slug VARCHAR(150) UNIQUE,
     type ENUM(
-        'backend',
-        'frontend',
-        'db',
-        'devops',
-        'mobile',
-        'tool',
-        'other'
+        'BACKEND',
+        'FRONTEND',
+        'DB',
+        'DEVOPS',
+        'MOBILE',
+        'TOOL',
+        'OTHER'
     ),
     icon_url TEXT
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
@@ -89,11 +89,11 @@ CREATE TABLE IF NOT EXISTS project_image (
     image_url TEXT NOT NULL,
     alt_text TEXT NOT NULL,
     kind ENUM(
-        'screenshot',
-        'logo',
-        'diagram',
-        'thumb'
-    ) NOT NULL DEFAULT 'screenshot',
+        'SCREENSHOT',
+        'LOGO',
+        'DIAGRAM',
+        'THUMB'
+    ) NOT NULL DEFAULT 'SCREENSHOT',
     project_pid CHAR(6) NOT NULL,
     CONSTRAINT fk_projectimage_project FOREIGN KEY (project_pid) REFERENCES projects (pid) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
@@ -144,4 +144,3 @@ BEGIN
 END$$
 
 DELIMITER;
-

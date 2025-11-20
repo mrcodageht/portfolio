@@ -1,7 +1,8 @@
+from __future__ import annotations
 from datetime import datetime
-
 from pydantic import BaseModel
 from enum import Enum
+from typing import Any
 
 class Status(str, Enum):
     IN_PROGRESS = "in_progress"
@@ -13,34 +14,24 @@ class Visibility(str, Enum):
     PUBLISHED = "published"
     PRIVATE = "private"
 
-
 class Project(BaseModel):
     pid: str
     title: str
     slug: str
     description: str
     startDate: datetime
-    endDate: datetime
+    endDate: datetime | None  # souvent utile d'accepter None
     status: Status
     visibility: Visibility
-    coverImageUrl: str
-    liveUrl: str
-    repoUrl: str
+    coverImageUrl: str | None
+    liveUrl: str | None
+    repoUrl: str | None
 
-
-    def __eq__( self, other ):
-        if not isinstance( other, Project ):
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Project):
             return NotImplemented
-        return(
-                self.pid == other.pid and
-                self.title == other.title and
-                self.slug == other.slug and
-                self.description == other.description and
-                self.startDate == other.startDate and
-                self.endDate == other.endDate and
-                self.status == other.Status and
-                self.visibility == other.visibility and
-                self.coverImageUrl == other.coverImageUrl and
-                self.liveUrl == other.liveUrl and
-                self.repoUrl == other.repoUrl 
-        )
+        # Pydantic v1: .dict(); v2: .model_dump() — on essaie les deux pour compatibilité
+        try:
+            return self.model_dump() == other.model_dump()
+        except Exception:
+            return self.dict() == other.dict()
