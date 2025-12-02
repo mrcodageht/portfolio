@@ -1,17 +1,9 @@
-from enum import Enum
 
-from app.schemas.project_schema import Project
+from app.schemas.enums import Kind
 
-
-class Kind(str, Enum):
-    SCREENSHOT = "screenshot"
-    LOGO = "logo"
-    DIAGRAM = "diagram"
-    THUMB = "thumb"
 
 class ProjectImage:
     id: str
-    project: Project
     imageUrl: str
     altText: str
     kind: Kind

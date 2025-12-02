@@ -1,15 +1,6 @@
-from enum import Enum
 from pydantic import BaseModel
 
-
-class Type(str, Enum):
-    BACKEND = "backend"
-    FRONTEND = "frontend"
-    DB = "db"
-    DEVOPS = "devops"
-    MOBILE = "mobile"
-    TOOL = "tool"
-    OTHER = "other"
+from app.schemas.enums import Type
 
 
 class Technology(BaseModel):

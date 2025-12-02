@@ -1,37 +1,52 @@
 from __future__ import annotations
 from datetime import datetime
 from pydantic import BaseModel
-from enum import Enum
-from typing import Any
+from typing import Any, Optional
 
-class Status(str, Enum):
-    IN_PROGRESS = "in_progress"
-    FINISHED = "finished"
-    ARCHIVED = "archived"
-    PLANNING = "planning"
+from app.models.project_model import ProjectModel
+from app.schemas.enums import Status, Visibility
 
-class Visibility(str, Enum):
-    PUBLISHED = "published"
-    PRIVATE = "private"
 
-class Project(BaseModel):
-    pid: str
+class ProjectBase(BaseModel):
     title: str
-    slug: str
+    slug: Optional[str] = None
     description: str
-    startDate: datetime
-    endDate: datetime | None  # souvent utile d'accepter None
+    start_at: datetime
+    end_at: Optional[datetime] = None  # souvent utile d'accepter None
     status: Status
     visibility: Visibility
-    coverImageUrl: str | None
-    liveUrl: str | None
-    repoUrl: str | None
+    cover_image_url: Optional[str] = None
+    liveUrl: Optional[str] = None
+    repoUrl: Optional[str] = None
 
-    def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Project):
-            return NotImplemented
-        # Pydantic v1: .dict(); v2: .model_dump() — on essaie les deux pour compatibilité
-        try:
-            return self.model_dump() == other.model_dump()
-        except Exception:
-            return self.dict() == other.dict()
+def map_from_project_model(pm: type[ProjectModel]):
+    return ProjectPublic(
+        pid=str(pm.pid),
+        title=pm.title,
+        slug=pm.slug,
+        description=pm.description,
+        start_at=pm.start_at,
+        end_at=pm.end_at,
+        status=pm.status,
+        visibility=pm.visibility,
+        cover_image_url=pm.cover_image_url,
+        liveUrl=pm.liveUrl,
+        repoUrl=pm.repoUrl
+    )
+
+
+class ProjectPublic(ProjectBase):
+    pid: str
+
+
+class ProjectUpdate(ProjectBase):
+    title: str | None = None
+    slug: str | None = None
+    description: str | None = None
+    start_at: datetime | None = None
+    end_at: datetime | None = None # souvent utile d'accepter None
+    status: Status | None = None
+    visibility: Visibility | None = None
+    cover_image_url: str | None = None
+    liveUrl: str | None = None
+    repoUrl: str | None = None

@@ -31,8 +31,8 @@ DELIMITER;
 CREATE TABLE IF NOT EXISTS projects (
     pid CHAR(6) NOT NULL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    slug VARCHAR(150) UNIQUE,
-    description VARCHAR(1000),
+    slug VARCHAR(150) UNIQUE NOT NULL,
+    description VARCHAR(1000) NOT NULL,
     start_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     end_at TIMESTAMP NULL DEFAULT NULL,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS projects (
     ) NOT NULL DEFAULT 'IN_PROGRESS',
     visibility ENUM('PUBLISHED', 'PRIVATE') NOT NULL DEFAULT 'PRIVATE',
     cover_image_url TEXT,
-    liveUrl TEXT,
-    repoUrl TEXT,
+    liveUrl TEXT NULL,
+    repoUrl TEXT NULL,
     INDEX idx_projects_slug (slug)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 

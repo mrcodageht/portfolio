@@ -1,27 +1,52 @@
-from fastapi import APIRouter, HTTPException, Depends
-from starlette import status
+from fastapi import APIRouter, Depends, Query
+from starlette import status as s
 from starlette.responses import JSONResponse
+from starlette.exceptions import HTTPException
 from fastapi.encoders import jsonable_encoder
 
+from app.schemas.enums import Visibility, Status
+from app.schemas.project_schema import ProjectPublic, ProjectBase
 from app.services.project_service import ProjectService
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
-@router.get("", response_model=None)
-def get_projects(service: ProjectService = Depends(ProjectService)):
-    projects = jsonable_encoder(service.get_all())
+@router.get("", response_model=list[ProjectPublic])
+def get_projects(
+        status : Status | None = None,
+        visibility : Visibility | None = None,
+        service: ProjectService = Depends(ProjectService)
+):
+    print(f"status demande : {status}")
+
+    projects = jsonable_encoder(service.get_all( status = status, visibility=visibility))
     return JSONResponse(
         content=projects,
-        status_code=status.HTTP_200_OK
+        status_code=s.HTTP_200_OK
     )
 
-@router.get("/{pid}")
-def get_by_id(pid: str):
-    return None
+@router.get("/{pid}", response_model=ProjectPublic)
+def get_by_pid(pid: str, service = Depends(ProjectService)):
+    project = jsonable_encoder(service.get_by_pid(pid))
+    return JSONResponse(
+        content=project,
+        status_code=s.HTTP_200_OK
+    )
 
-@router.post("")
-def create():
-    return None
+@router.post("", response_model=ProjectPublic)
+def create(project : ProjectBase, service = Depends(ProjectService)):
+    try:
+        project = jsonable_encoder(service.save(project_create=project))
+        return JSONResponse(
+            content=project,
+            status_code=s.HTTP_201_CREATED
+        )
+    except ValueError as err:
+        res = {"details":err}
+        raise HTTPException(
+            detail=err,
+            status_code=s.HTTP_400_BAD_REQUEST
+        )
+
 
 @router.put("")
 def update():

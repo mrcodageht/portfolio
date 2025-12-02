@@ -1,11 +1,9 @@
 from typing import List
-
-from sqlalchemy import Column, String, TIMESTAMP, ForeignKey, func, Enum as SQLEnum, Table
+from sqlalchemy import Column, FetchedValue, String, TIMESTAMP, ForeignKey, func, Enum as SQLEnum, Table
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.data.database import Base
-from app.schemas.project_image_schema import Kind
-from app.schemas.project_schema import Status, Visibility
-from app.schemas.technology_schema import Type
+from app.schemas.enums import Kind, Type, Status, Visibility
+from app.utils.project_utils import generate_short_id6
 
 technologies_project = Table(
     "technologies_project",
@@ -70,7 +68,7 @@ class ProjectImageModel(Base):
 class ProjectModel(Base):
     __tablename__ = "projects"
 
-    pid : Mapped[str] =  mapped_column(primary_key=True)
+    pid : Mapped[str] =  mapped_column(primary_key=True, default=generate_short_id6)
     title = Column(String(255), nullable=False)
     slug = Column(String(150), unique=True, index=True)
     description = Column(String(1000))  # augmenter la taille
@@ -98,7 +96,6 @@ class ProjectModel(Base):
     technologies : Mapped[List[TechnologyModel]] = relationship(
         secondary=technologies_project
     )
-
 
 
 

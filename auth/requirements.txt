@@ -11,4 +11,7 @@ sqlalchemy
 pymysql
 cryptography
 requests
-sqlmodel
+pyjwt
+pwdlib[argon2]
+python-jose[cryptography]
+python-multipart
