@@ -2,6 +2,7 @@ from typing import Any, Optional, List
 
 from click import option
 from fastapi import Depends
+from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
 from app.data.dao.dao_interface import DAOInterface, T
@@ -43,8 +44,8 @@ class ProjectDao(DAOInterface[ProjectModel]):
             .filter_by(pid=pid).first())
         return project
     
-    def find_by_slug(self, slug:str)-> type[ProjectModel]:
-        project = (self.db.query(ProjectModel).filter(ProjectModel.slug==slug).first())
+    def find_by_slug(self, slug:str)-> ProjectModel:
+        project = (self.db.query(ProjectModel).filter(func.lower(ProjectModel.slug)==func.lower(slug)).first())
         return project
 
     def create(self, project: ProjectBase) -> ProjectModel:

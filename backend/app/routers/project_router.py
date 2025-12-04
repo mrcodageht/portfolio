@@ -4,6 +4,7 @@ from starlette.responses import JSONResponse
 from starlette.exceptions import HTTPException
 from fastapi.encoders import jsonable_encoder
 
+from app.exceptions.global_projects_exceptions import *
 from app.schemas.enums import Visibility, Status
 from app.schemas.project_schema import ProjectPublic, ProjectBase
 from app.services.project_service import ProjectService
@@ -26,11 +27,18 @@ def get_projects(
 
 @router.get("/{pid}", response_model=ProjectPublic)
 def get_by_pid(pid: str, service = Depends(ProjectService)):
-    project = jsonable_encoder(service.get_by_pid(pid))
-    return JSONResponse(
-        content=project,
-        status_code=s.HTTP_200_OK
-    )
+    try:
+        project = jsonable_encoder(service.get_by_pid(pid))
+        return JSONResponse(
+            content=project,
+            status_code=s.HTTP_200_OK
+        )
+    except ProjectNotFoundWithPidException as err:
+        res = {"details":err.message}
+        raise HTTPException(
+            detail=err.message,
+            status_code=s.HTTP_404_NOT_FOUND
+        )
 
 @router.post("", response_model=ProjectPublic)
 def create(project : ProjectBase, service = Depends(ProjectService)):
@@ -40,10 +48,10 @@ def create(project : ProjectBase, service = Depends(ProjectService)):
             content=project,
             status_code=s.HTTP_201_CREATED
         )
-    except ValueError as err:
-        res = {"details":err}
+    except ProjectAlreadyExistsWithSlugException as err:
+        res = {"details":err.message}
         raise HTTPException(
-            detail=err,
+            detail=err.message,
             status_code=s.HTTP_400_BAD_REQUEST
         )
 

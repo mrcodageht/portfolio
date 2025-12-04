@@ -1,6 +1,8 @@
 
 from fastapi import Depends
 
+from app.exceptions.global_projects_exceptions import ProjectAlreadyExistsWithSlugException,  ProjectNotFoundWithPidException
+
 from ..data.dao.project_dao import ProjectDao
 from ..models.project_model import ProjectModel
 from app.schemas.enums import Status, Visibility
@@ -16,11 +18,13 @@ class ProjectService:
             status : Status | None = None,
             visibility : Visibility | None = None
     )-> list[ProjectPublic]:
-        projects = self.project_dao.find_all( status=status, visibility=visibility )
+        projects = self.project_dao.find_all( status=status, visibility=visibility)
         return [map_to_project(p) for p in projects]
 
     def get_by_pid(self, pid: str) -> ProjectPublic:
         project = self.project_dao.find_by_id(pid=pid)
+        if project is None:
+            raise ProjectNotFoundWithPidException(pid)
         return map_to_project(project_model=project)
 
     def save(self, project_create : ProjectBase) -> ProjectPublic:
@@ -33,7 +37,7 @@ class ProjectService:
         if project_with_slug is not None:
             # Si nous trouvons un objet, c'est que le slug existe déjà.
             print(f"project with slug : {project_with_slug}")
-            raise ValueError("Un project existe deja avec ce slug")
+            raise ProjectAlreadyExistsWithSlugException(project_with_slug.slug)
         else:
             # Si project_with_slug est None, le slug est libre.
             print("==> block else")
