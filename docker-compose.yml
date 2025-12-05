@@ -1,0 +1,83 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    container_name: "portfoliodb"
+    env_file:
+      - ./config/.env.data
+    ports:
+      - ${MYSQL_PORT:-3308}:3306
+    command: --log-bin-trust-function-creators=1
+    volumes:
+      - db_data:/var/lib/mysql
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "127.0.0.1",
+          "-u",
+          "root",
+          "--password=${MYSQL_ROOT_PASSWORD}",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # stack pour le container d'api
+  app:
+    container_name: app-portfolio
+    env_file:
+      - ./config/.env.backend
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+    ports:
+      - ${PORT:-8079}:8079
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/app
+          target: /code/app
+          ignore:
+            - "**/__pycache__"
+            - "**/*.pyc"
+            - "**/.pytest_cache"
+        - action: rebuild
+          path: ./backend/requirements.txt
+
+  # container pour l'authentification
+  auth:
+    container_name: auth-portfolio
+    env_file:
+      - ./config/.env.auth
+    build:
+      context: .
+      dockerfile: ./auth/Dockerfile
+    restart: always
+    ports:
+      - ${PORT:-8070}:8070
+    depends_on:
+      db:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync
+          path: ./auth/app/
+          target: /code/app
+          ignore:
+            - "**/__pycache__"
+            - "**/*.pyc"
+            - "**/.pytest_cache"
+        - action: rebuild
+          path: ./auth/requirements.txt
+
+volumes:
+  db_data:
