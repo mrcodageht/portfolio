@@ -1,4 +1,4 @@
-# portfolio
+# portfolio CMS
 Ceci est un projet backoffice pour une api de gestion de projet personnel
 
 Objectif du projet
