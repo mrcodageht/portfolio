@@ -79,5 +79,14 @@ services:
         - action: rebuild
           path: ./auth/requirements.txt
 
+  # container pour la documentation
+  docs:
+    container_name: docs-portfolio
+    build:
+      context: .
+      dockerfile: ./documentation/Dockerfile
+    ports:
+      - "8075:80"
+    restart: always
 volumes:
   db_data:
