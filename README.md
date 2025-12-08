@@ -30,25 +30,44 @@ complémentaires :
 
 ### 🔹 Backend (API)
 
-Une API construite avec **FastAPI**, permettant de gérer : - Les
-projets - Les technologies maîtrisées - Les collaborateurs (pour
+Une API construite avec **FastAPI**, permettant de gérer : <br> 
+- Les projets 
+- Les technologies maîtrisées 
+- Les collaborateurs (pour
 attribuer des crédits ou contributions)
+
+```bash
+# url
+http://localhost:8079
+```
 
 ### 🔹 Front-end (CMS)
 
 Un petit CMS en **HTML5 / CSS3 / JS / Bootstrap**, permettant
 d'interagir avec l'API sans développer un client personnalisé pour gérer
 les entités du portfolio.
+```bash
+# url
+http://localhost:8073
+```
 
 ### 🔹 Documentation
 
 Documentation générée automatiquement grâce à **MkDocs**.
+```bash
+# url
+http://localhost:8075
+```
 
 ### 🔹 Authentification
 
 Un conteneur dédié à la gestion de l'auth, assurant une sécurité
 minimale même en self‑hosting pour empêcher toute modification non
 autorisée.
+```bash
+# url 
+http://localhost:8070
+```
 
 
 ## Configuration
@@ -59,6 +78,7 @@ l'ensemble des fichiers nécessaires pour :
 -   Configurer l'environnement
 -   Démarrer l'application via Docker
 -   Adapter les variables selon votre installation
+
 
 
 ## Licence
