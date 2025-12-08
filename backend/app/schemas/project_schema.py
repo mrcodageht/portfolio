@@ -40,13 +40,12 @@ class ProjectPublic(ProjectBase):
 
 
 class ProjectUpdate(ProjectBase):
-    title: str | None = None
-    slug: str | None = None
-    description: str | None = None
-    start_at: datetime | None = None
-    end_at: datetime | None = None # souvent utile d'accepter None
-    status: Status | None = None
-    visibility: Visibility | None = None
-    cover_image_url: str | None = None
-    liveUrl: str | None = None
-    repoUrl: str | None = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    start_at: Optional[datetime] = None
+    end_at : Optional[datetime] = None # souvent utile d'accepter None
+    status: Optional[Status] = None
+    visibility: Optional[Visibility] = None
+    cover_image_url: Optional[str] = None
+    liveUrl: Optional[str] = None
+    repoUrl: Optional[str] = None

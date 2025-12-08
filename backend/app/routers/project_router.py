@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, Query
 from starlette import status as s
 from starlette.responses import JSONResponse
 from starlette.exceptions import HTTPException
-from fastapi.encoders import jsonable_encoder
+from fastapi.encoders import jsonable_encoder as je
 
 from app.exceptions.global_projects_exceptions import *
 from app.schemas.enums import Visibility, Status
-from app.schemas.project_schema import ProjectPublic, ProjectBase
+from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectUpdate
 from app.services.project_service import ProjectService
 
 router = APIRouter(prefix="/projects", tags=["projects"])
@@ -19,7 +19,7 @@ def get_projects(
 ):
     print(f"status demande : {status}")
 
-    projects = jsonable_encoder(service.get_all( status = status, visibility=visibility))
+    projects = je(service.get_all( status = status, visibility=visibility))
     return JSONResponse(
         content=projects,
         status_code=s.HTTP_200_OK
@@ -28,7 +28,7 @@ def get_projects(
 @router.get("/{pid}", response_model=ProjectPublic)
 def get_by_pid(pid: str, service = Depends(ProjectService)):
     try:
-        project = jsonable_encoder(service.get_by_pid(pid))
+        project = je(service.get_by_pid(pid))
         return JSONResponse(
             content=project,
             status_code=s.HTTP_200_OK
@@ -43,7 +43,7 @@ def get_by_pid(pid: str, service = Depends(ProjectService)):
 @router.post("", response_model=ProjectPublic)
 def create(project : ProjectBase, service = Depends(ProjectService)):
     try:
-        project = jsonable_encoder(service.save(project_create=project))
+        project = je(service.save(project_create=project))
         return JSONResponse(
             content=project,
             status_code=s.HTTP_201_CREATED
@@ -56,13 +56,17 @@ def create(project : ProjectBase, service = Depends(ProjectService)):
         )
 
 
-@router.put("")
-def update():
-    return None
+@router.put(path="/{pid}", response_model=ProjectPublic)
+def update(pid: str, project_to_update: ProjectUpdate, service = Depends(ProjectService)):
+    project = je(service.update(pid, project_to_update))
+    return JSONResponse(
+        content=project,
+        status_code=s.HTTP_200_OK
+    )
 
-@router.delete("")
-def delete():
-    return None
+@router.delete("/{pid}", status_code=s.HTTP_204_NO_CONTENT)
+def delete(pid: str, service = Depends(ProjectService)):
+    service.delete(pid)
 
 def get_project_service():
     return ProjectService()

@@ -1,15 +1,17 @@
 from typing import Any, Optional, List
 
 from click import option
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
+from starlette import status as s
 
 from app.data.dao.dao_interface import DAOInterface, T
 from app.data.database import get_db
-from app.models.project_model import ProjectModel
+from app.models.project_model import ProjectImageModel, ProjectModel
 from app.schemas.enums import Status, Visibility
-from app.schemas.project_schema import ProjectBase
+from app.schemas.project_schema import ProjectBase, ProjectUpdate
+
 
 
 class ProjectDao(DAOInterface[ProjectModel]):
@@ -48,7 +50,7 @@ class ProjectDao(DAOInterface[ProjectModel]):
         project = (self.db.query(ProjectModel).filter(func.lower(ProjectModel.slug)==func.lower(slug)).first())
         return project
 
-    def create(self, project: ProjectBase) -> ProjectModel:
+    def create(self, project: ProjectBase) -> type[ProjectModel]:
         try:
             db_project = ProjectModel(**project.model_dump(exclude_unset=True))
             self.db.add(db_project)
@@ -61,8 +63,50 @@ class ProjectDao(DAOInterface[ProjectModel]):
             raise Exception("the project not have been created successfully.")
 
 
-    def update(self, id: Any, item: ProjectModel) -> Optional[ProjectModel]:
-        pass
+    def update(self, id: str, item: ProjectUpdate) -> type[ProjectModel]:
+        project_existing = self.find_by_id(pid=id)
+        if project_existing is None:
+            raise HTTPException(
+                detail=f"Project not found with the pid '{id}'",
+                status_code=s.HTTP_404_NOT_FOUND
+            )
 
-    def delete(self, id: Any) -> bool:
-        pass
+        for f,v in item.model_dump(exclude_unset=True).items():
+            setattr(project_existing,f,v)          
+        try:
+            self.db.commit()
+            self.db.refresh(project_existing)
+            return project_existing
+        except Exception as ex:
+            print(f"xx> Error : {ex}")
+
+    def delete(self, id: str) -> bool:
+        project_existing = self.find_by_id(pid=id)
+        if project_existing is None:
+            raise HTTPException(
+                detail=f"Project not found with the pid '{id}'",
+                status_code=s.HTTP_404_NOT_FOUND
+            )
+        try:
+            images = self.db.query(ProjectImageModel).filter(ProjectImageModel.project_pid==id).all()
+            for im in images:
+                self.db.delete(im)
+            self.db.delete(project_existing)
+            self.db.commit()
+            return True
+        except Exception as ex:
+            print(f"Error : {ex}")
+            raise HTTPException(
+                detail=f"Failed to delete the project with the pid '{id}'",
+                status_code=s.HTTP_400_BAD_REQUEST
+            )
+
+
+    def create_all(self, items: List[ProjectBase]):
+        raise NotImplementedError
+
+    def update_all(self, ids, items):
+        raise NotImplementedError
+
+    def delete_all(self, ids: List[int]):
+        raise NotImplementedError

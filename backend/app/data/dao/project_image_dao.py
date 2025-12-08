@@ -26,3 +26,12 @@ class ProjectImageDao(DAOInterface[ProjectImageModel]):
 
     def delete(self, id: Any) -> bool:
         pass
+
+    def create_all(self, items):
+        raise NotImplementedError
+
+    def update_all(self, ids, items):
+        raise NotImplementedError
+
+    def delete_all(self, ids):
+        raise NotImplementedError

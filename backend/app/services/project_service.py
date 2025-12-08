@@ -1,12 +1,13 @@
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 
 from app.exceptions.global_projects_exceptions import ProjectAlreadyExistsWithSlugException,  ProjectNotFoundWithPidException
 
 from ..data.dao.project_dao import ProjectDao
 from ..models.project_model import ProjectModel
 from app.schemas.enums import Status, Visibility
-from app.schemas.project_schema import ProjectPublic, ProjectBase
+from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectUpdate
+from starlette import status as s
 
 
 class ProjectService:
@@ -43,6 +44,14 @@ class ProjectService:
             print("==> block else")
             project_created = self.project_dao.create(project_create)
             return map_to_project(project_model=project_created)
+
+    def update(self,pid, proj_to_update: ProjectUpdate) -> ProjectModel:
+        proj_updated = self.project_dao.update(id=pid, item=proj_to_update)
+        return map_to_project(proj_updated)
+
+    def delete(self, pid: str):
+        self.project_dao.delete(id=pid) 
+
 
 
 
