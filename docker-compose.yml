@@ -88,5 +88,15 @@ services:
     ports:
       - "8075:80"
     restart: always
+
+  front-portfolio:
+    container_name: front-portfolio
+    image: nginx:alpine
+    ports:
+      - "8073:80"
+    restart: always
+    volumes:
+      - ./frontend/:/usr/share/nginx/html/
+
 volumes:
   db_data:
