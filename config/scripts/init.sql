@@ -23,7 +23,7 @@ BEGIN
     );
 END$$
 
-DELIMITER;
+DELIMITER ;
 
 -- ======================
 -- TABLE : projects  (pid = CHAR(6) WITHOUT DEFAULT)
@@ -143,4 +143,4 @@ BEGIN
   END IF;
 END$$
 
-DELIMITER;
+DELIMITER ;

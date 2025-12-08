@@ -1,6 +1,8 @@
 services:
   db:
-    image: mysql:8.0
+    build:
+      context: .
+      dockerfile: ./config/db.Dockerfile
     restart: always
     container_name: "portfoliodb"
     env_file:
