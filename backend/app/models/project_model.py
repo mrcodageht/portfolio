@@ -40,7 +40,7 @@ class CollaboratorModel(Base):
 
 class TechnologyModel(Base):
     __tablename__ = "technologies"
-    id = Column(String(50), primary_key=True, server_default="uuid()")
+    id : Mapped[str] = mapped_column(primary_key=True, default=generate_short_id6)
     name = Column(String(255), nullable=False)
     slug = Column(String(150), unique=True)
     type = Column(

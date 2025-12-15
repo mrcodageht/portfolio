@@ -11,4 +11,5 @@ sqlalchemy
 pymysql
 cryptography
 requests
+pytest
 sqlmodel

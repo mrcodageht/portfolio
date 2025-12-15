@@ -8,4 +8,14 @@ class Technology(BaseModel):
     name: str
     slug: str
     type: Type
-    iconUrl: str
+    icon_url: str
+
+class TechnologyCreate(BaseModel):
+    name: str
+    type: Type
+    icon_url: str
+
+class TechnologyPublic(TechnologyCreate):
+    id: str
+    slug: str
+

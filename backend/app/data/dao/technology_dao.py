@@ -1,24 +1,103 @@
 from typing import Any, Optional, List
-
+from starlette import status
+from fastapi import Depends, HTTPException
+from sqlalchemy.orm import Session
 from app.data.dao.dao_interface import DAOInterface, T
 from app.models.project_model import TechnologyModel
+from app.data.database import get_db
+from app.schemas.technology_schema import TechnologyCreate
 
 
 class TechnologyDao(DAOInterface[TechnologyModel]):
+
+    def __init__(self, db: Session = Depends(get_db)):
+        self.db = db
+        super().__init__()
+
     def find_all(self) -> List[TechnologyModel]:
-        pass
+        technos = self.db.query(TechnologyModel).all()
+        return technos
 
-    def find_by_id(self, id: Any) -> Optional[TechnologyModel]:
-        pass
+    def find_by_id(self, id: str) -> Optional[TechnologyModel]:
+        techno = self.db.query(TechnologyModel).filter(TechnologyModel.id==id).first()
+        return techno
 
-    def create(self, item: TechnologyModel) -> TechnologyModel:
-        pass
+    def create(self, item: TechnologyCreate) -> TechnologyModel:
+        techno = TechnologyModel(**item.model_dump(exclude_unset=True))
 
-    def update(self, id: Any, item: TechnologyModel) -> Optional[TechnologyModel]:
-        pass
+        techno.slug = item.name.lower().replace(" ","-")
+        
+        is_exists = self.db.query(TechnologyModel).filter(TechnologyModel.slug==techno.slug).first()
+        if is_exists is not None:
+            raise HTTPException(
+                detail=f"Technology '{techno.slug}' already exists",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
 
-    def delete(self, id: Any) -> bool:
-        pass
+        try:
+            self.db.add(techno)
+            self.db.commit()
+            self.db.refresh(techno) 
+            return techno
+        except Exception as e:
+            self.db.rollback()
+            print(f"Erreur lors de la sauvegarde {e}")
+            raise HTTPException(
+                detail="Erreur lors de la sauvegarde.",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def update(self, id: str, item: TechnologyCreate) -> Optional[TechnologyModel]:
+        techno = self.find_by_id(id=id)
+        if techno is None:
+            raise HTTPException(
+                detail=f"Techonology not found with the id '{id}'",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        
+        techno.slug = item.name.lower().replace(" ","-")
+        
+        is_exists = self.db.query(TechnologyModel).filter(TechnologyModel.slug==techno.slug).first()
+        if is_exists is not None:
+            raise HTTPException(
+                detail=f"Technology '{techno.slug}' already exists",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+        
+        for f,v in item.model_dump(exclude_unset=True).items():
+            setattr(techno,f,v)
+        try:
+            self.db.commit()
+            self.db.refresh(techno)
+            return techno
+        except Exception as e:
+            self.db.rollback()
+            print(f"Erreur lors de la sauvegarde {e}")
+            raise HTTPException(
+                detail="Erreur lors de la sauvegarde.",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+                 
+
+    def delete(self, id: str) -> bool:
+        techno = self.find_by_id(id=id)
+        if techno is None:
+            raise HTTPException(
+                detail=f"Techonology not found with the id '{id}'",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            self.db.delete(techno)
+            self.db.commit()
+            return True
+        except Exception as e:
+            self.db.rollback()
+            print(f"Erreur lors de la sauvegarde {e}")
+            raise HTTPException(
+                detail="Erreur lors de la sauvegarde.",
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     def create_all(self, items):
         raise NotImplementedError

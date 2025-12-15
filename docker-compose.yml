@@ -45,7 +45,7 @@ services:
       - ${PORT:-8079}:8079
     develop:
       watch:
-        - action: sync
+        - action: rebuild
           path: ./backend/app
           target: /code/app
           ignore:
