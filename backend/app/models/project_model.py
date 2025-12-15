@@ -25,7 +25,7 @@ collaborator_project= Table(
 
 class CollaboratorModel(Base):
     __tablename__ = "collaborators"
-    id = Column(String(50), primary_key=True, server_default="uuid()")
+    id : Mapped[str] = mapped_column(primary_key=True, default=generate_short_id6)
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
     role = Column(String, nullable=True)

@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 
 from app import landing_page
 from app.config.env import settings
-from app.routers import project_router
+from app.routers import collaborator_router, project_router
 from app.routers import technology_router
 
 app = FastAPI(
@@ -19,3 +19,4 @@ def root():
 
 app.include_router(project_router.router, prefix="/api/v1")
 app.include_router(technology_router.router, prefix="/api/v1")
+app.include_router(collaborator_router.router, prefix="/api/v1")
