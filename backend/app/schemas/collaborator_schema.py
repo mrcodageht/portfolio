@@ -4,13 +4,13 @@ from typing import Optional
 from pydantic import BaseModel
 
 class CollaboratorCreate(BaseModel):
-    firstname: str
-    lastname: str
+    first_name: str
+    last_name: str
     role: str
-    portfolioUrl: Optional[str] = None
-    githubUrl: Optional[str] = None
-    gitlabUrl: Optional[str] = None
-    linkedinUrl: Optional[str] = None
+    portfolio_url: Optional[str] = None
+    github_url: Optional[str] = None
+    #gitlab_url: Optional[str] = None
+    linkedin_url: Optional[str] = None
 
 class CollaboratorPublic(CollaboratorCreate):
     id: str

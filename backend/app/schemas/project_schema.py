@@ -16,8 +16,8 @@ class ProjectBase(BaseModel):
     status: Status
     visibility: Visibility
     cover_image_url: Optional[str] = None
-    liveUrl: Optional[str] = None
-    repoUrl: Optional[str] = None
+    live_url: Optional[str] = None
+    repo_url: Optional[str] = None
 
 def map_from_project_model(pm: type[ProjectModel]):
     return ProjectPublic(
@@ -30,8 +30,8 @@ def map_from_project_model(pm: type[ProjectModel]):
         status=pm.status,
         visibility=pm.visibility,
         cover_image_url=pm.cover_image_url,
-        liveUrl=pm.liveUrl,
-        repoUrl=pm.repoUrl
+        live_url=pm.liveUrl,
+        repo_url=pm.repoUrl
     )
 
 
@@ -47,5 +47,5 @@ class ProjectUpdate(ProjectBase):
     status: Optional[Status] = None
     visibility: Optional[Visibility] = None
     cover_image_url: Optional[str] = None
-    liveUrl: Optional[str] = None
-    repoUrl: Optional[str] = None
+    live_url: Optional[str] = None
+    repo_url: Optional[str] = None

@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS projects (
     ) NOT NULL DEFAULT 'IN_PROGRESS',
     visibility ENUM('PUBLISHED', 'PRIVATE') NOT NULL DEFAULT 'PRIVATE',
     cover_image_url TEXT,
-    liveUrl TEXT NULL,
-    repoUrl TEXT NULL,
+    live_url TEXT NULL,
+    repo_url TEXT NULL,
     INDEX idx_projects_slug (slug)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 

@@ -69,6 +69,6 @@ def map_to_project(project_model: type[ProjectModel]) -> ProjectPublic:
         status=project_model.status,
         visibility=project_model.visibility,
         cover_image_url=project_model.cover_image_url,
-        liveUrl=project_model.liveUrl,
-        repoUrl=project_model.repoUrl,
+        live_url=project_model.live_url,
+        repo_url=project_model.repo_url,
     )

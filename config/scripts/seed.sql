@@ -299,8 +299,8 @@ INSERT INTO
         status,
         visibility,
         cover_image_url,
-        liveUrl,
-        repoUrl
+        live_url,
+        repo_url
     )
 VALUES (
         @p1,
@@ -325,8 +325,8 @@ INSERT INTO
         status,
         visibility,
         cover_image_url,
-        liveUrl,
-        repoUrl
+        live_url,
+        repo_url
     )
 VALUES (
         @p2,
@@ -351,8 +351,8 @@ INSERT INTO
         status,
         visibility,
         cover_image_url,
-        liveUrl,
-        repoUrl
+        live_url,
+        repo_url
     )
 VALUES (
         @p3,
@@ -377,8 +377,8 @@ INSERT INTO
         status,
         visibility,
         cover_image_url,
-        liveUrl,
-        repoUrl
+        live_url,
+        repo_url
     )
 VALUES (
         @p4,
@@ -403,8 +403,8 @@ INSERT INTO
         status,
         visibility,
         cover_image_url,
-        liveUrl,
-        repoUrl
+        live_url,
+        repo_url
     )
 VALUES (
         @p5,
@@ -429,8 +429,8 @@ INSERT INTO
         status,
         visibility,
         cover_image_url,
-        liveUrl,
-        repoUrl
+        live_url,
+        repo_url
     )
 VALUES (
         @p6,

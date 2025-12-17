@@ -1,4 +1,5 @@
 from typing import List
+import uuid
 from sqlalchemy import Column, FetchedValue, String, TIMESTAMP, ForeignKey, func, Enum as SQLEnum, Table
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.data.database import Base
@@ -25,7 +26,7 @@ collaborator_project= Table(
 
 class CollaboratorModel(Base):
     __tablename__ = "collaborators"
-    id : Mapped[str] = mapped_column(primary_key=True, default=generate_short_id6)
+    id : Mapped[str] = mapped_column(primary_key=True, default=uuid.uuid4())
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
     role = Column(String, nullable=True)
@@ -84,8 +85,8 @@ class ProjectModel(Base):
         default=Visibility.PRIVATE,
     )
     cover_image_url = Column(String)  # corrigé
-    liveUrl = Column(String)
-    repoUrl = Column(String)
+    live_url = Column(String)
+    repo_url = Column(String)
 
     # relations
     images: Mapped[List[ProjectImageModel]] = relationship()
