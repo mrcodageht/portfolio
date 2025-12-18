@@ -9,12 +9,24 @@ from app.routers import collaborator_router, project_router, user_router
 from app.routers import technology_router
 from app.services.services_user import UserService
 
+from starlette.middleware.cors import CORSMiddleware
+
 generated_key = settings.KEY_INIT
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.API_VERSION
 )
+origins = ["*"
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+#
 
 @app.get("/", response_class=HTMLResponse)
 def root():
