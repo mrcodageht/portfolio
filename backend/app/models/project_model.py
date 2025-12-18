@@ -1,6 +1,6 @@
 from typing import List
 import uuid
-from sqlalchemy import Column, FetchedValue, String, TIMESTAMP, ForeignKey, func, Enum as SQLEnum, Table
+from sqlalchemy import Boolean, Column, FetchedValue, String, TIMESTAMP, ForeignKey, func, Enum as SQLEnum, Table
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from app.data.database import Base
 from app.schemas.enums import Kind, Type, Status, Visibility
@@ -98,7 +98,16 @@ class ProjectModel(Base):
         secondary=technologies_project
     )
 
+class UserModel(Base):
 
+    __tablename__ = "users"
+    id: Mapped[str] = mapped_column(primary_key=True, default=uuid.uuid4())
+    last_name = Column(String)
+    first_name = Column(String)
+    email = Column(String)
+    hashed_password = Column(String)
+    created_at = Column(TIMESTAMP, server_default=func.now())
+    admin = Column(Boolean)
 
 
 

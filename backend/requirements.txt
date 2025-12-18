@@ -13,3 +13,5 @@ cryptography
 requests
 pytest
 sqlmodel
+bcrypt
+python-multipart

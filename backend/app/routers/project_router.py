@@ -8,6 +8,7 @@ from app.exceptions.global_projects_exceptions import *
 from app.schemas.enums import Visibility, Status
 from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectUpdate
 from app.services.project_service import ProjectService
+from app.services.services_user import require_admin
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
@@ -40,7 +41,11 @@ def get_by_pid(pid: str, service = Depends(ProjectService)):
             status_code=s.HTTP_404_NOT_FOUND
         )
 
-@router.post("", response_model=ProjectPublic)
+@router.post(
+        "", 
+        response_model=ProjectPublic,
+        dependencies=[Depends(require_admin)]
+        )
 def create(project : ProjectBase, service = Depends(ProjectService)):
     try:
         project = je(service.save(project_create=project))
@@ -56,7 +61,11 @@ def create(project : ProjectBase, service = Depends(ProjectService)):
         )
 
 
-@router.put(path="/{pid}", response_model=ProjectPublic)
+@router.put(
+        path="/{pid}", 
+        response_model=ProjectPublic,
+        dependencies=[Depends(require_admin)]
+        )
 def update(pid: str, project_to_update: ProjectUpdate, service = Depends(ProjectService)):
     project = je(service.update(pid, project_to_update))
     return JSONResponse(
@@ -64,7 +73,11 @@ def update(pid: str, project_to_update: ProjectUpdate, service = Depends(Project
         status_code=s.HTTP_200_OK
     )
 
-@router.delete("/{pid}", status_code=s.HTTP_204_NO_CONTENT)
+@router.delete(
+        "/{pid}", 
+        status_code=s.HTTP_204_NO_CONTENT,
+        dependencies=[Depends(require_admin)]
+        )
 def delete(pid: str, service = Depends(ProjectService)):
     service.delete(pid)
 

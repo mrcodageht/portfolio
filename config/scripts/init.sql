@@ -25,6 +25,17 @@ END$$
 
 DELIMITER ;
 
+CREATE TABLE IF NOT EXISTS users (
+    id CHAR(36) NOT NULL PRIMARY KEY DEFAULT(UUID()),
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    hashed_password VARCHAR(255) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    admin TINYINT(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 -- ======================
 -- TABLE : projects  (pid = CHAR(6) WITHOUT DEFAULT)
 -- ======================

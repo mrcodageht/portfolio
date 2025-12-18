@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.schemas.collaborator_schema import CollaboratorCreate, CollaboratorPublic
 from app.services.collaborateur_service import CollaboratorService
+from app.services.services_user import require_admin
 
 
 router = APIRouter(
@@ -36,14 +37,24 @@ def search(
     pass
 
 
-@router.post("", response_model=CollaboratorPublic, status_code=status.HTTP_201_CREATED)
+@router.post(
+        "", 
+        response_model=CollaboratorPublic, 
+        status_code=status.HTTP_201_CREATED,
+        dependencies=[Depends(require_admin)]
+)
 def create(
     collab_create: CollaboratorCreate,
     services: CollaboratorService = Depends(CollaboratorService)
 ):
     return services.save(collab_create=collab_create)
 
-@router.put("/{id}", response_model=CollaboratorPublic, status_code=status.HTTP_200_OK)
+@router.put(
+        "/{id}", 
+        response_model=CollaboratorPublic, 
+        status_code=status.HTTP_200_OK,
+        dependencies=[Depends(require_admin)]
+        )
 def update(
     id: str,
     collab_create: CollaboratorCreate,
@@ -52,7 +63,11 @@ def update(
     return services.update(id=id, collab_update=collab_create)
     
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+        "/{id}", 
+        status_code=status.HTTP_204_NO_CONTENT,
+        dependencies=[Depends(require_admin)]
+        )
 def delete(
     id: str,
     services: CollaboratorService = Depends(CollaboratorService)

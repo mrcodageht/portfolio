@@ -45,7 +45,7 @@ services:
       - ${PORT:-8079}:8079
     develop:
       watch:
-        - action: rebuild
+        - action: sync+restart
           path: ./backend/app
           target: /code/app
           ignore:
@@ -64,14 +64,12 @@ services:
       context: .
       dockerfile: ./auth/Dockerfile
     restart: always
-    ports:
-      - ${PORT:-8070}:8070
     depends_on:
       db:
         condition: service_healthy
     develop:
       watch:
-        - action: sync
+        - action: sync+restart
           path: ./auth/app/
           target: /code/app
           ignore:
