@@ -9,7 +9,7 @@ from app.services.services_user import require_admin
 
 
 router = APIRouter(
-    prefix="/collaborator",
+    prefix="/collaborators",
     tags=["Collaborator"])
 
 

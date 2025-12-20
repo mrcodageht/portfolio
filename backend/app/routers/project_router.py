@@ -10,7 +10,7 @@ from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectUpdate
 from app.services.project_service import ProjectService
 from app.services.services_user import require_admin
 
-router = APIRouter(prefix="/projects", tags=["projects"])
+router = APIRouter(prefix="/projects", tags=["project"])
 
 @router.get("", response_model=list[ProjectPublic])
 def get_projects(

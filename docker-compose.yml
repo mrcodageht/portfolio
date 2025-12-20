@@ -97,6 +97,11 @@ services:
     restart: always
     volumes:
       - ./frontend/:/usr/share/nginx/html/
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/
+          target: /usr/share/nginx/html/
 
 volumes:
   db_data:
