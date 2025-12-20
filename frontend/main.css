@@ -1,0 +1,127 @@
+        :root {
+            --primary: #2563eb;
+            --sidebar-bg: #1e293b;
+            --sidebar-hover: #334155;
+        }
+
+        body {
+            background: #f8fafc;
+            font-family: "JetBrains Mono", monospace;
+            font-optical-sizing: auto;
+            font-style: normal;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            background: var(--sidebar-bg);
+            padding-top: 20px;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            padding: 0 20px 30px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--sidebar-hover);
+            color: white;
+        }
+
+        .sidebar-menu i {
+            margin-right: 12px;
+            width: 20px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .table-actions button {
+            padding: 5px 10px;
+            margin: 0 2px;
+        }
+
+        .badge-tech {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin: 2px;
+        }
+
+        .modal-header {
+            background: var(--primary);
+            color: white;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stats-card h3 {
+            font-size: 36px;
+            margin: 10px 0;
+        }
