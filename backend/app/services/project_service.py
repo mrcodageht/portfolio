@@ -31,10 +31,11 @@ class ProjectService:
             
         projects = self.project_dao.find_all( status=status, visibility=visibility)
         if techs:
+            print("Requested technologies")
             project_with_techs = []
             for p in projects:
                 technos = self.technology_dao.find_by_project(project_id=p.pid)
-                project_with_techs.append(map_to_project_with_technologies(project=p, techs=technos))
+                project_with_techs.append(map_to_project_with_technologies(project_model=p, techs=technos))
             return project_with_techs
         return [map_to_project(p) for p in projects]
 

@@ -22,7 +22,8 @@ def get_projects(
         service: ProjectService = Depends(ProjectService)
 
 ) -> ProjectPublic | ProjectPublicWithTechnologies:
-
+    if techs is None:
+        techs = False
     projects = je(service.get_all( status = status, visibility=visibility, techs=techs))
     return JSONResponse(
         content=projects,

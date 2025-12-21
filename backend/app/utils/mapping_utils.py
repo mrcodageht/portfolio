@@ -45,12 +45,21 @@ def map_to_collaborator_public(collab: CollaboratorModel)-> CollaboratorPublic:
         linkedin_url=collab.linkedin_url
     )
 
-def map_to_project_with_technologies(project: ProjectModel, techs: list[TechnologyModel])-> ProjectPublicWithTechnologies:
+def map_to_project_with_technologies(project_model: ProjectModel, techs: list[TechnologyModel])-> ProjectPublicWithTechnologies:
     
-    project_mapped = map_to_project(project_model=project)
     techs_mapped = [map_to_technology_pub(t) for t in techs]
     ppwt = ProjectPublicWithTechnologies(
-        project=project_mapped,
-        technologies=techs_mapped
+        title=project_model.title,
+        pid=str(project_model.pid),
+        slug=project_model.slug,
+        description=project_model.description,
+        start_at=project_model.start_at,
+        end_at=project_model.end_at,
+        status=project_model.status,
+        visibility=project_model.visibility,
+        cover_image_url=project_model.cover_image_url,
+        live_url=project_model.live_url,
+        repo_url=project_model.repo_url,
+        technologies=techs_mapped,
     )
     return ppwt

@@ -39,8 +39,7 @@ def map_from_project_model(pm: type[ProjectModel]):
 class ProjectPublic(ProjectBase):
     pid: str
 
-class ProjectPublicWithTechnologies(BaseModel):
-    project: ProjectPublic
+class ProjectPublicWithTechnologies(ProjectPublic):
     technologies: list[TechnologyPublic]
 
 class ProjectUpdate(ProjectBase):
