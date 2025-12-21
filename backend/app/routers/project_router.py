@@ -1,3 +1,4 @@
+from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from starlette import status as s
 from starlette.responses import JSONResponse
@@ -6,21 +7,23 @@ from fastapi.encoders import jsonable_encoder as je
 
 from app.exceptions.global_projects_exceptions import *
 from app.schemas.enums import Visibility, Status
-from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectUpdate
+from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithTechnologies, ProjectUpdate
 from app.services.project_service import ProjectService
 from app.services.services_user import require_admin
 
 router = APIRouter(prefix="/projects", tags=["project"])
 
-@router.get("", response_model=list[ProjectPublic])
+@router.get("")
 def get_projects(
         status : Status | None = None,
         visibility : Visibility | None = None,
+        collabs: bool | None = None,
+        techs: bool | None = None,
         service: ProjectService = Depends(ProjectService)
-):
-    print(f"status demande : {status}")
 
-    projects = je(service.get_all( status = status, visibility=visibility))
+) -> ProjectPublic | ProjectPublicWithTechnologies:
+
+    projects = je(service.get_all( status = status, visibility=visibility, techs=techs))
     return JSONResponse(
         content=projects,
         status_code=s.HTTP_200_OK

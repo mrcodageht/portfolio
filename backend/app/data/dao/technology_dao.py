@@ -3,7 +3,7 @@ from starlette import status
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.data.dao.dao_interface import DAOInterface, T
-from app.models.project_model import TechnologyModel
+from app.models.project_model import ProjectModel, TechnologyModel
 from app.data.database import get_db
 from app.schemas.technology_schema import TechnologyCreate
 
@@ -21,6 +21,10 @@ class TechnologyDao(DAOInterface[TechnologyModel]):
     def find_by_id(self, id: str) -> Optional[TechnologyModel]:
         techno = self.db.query(TechnologyModel).filter(TechnologyModel.id==id).first()
         return techno
+    
+    def find_by_project(self, project_id) -> list[TechnologyModel]:
+        technos = self.db.query(TechnologyModel).join(TechnologyModel.projects).filter(ProjectModel.pid==project_id).all()
+        return technos
 
     def create(self, item: TechnologyCreate) -> TechnologyModel:
         techno = TechnologyModel(**item.model_dump(exclude_unset=True))

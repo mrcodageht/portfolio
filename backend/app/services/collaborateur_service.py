@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException
 from app.data.dao.collaborator_dao import CollaboratorDao
 from app.models.project_model import CollaboratorModel
 from app.schemas.collaborator_schema import CollaboratorCreate, CollaboratorPublic
+from app.utils.mapping_utils import map_to_collaborator_public
 
 
 class CollaboratorService:
@@ -35,18 +36,6 @@ class CollaboratorService:
     def delete(self, id: str) -> bool:
         return self.collaborator_dao.delete(id=id)
 
-
-
-def map_to_collaborator_public(collab: CollaboratorModel)-> CollaboratorPublic:
-    return CollaboratorPublic(
-        first_name=collab.first_name,
-        last_name=collab.last_name,
-        id=collab.id,
-        role=collab.role,
-        portfolio_url=collab.portfolio_url,
-        github_url=collab.github_url,
-        linkedin_url=collab.linkedin_url
-    )
 
 def get_dao():
     return CollaboratorDao()

@@ -5,6 +5,7 @@ from typing import Any, Optional
 
 from app.models.project_model import ProjectModel
 from app.schemas.enums import Status, Visibility
+from app.schemas.technology_schema import TechnologyPublic
 
 
 class ProjectBase(BaseModel):
@@ -30,14 +31,17 @@ def map_from_project_model(pm: type[ProjectModel]):
         status=pm.status,
         visibility=pm.visibility,
         cover_image_url=pm.cover_image_url,
-        live_url=pm.liveUrl,
-        repo_url=pm.repoUrl
+        live_url=pm.live_url,
+        repo_url=pm.repo_url
     )
 
 
 class ProjectPublic(ProjectBase):
     pid: str
 
+class ProjectPublicWithTechnologies(BaseModel):
+    project: ProjectPublic
+    technologies: list[TechnologyPublic]
 
 class ProjectUpdate(ProjectBase):
     title: Optional[str] = None

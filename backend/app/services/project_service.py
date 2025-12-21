@@ -1,25 +1,41 @@
 
 from fastapi import Depends, HTTPException
 
+from app.data.dao.technology_dao import TechnologyDao
 from app.exceptions.global_projects_exceptions import ProjectAlreadyExistsWithSlugException,  ProjectNotFoundWithPidException
+from app.utils.mapping_utils import map_to_project, map_to_project_with_technologies
 
 from ..data.dao.project_dao import ProjectDao
-from ..models.project_model import ProjectModel
+from ..models.project_model import ProjectModel, TechnologyModel
 from app.schemas.enums import Status, Visibility
-from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectUpdate
+from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithTechnologies, ProjectUpdate
 from starlette import status as s
 
 
 class ProjectService:
-    def __init__(self, project_dao: ProjectDao = Depends(ProjectDao)):
+    def __init__(
+            self, 
+            project_dao: ProjectDao = Depends(ProjectDao),
+            technology_dao: TechnologyDao = Depends(TechnologyDao)
+            ):
         self.project_dao = project_dao
+        self.technology_dao = technology_dao
 
     def get_all(
             self,
             status : Status | None = None,
-            visibility : Visibility | None = None
-    )-> list[ProjectPublic]:
+            visibility : Visibility | None = None,
+            techs: bool = False,
+            collabs: bool = False
+    )-> list[ProjectPublic] | list[ProjectPublicWithTechnologies]:
+            
         projects = self.project_dao.find_all( status=status, visibility=visibility)
+        if techs:
+            project_with_techs = []
+            for p in projects:
+                technos = self.technology_dao.find_by_project(project_id=p.pid)
+                project_with_techs.append(map_to_project_with_technologies(project=p, techs=technos))
+            return project_with_techs
         return [map_to_project(p) for p in projects]
 
     def get_by_pid(self, pid: str) -> ProjectPublic:
@@ -58,17 +74,5 @@ class ProjectService:
 def get_project_dao():
     return ProjectDao
 
-def map_to_project(project_model: type[ProjectModel]) -> ProjectPublic:
-    return ProjectPublic(
-        title=project_model.title,
-        pid=str(project_model.pid),
-        slug=project_model.slug,
-        description=project_model.description,
-        start_at=project_model.start_at,
-        end_at=project_model.end_at,
-        status=project_model.status,
-        visibility=project_model.visibility,
-        cover_image_url=project_model.cover_image_url,
-        live_url=project_model.live_url,
-        repo_url=project_model.repo_url,
-    )
+
+

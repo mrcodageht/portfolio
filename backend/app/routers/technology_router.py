@@ -11,7 +11,9 @@ router = APIRouter(prefix="/technologies", tags=["Technology"])
 
 
 @router.get("", status_code=status.HTTP_200_OK, response_model=list[TechnologyPublic])
-def get_all(services: TechnologyService = Depends(TechnologyService)):
+def get_all(project_id: str | None = None, services: TechnologyService = Depends(TechnologyService)):
+    if project_id is not None:
+        return services.get_all_by_project(project_id=project_id)
     return services.get_all()
 
 @router.get("/{id}", status_code=status.HTTP_200_OK, response_model=TechnologyPublic)
