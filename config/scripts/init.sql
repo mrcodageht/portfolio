@@ -1,5 +1,5 @@
 -- Utilise ta DB
-CREATE DATABASE IF NOT EXISTS portfoliodb DEFAULT CHARACTER SET = utf8mb4 DEFAULT COLLATE = utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS portfoliodb;
 
 USE portfoliodb;
 
@@ -13,14 +13,23 @@ DROP TRIGGER IF EXISTS trg_technologies_before_insert;
 DELIMITER $$
 
 -- Fonction qui génère un identifiant court (6 chars)
+
 CREATE FUNCTION IF NOT EXISTS short_id6()
 RETURNS VARCHAR(6)
 DETERMINISTIC
 BEGIN
-    RETURN SUBSTRING(
-        REPLACE(TO_BASE64(UUID_TO_BIN(UUID())), '=', ''),
-        1, 6
-    );
+    DECLARE clean_str VARCHAR(255);
+    
+    -- 1. On récupère le Base64
+    -- 2. On remplace + par 'A', / par 'B' et on supprime le =
+    SET clean_str = REPLACE(
+                        REPLACE(
+                            REPLACE(TO_BASE64(UUID_TO_BIN(UUID())), '=', ''),
+                        '+', 'A'),
+                    '/', 'B');
+    
+    -- 3. On retourne les 6 premiers caractères
+    RETURN SUBSTRING(clean_str, 1, 6);
 END$$
 
 DELIMITER ;

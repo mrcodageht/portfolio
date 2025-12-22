@@ -8,4 +8,4 @@ def generate_short_id6():
     
     b64 = base64.b64encode(uid_bytes).decode('utf-8')
     
-    return b64.replace('=', '').replace('/', '_').replace('+', '-')[:6] 
+    return b64.replace('=', '').replace('/', 'B').replace('+', 'A')[:6] 
