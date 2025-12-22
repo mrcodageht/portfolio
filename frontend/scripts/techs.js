@@ -81,7 +81,7 @@ async function renderTechnologies() {
         list.innerHTML += `
                 <tr>
                     <td>
-                        <img width="40" height="40" src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/java.svg">
+                        <img width="30" height="30" src="${t.icon_url}">
                     </td>
                     <td><strong>${t.name}</strong></td>
                     <td><span class="badge bg-primary">${t.type}</span></td>

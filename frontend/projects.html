@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
         rel="stylesheet">
     <link href="main.css" rel="stylesheet" />
+    <script src="main.js" type="module"></script>
     <script src="scripts/projects.js" defer type="module"></script>
 </head>
 
@@ -19,22 +20,36 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-brand">
-            <i class="fas fa-briefcase"></i> Portfolio CMS
+            <i class="fas fa-briefcase"></i>
+            <span>Portfolio CMS</span>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="index.html" class="menu-link" data-view="dashboard"><i class="fas fa-home"></i> Dashboard</a>
+            <li>
+                <a href="index.html" class="menu-link" data-view="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span class="menu-text">Dashboard</span>
+                </a>
             </li>
-            <li><a href="projects.html" class="menu-link active" data-view="projects"><i
-                        class="fas fa-project-diagram"></i> Projets</a>
+            <li>
+                <a href="projects.html" class="menu-link active" data-view="projects">
+                    <i class="fas fa-project-diagram"></i>
+                    <span class="menu-text">Projets</span>
+                </a>
             </li>
-            <li><a href="technologies.html" class="menu-link" data-view="technologies"><i class="fas fa-code"></i>
-                    Technologies</a></li>
-            <li><a href="collaborators.html" class="menu-link" data-view="collaborators"><i class="fas fa-users"></i>
-                    Collaborateurs</a>
+            <li>
+                <a href="technologies.html" class="menu-link" data-view="technologies">
+                    <i class="fas fa-code"></i>
+                    <span class="menu-text">Technologies</span>
+                </a>
+            </li>
+            <li>
+                <a href="collaborators.html" class="menu-link" data-view="collaborators">
+                    <i class="fas fa-users"></i>
+                    <span class="menu-text">Collaborateurs</span>
+                </a>
             </li>
         </ul>
     </div>
-
     <!-- Main Content -->
     <div class="main-content">
         <div id="projects" class="view-section active">
@@ -49,19 +64,21 @@
 
             <div class="card">
                 <div class="card-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Visibilite</th>
-                                <th>Titre</th>
-                                <th>Technologies</th>
-                                <th>Date debut</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="projectsList"></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <!-- <th>Visibilite</th> -->
+                                    <th>Titre</th>
+                                    <th>Technologies</th>
+                                    <th>Date debut</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectsList"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

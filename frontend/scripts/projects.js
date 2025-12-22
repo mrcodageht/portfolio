@@ -75,7 +75,6 @@ async function renderProjects() {
     const list = document.getElementById('projectsList');
     const projects = await fetchProjects()
     logObj(TYPE.INFO, projects)
-    // <td>${p.technologies.map(t => `<span class="badge-tech">${t}</span>`).join('')}</td>
     for (const p of projects) {
         let idEdit = `edit-${p.pid}`
         let idDelete = `delete-${p.pid}`
@@ -90,9 +89,9 @@ async function renderProjects() {
         const iconVisibility = p.visibility === "private" ? '<i class="fa-solid fa-lock"></i>' : '<i class="fa-solid fa-lock-open"></i>'
         list.innerHTML += `
                 <tr>
-                    <td>${iconVisibility}</td>
                     <td><strong>${p.title}</strong></td>
-                    <td></td>
+
+                    <td>${p.technologies.map(t => `<span class="badge-tech">${t.name}</span>`).join('')}</td>
                     
                     <td>${new Date(p.start_at).toLocaleDateString('fr-FR')}</td>
                     <td>

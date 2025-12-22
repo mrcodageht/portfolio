@@ -6,9 +6,9 @@ export async function fetchProjects(id = null) {
     let resp = null
     if (id) {
 
-        resp = await fetch(`${API_BASE_URL}/projects/${id}`)
+        resp = await fetch(`${API_BASE_URL}/projects/${id}?techs=true`)
     } else {
-        resp = await fetch(`${API_BASE_URL}/projects`)
+        resp = await fetch(`${API_BASE_URL}/projects?techs=true`)
     }
 
     const projects = await resp.json()
