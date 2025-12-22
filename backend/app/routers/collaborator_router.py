@@ -27,6 +27,10 @@ def get_by_id(
 ):
     return services.get_by_id(id=id)
 
+@router.get(path="/project/{pid}", status_code=status.HTTP_200_OK, response_model=list[CollaboratorPublic])
+def get_by_project_id(pid: str, services: CollaboratorService = Depends(CollaboratorService)):
+    return services.get_by_project(project_id=pid)
+
 @router.get("/search", response_model=list[CollaboratorPublic], status_code=status.HTTP_200_OK)
 def search(
     firtname: Annotated[str, None] = None,

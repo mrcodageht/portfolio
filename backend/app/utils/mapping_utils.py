@@ -3,7 +3,7 @@
 """
 from app.models.project_model import CollaboratorModel, ProjectModel, TechnologyModel
 from app.schemas.collaborator_schema import CollaboratorPublic
-from app.schemas.project_schema import ProjectPublic, ProjectPublicWithTechnologies
+from app.schemas.project_schema import ProjectPublic, ProjectPublicWithCollaborators, ProjectPublicWithCollaboratorsAndTechnologies, ProjectPublicWithTechnologies
 from app.schemas.technology_schema import TechnologyPublic
 
 
@@ -63,3 +63,49 @@ def map_to_project_with_technologies(project_model: ProjectModel, techs: list[Te
         technologies=techs_mapped,
     )
     return ppwt
+
+
+def map_to_project_with_collaborators(
+        project_model: ProjectModel, 
+        collabs: list[CollaboratorModel]) -> ProjectPublicWithCollaborators:
+    collabs_mapped = [map_to_collaborator_public(c) for c in collabs]
+    ppwc = ProjectPublicWithCollaborators(
+        title=project_model.title,
+        pid=str(project_model.pid),
+        slug=project_model.slug,
+        description=project_model.description,
+        start_at=project_model.start_at,
+        end_at=project_model.end_at,
+        status=project_model.status,
+        visibility=project_model.visibility,
+        cover_image_url=project_model.cover_image_url,
+        live_url=project_model.live_url,
+        repo_url=project_model.repo_url,
+        collaborators=collabs_mapped
+    )
+    return ppwc
+
+def map_to_project_with_technologies_and_collaborators(
+        project_model: ProjectModel,
+        collabs: list[CollaboratorModel],
+        techs: list[TechnologyModel]
+) -> ProjectPublicWithCollaboratorsAndTechnologies:
+    
+    collabs_mapped = [map_to_collaborator_public(c) for c in collabs]
+    techs_mapped = [map_to_technology_pub(t) for t in techs]
+    ppwcat = ProjectPublicWithCollaboratorsAndTechnologies(
+        title=project_model.title,
+        pid=str(project_model.pid),
+        slug=project_model.slug,
+        description=project_model.description,
+        start_at=project_model.start_at,
+        end_at=project_model.end_at,
+        status=project_model.status,
+        visibility=project_model.visibility,
+        cover_image_url=project_model.cover_image_url,
+        live_url=project_model.live_url,
+        repo_url=project_model.repo_url,
+        collaborators=collabs_mapped,
+        technologies=techs_mapped
+    )
+    return ppwcat

@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder as je
 
 from app.exceptions.global_projects_exceptions import *
 from app.schemas.enums import Visibility, Status
-from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithTechnologies, ProjectUpdate
+from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithCollaboratorsAndTechnologies, ProjectPublicWithTechnologies, ProjectUpdate
 from app.services.project_service import ProjectService
 from app.services.services_user import require_admin
 
@@ -21,19 +21,26 @@ def get_projects(
         techs: bool | None = None,
         service: ProjectService = Depends(ProjectService)
 
-) -> ProjectPublic | ProjectPublicWithTechnologies:
+) -> ProjectPublic | ProjectPublicWithTechnologies | ProjectPublicWithCollaboratorsAndTechnologies:
     if techs is None:
         techs = False
-    projects = je(service.get_all( status = status, visibility=visibility, techs=techs))
+    if collabs is None:
+        collabs = False
+    projects = je(service.get_all( status = status, visibility=visibility, techs=techs, collabs=collabs))
     return JSONResponse(
         content=projects,
         status_code=s.HTTP_200_OK
     )
 
 @router.get("/{pid}", response_model=ProjectPublic)
-def get_by_pid(pid: str, service = Depends(ProjectService)):
+def get_by_pid(
+    pid: str,
+    collabs: bool | None = None,
+    techs: bool | None = None, 
+    service = Depends(ProjectService)
+):
     try:
-        project = je(service.get_by_pid(pid))
+        project = je(service.get_by_pid(pid, techs, collabs))
         return JSONResponse(
             content=project,
             status_code=s.HTTP_200_OK

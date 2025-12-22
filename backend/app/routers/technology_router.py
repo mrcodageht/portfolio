@@ -20,6 +20,11 @@ def get_all(project_id: str | None = None, services: TechnologyService = Depends
 def get_by_id(id: str, services: TechnologyService = Depends(TechnologyService)):
     return services.get_by_id(id=id)
 
+@router.get("/project/{pid}", status_code=status.HTTP_200_OK, response_model=list[TechnologyPublic])
+def get_by_project_id(pid: str, services: TechnologyService = Depends(TechnologyService)):
+    return services.get_all_by_project(project_id=pid)
+    
+
 @router.post(
         "", 
         status_code=status.HTTP_201_CREATED, 

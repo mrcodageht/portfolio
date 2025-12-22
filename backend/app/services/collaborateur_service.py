@@ -9,7 +9,10 @@ from app.utils.mapping_utils import map_to_collaborator_public
 
 
 class CollaboratorService:
-    def __init__(self, collaborator_dao: CollaboratorDao = Depends(CollaboratorDao)):
+    def __init__(
+            self, 
+            collaborator_dao: CollaboratorDao = Depends(CollaboratorDao)
+        ):
         self.collaborator_dao = collaborator_dao
         
 
@@ -24,6 +27,10 @@ class CollaboratorService:
                 status_code=status.HTTP_404_NOT_FOUND
             )
         return map_to_collaborator_public(collaborator)
+    
+    def get_by_project(self, project_id):
+        collaborators = self.collaborator_dao.find_by_project(project_id)
+        return [map_to_collaborator_public(c) for c in collaborators]
     
     def save(self, collab_create: CollaboratorCreate) -> CollaboratorPublic:
         collaborator = self.collaborator_dao.create(item=collab_create)

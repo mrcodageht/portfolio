@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Any, Optional
 
 from app.models.project_model import ProjectModel
+from app.schemas.collaborator_schema import CollaboratorPublic
 from app.schemas.enums import Status, Visibility
 from app.schemas.technology_schema import TechnologyPublic
 
@@ -20,27 +21,20 @@ class ProjectBase(BaseModel):
     live_url: Optional[str] = None
     repo_url: Optional[str] = None
 
-def map_from_project_model(pm: type[ProjectModel]):
-    return ProjectPublic(
-        pid=str(pm.pid),
-        title=pm.title,
-        slug=pm.slug,
-        description=pm.description,
-        start_at=pm.start_at,
-        end_at=pm.end_at,
-        status=pm.status,
-        visibility=pm.visibility,
-        cover_image_url=pm.cover_image_url,
-        live_url=pm.live_url,
-        repo_url=pm.repo_url
-    )
-
 
 class ProjectPublic(ProjectBase):
     pid: str
 
 class ProjectPublicWithTechnologies(ProjectPublic):
     technologies: list[TechnologyPublic]
+
+class ProjectPublicWithCollaborators(ProjectPublic):
+    collaborators: list[CollaboratorPublic]
+
+class ProjectPublicWithCollaboratorsAndTechnologies(ProjectPublic):
+    technologies: list[TechnologyPublic]
+    collaborators: list[CollaboratorPublic]
+    
 
 class ProjectUpdate(ProjectBase):
     title: Optional[str] = None

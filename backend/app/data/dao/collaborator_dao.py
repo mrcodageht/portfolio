@@ -7,7 +7,7 @@ from starlette import status
 
 from app.data.dao.dao_interface import DAOInterface, T
 from app.data.database import get_db
-from app.models.project_model import CollaboratorModel
+from app.models.project_model import CollaboratorModel, ProjectModel
 from app.schemas.collaborator_schema import CollaboratorCreate
 
 
@@ -22,6 +22,10 @@ class CollaboratorDao(DAOInterface[CollaboratorModel]):
 
     def find_by_id(self, id: str) -> Optional[CollaboratorModel]:
         return self.db.query(CollaboratorModel).filter(CollaboratorModel.id==id).first()
+
+    def find_by_project(self, project_id)-> list[CollaboratorModel]:
+        collabs = self.db.query(CollaboratorModel).join(CollaboratorModel.projects).filter(ProjectModel.pid==project_id).all()
+        return collabs
 
     def create(self, item: CollaboratorCreate) -> CollaboratorModel:
         collab = CollaboratorModel(**item.model_dump(exclude_unset=True))

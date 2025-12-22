@@ -1,9 +1,10 @@
 
 from fastapi import Depends, HTTPException
 
+from app.data.dao.collaborator_dao import CollaboratorDao
 from app.data.dao.technology_dao import TechnologyDao
 from app.exceptions.global_projects_exceptions import ProjectAlreadyExistsWithSlugException,  ProjectNotFoundWithPidException
-from app.utils.mapping_utils import map_to_project, map_to_project_with_technologies
+from app.utils.mapping_utils import map_to_project, map_to_project_with_collaborators, map_to_project_with_technologies, map_to_project_with_technologies_and_collaborators
 
 from ..data.dao.project_dao import ProjectDao
 from ..models.project_model import ProjectModel, TechnologyModel
@@ -16,10 +17,12 @@ class ProjectService:
     def __init__(
             self, 
             project_dao: ProjectDao = Depends(ProjectDao),
-            technology_dao: TechnologyDao = Depends(TechnologyDao)
+            technology_dao: TechnologyDao = Depends(TechnologyDao),
+            collaborator_dao: CollaboratorDao = Depends(CollaboratorDao)
             ):
         self.project_dao = project_dao
         self.technology_dao = technology_dao
+        self.collaborator_dao = collaborator_dao
 
     def get_all(
             self,
@@ -30,6 +33,18 @@ class ProjectService:
     )-> list[ProjectPublic] | list[ProjectPublicWithTechnologies]:
             
         projects = self.project_dao.find_all( status=status, visibility=visibility)
+        if techs and collabs:
+            project_with_collabs_and_techs = []
+            for p in projects:
+                collabs = self.collaborator_dao.find_by_project(project_id=p.pid)
+                technos = self.technology_dao.find_by_project(project_id=p.pid)
+                project_with_collabs_and_techs.append(map_to_project_with_technologies_and_collaborators(
+                    project_model=p,
+                    collabs=collabs,
+                    techs=technos
+                ))
+            return project_with_collabs_and_techs
+
         if techs:
             print("Requested technologies")
             project_with_techs = []
@@ -37,12 +52,48 @@ class ProjectService:
                 technos = self.technology_dao.find_by_project(project_id=p.pid)
                 project_with_techs.append(map_to_project_with_technologies(project_model=p, techs=technos))
             return project_with_techs
+        
+        if collabs:
+            project_with_collabs = []
+            for p in projects:
+                collabs = self.collaborator_dao.find_by_project(project_id=p.pid)
+                project_with_collabs.append(map_to_project_with_collaborators(project_model=p, collabs=collabs))
+            return project_with_collabs
+        
+        
+
         return [map_to_project(p) for p in projects]
 
-    def get_by_pid(self, pid: str) -> ProjectPublic:
+    def get_by_pid(
+            self, 
+            pid: str, 
+            techs: bool = False,
+            collabs: bool = False
+) -> ProjectPublic:
         project = self.project_dao.find_by_id(pid=pid)
         if project is None:
             raise ProjectNotFoundWithPidException(pid)
+        
+        if techs and collabs:
+            collabs = self.collaborator_dao.find_by_project(project_id=project.pid)
+            technos = self.technology_dao.find_by_project(project_id=project.pid)
+            project_with_collabs_and_techs = map_to_project_with_technologies_and_collaborators(
+                    project_model=project,
+                    collabs=collabs,
+                    techs=technos
+            )
+            return project_with_collabs_and_techs
+
+        if techs:
+            technos = self.technology_dao.find_by_project(project_id=project.pid)
+            project_with_techs = map_to_project_with_technologies(project_model=project, techs=technos)
+            return project_with_techs
+        
+        if collabs:
+            collabs = self.collaborator_dao.find_by_project(project_id=project.pid)
+            project_with_collabs = map_to_project_with_collaborators(project_model=project, collabs=collabs)
+            return project_with_collabs
+
         return map_to_project(project_model=project)
 
     def save(self, project_create : ProjectBase) -> ProjectPublic:
