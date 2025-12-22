@@ -21,7 +21,7 @@ VALUES (
         'Python',
         'python',
         'BACKEND',
-        'https://cdn.example.com/icons/python.svg'
+        'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/python.svg'
     );
 
 SET @t2 = short_id6 ();
@@ -57,7 +57,7 @@ VALUES (
         'React',
         'react',
         'FRONTEND',
-        'https://cdn.example.com/icons/react.svg'
+        'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/reactjs.svg'
     );
 
 SET @t4 = short_id6 ();
@@ -75,7 +75,7 @@ VALUES (
         'PostgreSQL',
         'postgresql',
         'DB',
-        'https://cdn.example.com/icons/postgres.svg'
+        'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/postgresql.svg'
     );
 
 SET @t5 = short_id6 ();
@@ -129,7 +129,7 @@ VALUES (
         'React Native',
         'react-native',
         'MOBILE',
-        'https://cdn.example.com/icons/react-native.svg'
+        'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/reactjs.svg'
     );
 
 SET @t8 = short_id6 ();
@@ -147,7 +147,7 @@ VALUES (
         'CLI Tool',
         'cli-tool',
         'TOOL',
-        'https://cdn.example.com/icons/cli.svg'
+        'https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/termix.svg'
     );
 
 -- ======================
