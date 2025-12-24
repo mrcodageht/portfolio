@@ -107,14 +107,17 @@ def add_technologies_project(
 @router.delete(
         "/{pid}/technologies/{slug}",
         status_code=s.HTTP_200_OK,
-        response_model=ProjectPublic
+        response_model=ProjectPublicWithTechnologies
 )
 def remove_technology_project(
     pid: str,
     slug: str,
     services: ProjectService = Depends(ProjectService)
 ):
-    pass
+    return services.remove_technology_in_project(
+        pid=pid,
+        slug=slug
+    )
 
 def get_project_service():
     return ProjectService()

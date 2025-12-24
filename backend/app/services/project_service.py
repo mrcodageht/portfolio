@@ -143,8 +143,14 @@ class ProjectService:
         return map_to_project_with_technologies(project_model=project, techs=techsModel)
 
     def remove_technology_in_project(self, pid: str, slug: str)-> ProjectPublicWithTechnologies:
-        pass
-
+        tech = self.technology_dao.find_by_slug(slug=slug)
+        if tech is None:
+            raise HTTPException(
+                    detail=f"Technology not find with the slug '{slug}'",
+                    status_code=s.HTTP_404_NOT_FOUND
+                )
+        project = self.project_dao.remove_technologies(pid=pid, tech=tech)
+        return map_to_project_with_technologies(project_model=project, techs=project.technologies)
 
 
 

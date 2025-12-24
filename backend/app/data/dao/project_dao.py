@@ -122,7 +122,37 @@ class ProjectDao(DAOInterface[ProjectModel]):
                 status_code=s.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    def remove_technologies(self, pid: str, tech: TechnologyModel):
+        project_existing = self.db.query(ProjectModel).join(ProjectModel.technologies).filter(ProjectModel.pid==pid).first()
+        if project_existing is None:
+            raise HTTPException(
+                detail=f"Project not found with the pid '{id}'",
+                status_code=s.HTTP_404_NOT_FOUND
+            )
+        
+        tech_existing = False
+        for t in project_existing.technologies:
+            if t.id==tech.id:
+                tech_existing = True
+        if tech_existing:
+            try:
+                project_existing.technologies.remove(tech)
+            
+                self.db.commit()
+                self.db.refresh(project_existing)
+                return project_existing
+            except Exception as e:
+                print(f"Error => {e}")
+                raise HTTPException(
+                    detail="Failed to update the project",
+                    status_code=s.HTTP_500_INTERNAL_SERVER_ERROR
+                )
 
+        raise HTTPException(
+            detail=f"Technology with the slug '{tech.slug}' not exists in this project",
+            status_code=s.HTTP_404_NOT_FOUND
+        )
+        
 
 
     def create_all(self, items: List[ProjectBase]):
