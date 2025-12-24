@@ -9,7 +9,7 @@ from app.utils.mapping_utils import map_to_project, map_to_project_with_collabor
 from ..data.dao.project_dao import ProjectDao
 from ..models.project_model import ProjectModel, TechnologyModel
 from app.schemas.enums import Status, Visibility
-from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithTechnologies, ProjectUpdate
+from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
 from starlette import status as s
 
 
@@ -119,6 +119,31 @@ class ProjectService:
 
     def delete(self, pid: str):
         self.project_dao.delete(id=pid) 
+
+    def add_technologies_in_project(self, pid: str, techs: list[ProjectTechnologyCreate])-> ProjectPublicWithTechnologies:
+        project = self.project_dao.find_by_id(pid=pid)
+        if project is None:
+           raise HTTPException(
+               detail=f"Project not found with the pid '{pid}'",
+               status_code=s.HTTP_404_NOT_FOUND
+           ) 
+        techsModel: list[TechnologyModel] = []
+        for t in techs:
+            tech = self.technology_dao.find_by_slug(t.slug)
+            if tech is None:
+                raise HTTPException(
+                    detail=f"Technology not find with the slug '{t.slug}'",
+                    status_code=s.HTTP_404_NOT_FOUND
+                )
+            
+            techsModel.append(tech)
+        
+        project = self.project_dao.add_technologies(pid=pid, techs=techsModel)
+        techsModel = self.technology_dao.find_by_project(project_id=project.pid)
+        return map_to_project_with_technologies(project_model=project, techs=techsModel)
+
+    def remove_technology_in_project(self, pid: str, slug: str)-> ProjectPublicWithTechnologies:
+        pass
 
 
 

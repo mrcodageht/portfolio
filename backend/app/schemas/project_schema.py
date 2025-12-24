@@ -21,6 +21,8 @@ class ProjectBase(BaseModel):
     live_url: Optional[str] = None
     repo_url: Optional[str] = None
 
+class ProjectTechnologyCreate(BaseModel):
+    slug: str
 
 class ProjectPublic(ProjectBase):
     pid: str

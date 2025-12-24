@@ -8,9 +8,9 @@ from starlette import status as s
 
 from app.data.dao.dao_interface import DAOInterface, T
 from app.data.database import get_db
-from app.models.project_model import ProjectImageModel, ProjectModel
+from app.models.project_model import ProjectImageModel, ProjectModel, TechnologyModel
 from app.schemas.enums import Status, Visibility
-from app.schemas.project_schema import ProjectBase, ProjectUpdate
+from app.schemas.project_schema import ProjectBase, ProjectTechnologyCreate, ProjectUpdate
 
 
 
@@ -100,6 +100,29 @@ class ProjectDao(DAOInterface[ProjectModel]):
                 detail=f"Failed to delete the project with the pid '{id}'",
                 status_code=s.HTTP_400_BAD_REQUEST
             )
+        
+    def add_technologies(self, pid: str ,techs: list[TechnologyModel]) -> ProjectModel:
+        project_existing = self.db.query(ProjectModel).join(ProjectModel.technologies).filter(ProjectModel.pid==pid).first()
+        if project_existing is None:
+            raise HTTPException(
+                detail=f"Project not found with the pid '{id}'",
+                status_code=s.HTTP_404_NOT_FOUND
+            )
+        
+        try:
+            for t in techs:
+                project_existing.technologies.append(t)
+            self.db.commit()
+            self.db.refresh(project_existing)
+            return project_existing
+        except Exception as e:
+            print(f"Error => {e}")
+            raise HTTPException(
+                detail="Failed to update the project",
+                status_code=s.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
 
 
     def create_all(self, items: List[ProjectBase]):

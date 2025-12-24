@@ -22,6 +22,10 @@ class TechnologyDao(DAOInterface[TechnologyModel]):
         techno = self.db.query(TechnologyModel).filter(TechnologyModel.id==id).first()
         return techno
     
+    def find_by_slug(self, slug: str) -> Optional[TechnologyModel]:
+        techno = self.db.query(TechnologyModel).filter(TechnologyModel.slug==slug).first()
+        return techno
+    
     def find_by_project(self, project_id) -> list[TechnologyModel]:
         technos = self.db.query(TechnologyModel).join(TechnologyModel.projects).filter(ProjectModel.pid==project_id).all()
         return technos

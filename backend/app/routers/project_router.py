@@ -7,7 +7,7 @@ from fastapi.encoders import jsonable_encoder as je
 
 from app.exceptions.global_projects_exceptions import *
 from app.schemas.enums import Visibility, Status
-from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithCollaboratorsAndTechnologies, ProjectPublicWithTechnologies, ProjectUpdate
+from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithCollaboratorsAndTechnologies, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
 from app.services.project_service import ProjectService
 from app.services.services_user import require_admin
 
@@ -91,6 +91,30 @@ def update(pid: str, project_to_update: ProjectUpdate, service = Depends(Project
         )
 def delete(pid: str, service = Depends(ProjectService)):
     service.delete(pid)
+
+@router.patch(
+        path="/{pid}/technologies",
+        status_code=s.HTTP_200_OK,
+        response_model=ProjectPublicWithTechnologies
+)
+def add_technologies_project(
+    pid: str,
+    techs: list[ProjectTechnologyCreate],
+    services: ProjectService = Depends(ProjectService)
+):
+    return services.add_technologies_in_project(pid=pid, techs=techs)
+
+@router.delete(
+        "/{pid}/technologies/{slug}",
+        status_code=s.HTTP_200_OK,
+        response_model=ProjectPublic
+)
+def remove_technology_project(
+    pid: str,
+    slug: str,
+    services: ProjectService = Depends(ProjectService)
+):
+    pass
 
 def get_project_service():
     return ProjectService()
