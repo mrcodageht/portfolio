@@ -95,7 +95,8 @@ def delete(pid: str, service = Depends(ProjectService)):
 @router.patch(
         path="/{pid}/technologies",
         status_code=s.HTTP_200_OK,
-        response_model=ProjectPublicWithTechnologies
+        response_model=ProjectPublicWithTechnologies,
+        dependencies=[Depends(require_admin)]
 )
 def add_technologies_project(
     pid: str,
@@ -107,7 +108,8 @@ def add_technologies_project(
 @router.delete(
         "/{pid}/technologies/{slug}",
         status_code=s.HTTP_200_OK,
-        response_model=ProjectPublicWithTechnologies
+        response_model=ProjectPublicWithTechnologies,
+        dependencies=[Depends(require_admin)]
 )
 def remove_technology_project(
     pid: str,
