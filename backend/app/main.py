@@ -7,6 +7,8 @@ from app.config.env import settings
 from app.data.database import get_db
 from app.routers import collaborator_router, project_router, user_router
 from app.routers import technology_router
+from app.schemas.stats_schema import Stats
+from app.services.ressource import RessourceService
 from app.services.services_user import UserService
 
 from starlette.middleware.cors import CORSMiddleware
@@ -32,7 +34,7 @@ app.add_middleware(
 def root():
     return landing_page.landing_page
 
-@app.post("/init", status_code=status.HTTP_204_NO_CONTENT)
+@app.post("/api/v1/init", status_code=status.HTTP_204_NO_CONTENT)
 def init(key: str, service: UserService = Depends(UserService)):
     if key == generated_key:
         service.create_default_admin()
@@ -41,6 +43,10 @@ def init(key: str, service: UserService = Depends(UserService)):
             detail=f"Not authorized.",
             status_code= status.HTTP_403_FORBIDDEN
         )
+    
+@app.get("/api/v1/stats", response_model=Stats, status_code=status.HTTP_200_OK)
+def stats(services : RessourceService = Depends(RessourceService)):
+    return services.get_stats()
 
 
 app.include_router(project_router.router, prefix="/api/v1")
@@ -51,3 +57,6 @@ app.include_router(user_router.router, prefix="/api/v1")
 
 def get_service():
     return UserService()
+
+def get_ressource():
+    return RessourceService()

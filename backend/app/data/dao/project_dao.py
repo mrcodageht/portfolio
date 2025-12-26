@@ -14,7 +14,7 @@ from app.schemas.project_schema import ProjectBase, ProjectTechnologyCreate, Pro
 
 
 
-class ProjectDao(DAOInterface[ProjectModel]):
+class ProjectDao:
 
     def __init__(self, db : Session = Depends(get_db)):
         self.db = db
@@ -23,7 +23,7 @@ class ProjectDao(DAOInterface[ProjectModel]):
             self,
             status : Status | None = None,
             visibility : Visibility | None = None
-    ) -> list[type[ProjectModel]]:
+    ) -> list[ProjectModel]:
 
         if status is not None and visibility is not None :
             return self.db.query(ProjectModel).filter_by(
@@ -50,7 +50,7 @@ class ProjectDao(DAOInterface[ProjectModel]):
         project = (self.db.query(ProjectModel).filter(func.lower(ProjectModel.slug)==func.lower(slug)).first())
         return project
 
-    def create(self, project: ProjectBase) -> type[ProjectModel]:
+    def create(self, project: ProjectBase) -> ProjectModel:
         try:
             db_project = ProjectModel(**project.model_dump(exclude_unset=True))
             self.db.add(db_project)
@@ -63,7 +63,7 @@ class ProjectDao(DAOInterface[ProjectModel]):
             raise Exception("the project not have been created successfully.")
 
 
-    def update(self, id: str, item: ProjectUpdate) -> type[ProjectModel]:
+    def update(self, id: str, item: ProjectUpdate) -> Optional[type[ProjectModel]]:
         project_existing = self.find_by_id(pid=id)
         if project_existing is None:
             raise HTTPException(
@@ -153,6 +153,9 @@ class ProjectDao(DAOInterface[ProjectModel]):
             status_code=s.HTTP_404_NOT_FOUND
         )
         
+    def get_total(self)-> int:
+        count = self.db.query(ProjectModel).count()
+        return count
 
 
     def create_all(self, items: List[ProjectBase]):

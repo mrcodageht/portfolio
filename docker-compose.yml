@@ -5,6 +5,8 @@ services:
       dockerfile: ./config/db.Dockerfile
     restart: always
     container_name: "portfoliodb"
+    environment:
+      - MYSQL_ROOT_PASSWORD=ro0tPassw0rd
     env_file:
       - ./config/.env.data
     ports:
@@ -23,7 +25,7 @@ services:
           "127.0.0.1",
           "-u",
           "root",
-          "--password=${MYSQL_ROOT_PASSWORD}",
+          "--password=ro0tPassw0rd",
         ]
       interval: 5s
       timeout: 3s

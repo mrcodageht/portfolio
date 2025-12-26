@@ -31,7 +31,7 @@ class TechnologyDao(DAOInterface[TechnologyModel]):
         return technos
 
     def create(self, item: TechnologyCreate) -> TechnologyModel:
-        techno = TechnologyModel(**item.model_dump(exclude_unset=True))
+        techno: ProjectModel = TechnologyModel(**item.model_dump(exclude_unset=True))
 
         techno.slug = item.name.lower().replace(" ","-")
         
@@ -107,6 +107,7 @@ class TechnologyDao(DAOInterface[TechnologyModel]):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+
     def create_all(self, items):
         raise NotImplementedError
 
@@ -115,3 +116,7 @@ class TechnologyDao(DAOInterface[TechnologyModel]):
 
     def delete_all(self, ids):
         raise NotImplementedError
+
+    def get_total(self) -> int:
+        return self.db.query(TechnologyModel).count()
+

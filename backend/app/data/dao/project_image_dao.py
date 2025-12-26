@@ -35,3 +35,7 @@ class ProjectImageDao(DAOInterface[ProjectImageModel]):
 
     def delete_all(self, ids):
         raise NotImplementedError
+
+    def get_total(self) -> int:
+        raise NotImplementedError
+

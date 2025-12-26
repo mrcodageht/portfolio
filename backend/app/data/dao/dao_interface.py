@@ -62,3 +62,14 @@ class DAOInterface(Generic[T], ABC):
         Retourne True si suppression réussie, False si l'entité n'existait pas.
         """
         raise NotImplementedError
+    
+    @abstractmethod
+    def get_total(self)-> int:
+        """
+        Cette methode permet de count le nombre d'enregistrement de l'entite dans la base de donnees
+        
+        :param self: Description
+        :return: Description
+        :rtype: int
+        """
+        raise NotImplementedError

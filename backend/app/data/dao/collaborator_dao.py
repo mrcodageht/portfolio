@@ -99,3 +99,7 @@ class CollaboratorDao(DAOInterface[CollaboratorModel]):
 
     def delete_all(self, ids):
         raise NotImplementedError
+
+    def get_total(self) -> int:
+        return self.db.query(CollaboratorModel).count()
+
