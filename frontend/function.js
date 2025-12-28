@@ -42,3 +42,10 @@ export async function fetchCollabs(id = null) {
     logObj(TYPE.DEBUG, collabs)
     return collabs
 }
+
+export async function fetchStats() {
+    const resp = await fetch(`${API_BASE_URL}/stats`)
+    const stats = await resp.json()
+    logObj(TYPE.DEBUG, stats)
+    return stats
+}
