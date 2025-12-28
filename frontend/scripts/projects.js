@@ -1,4 +1,4 @@
-import { fetchProjects, fetchTechs } from "../function.js";
+import { fetchProjects, fetchTechs, updateProject } from "../function.js";
 import { log, logObj, TYPE } from "../log.js";
 
 async function openProjectModal(technologies, id = null) {
@@ -39,6 +39,7 @@ async function openProjectModal(technologies, id = null) {
                         type="checkbox"
                         value=""
                         id="check-${t.id}"
+                        name="stack-tech"
                         ${isSelected}
                       />
                       <label class="form-check-label" for="checkDefault">
@@ -63,26 +64,25 @@ async function openProjectModal(technologies, id = null) {
   modal.show();
 }
 
-function saveProject() {
+function saveProject(form) {
   const id = document.getElementById("projectId").value;
+  const technologies = document.getElementsByName("stack-tech");
+  logObj(TYPE.DEBUG, technologies);
   const project = {
-    id: id || Date.now(),
     title: document.getElementById("projectTitle").value,
     description: document.getElementById("projectDescription").value,
-    url: document.getElementById("projectUrl").value,
-    technologies: document
-      .getElementById("projectTech")
-      .value.split(",")
-      .map((t) => t.trim()),
-    date: document.getElementById("projectDate").value,
+    status: document.getElementById("projectStatus"),
+    visibility: document.getElementById("projectVisibility"),
+    start_at: document.getElementById("projectDateStart"),
+    end_at: document.getElementById("projectDateEnd"),
+    cover_image_url: document.getElementById("projectCover"),
+    live_url: document.getElementById("projectUrl").value,
+    repo_url: document.getElementById("projectRepoUrl"),
   };
 
-  document.getElementById("new-proj").addEventListener("click", (e) => {
-    openProjectModal();
-  });
   if (id) {
-    const index = projects.findIndex((p) => p.id == id);
-    projects[index] = project;
+    logObj(TYPE.DEBUG, project, "project a cree : ");
+    const projectUpdated = updateProject(id, project);
   } else {
     projects.push(project);
   }
@@ -102,6 +102,7 @@ function deleteProject(pid) {
 
 async function renderProjects() {
   const list = document.getElementById("projectsList");
+  list.innerHTML = "";
   const projects = await fetchProjects();
   logObj(TYPE.INFO, projects);
   for (const p of projects) {
@@ -156,6 +157,7 @@ document.getElementById("new-proj").addEventListener("click", (e) => {
 });
 const allBtnEdit = document.querySelectorAll(".edit-project");
 const allBtnDelete = document.querySelectorAll(".delete-project");
+const btnSaveProject = document.getElementById("saveProject");
 
 allBtnDelete.forEach((btn) => {
   btn.addEventListener("click", (e) => {
@@ -170,4 +172,9 @@ allBtnEdit.forEach((btn) => {
     log(TYPE.DEBUG, `Edit du projet ${id[1]}`);
     openProjectModal(technologies, id[1]);
   });
+});
+
+btnSaveProject.addEventListener("click", (e) => {
+  const form = document.getElementById("projectForm");
+  saveProject(form);
 });

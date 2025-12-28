@@ -1,13 +1,12 @@
 export function log(type, msg) {
-  console.log(`==> [${type}] - ${msg}`)
+  console.log(`==> [${type}] - ${msg}`);
 }
 
-export function logObj(type, msg) {
-  console.table(`==> [${type}] - `, msg)
+export function logObj(type, obj, msg = "") {
+  console.table(`==> [${type}] - ${msg}`, obj);
 }
-
 
 export const TYPE = {
-  DEBUG: 'DEBUG',
-  INFO: 'INFO'
+  DEBUG: "DEBUG",
+  INFO: "INFO",
 };
