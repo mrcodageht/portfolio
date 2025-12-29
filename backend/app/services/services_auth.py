@@ -57,6 +57,10 @@ def validate_token(token: str) -> TokenDecoded:
     if response.status_code == status.HTTP_403_FORBIDDEN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail=response.json()["detail"])
+    
+    if response.status_code == status.HTTP_401_UNAUTHORIZED:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail=response.json()["detail"])
 
     if response.status_code != status.HTTP_200_OK:
         raise HTTPException(

@@ -1,4 +1,3 @@
-import uuid
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from starlette import status
