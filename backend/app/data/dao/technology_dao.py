@@ -68,14 +68,17 @@ class TechnologyDao(DAOInterface[TechnologyModel]):
                 status_code=status.HTTP_404_NOT_FOUND
             )
         
-        techno.slug = item.name.lower().replace(" ","-")
+        slug = item.name.lower().replace(" ","-")
         
-        is_exists = self.db.query(TechnologyModel).filter(TechnologyModel.slug==techno.slug).first()
-        if is_exists is not None:
-            raise HTTPException(
-                detail=f"Technology '{techno.slug}' already exists",
-                status_code=status.HTTP_404_NOT_FOUND
-            )
+        if slug != techno.slug:
+            techno.slug = slug
+
+            is_exists = self.db.query(TechnologyModel).filter(TechnologyModel.slug==techno.slug).first()
+            if is_exists is not None:
+                raise HTTPException(
+                    detail=f"Technology '{techno.slug}' already exists",
+                    status_code=status.HTTP_404_NOT_FOUND
+                )
         
         for f,v in item.model_dump(exclude_unset=True).items():
             setattr(techno,f,v)
