@@ -1,6 +1,13 @@
+import {
+  ProjectResponse,
+  Technology,
+  TechnologyProjectCreate,
+} from "./class.js";
 import { log, logObj, TYPE } from "./log.js";
 
 const API_BASE_URL = "http://localhost:8079/api/v1";
+export const COOKIE_NAME_TOKEN = "portfolio-token";
+
 export async function fetchProjects(id = null) {
   let resp = null;
   if (id) {
@@ -26,6 +33,20 @@ export async function fetchTechs(id = null) {
   logObj(TYPE.DEBUG, techs);
   return techs;
 }
+
+export async function fetchTechsProject(pid) {
+  const resp = await fetch(`${API_BASE_URL}/technologies/project/${pid}`);
+  if (resp.ok) {
+    const techs = [];
+    const technologies = await resp.json();
+    for (const t of technologies) {
+      techs.push(Technology.fromResponse(t));
+    }
+    return techs;
+  }
+  throw new Error(`Response status : ${resp.status}`);
+}
+
 export async function fetchCollabs(id = null) {
   let resp = null;
   if (id) {
@@ -48,21 +69,92 @@ export async function fetchStats() {
 }
 
 export async function updateProject(pid, project) {
-  const token = localStorage.getItem("token-portfolio");
+  try {
+    const resp = await fetch(`${API_BASE_URL}/projects/${pid}`, {
+      method: "PUT",
+      body: JSON.stringify(project),
 
-  const resp = await fetch(`${API_BASE_URL}/projects/${pid}`, {
-    method: "PUT",
-    body: JSON.stringify(project),
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).catch((err) => {
-    console.error(`${TYPE.INFO} => `, err);
-  });
+      headers: {
+        Authorization: getAuthToken(),
+        "Content-Type": "application/json",
+      },
+    });
 
-  if (resp.ok) {
-    const projectUpdated = await resp.json();
-    return projectUpdated();
+    if (resp.ok) {
+      const projectUpdated = await resp.json();
+      const projectToReturn = ProjectResponse.fromResponse(projectUpdated);
+      return projectToReturn;
+    } else {
+      if (resp.status === 401) {
+        // supprimer le token
+        deleteCookie(COOKIE_NAME_TOKEN);
+        throw new Error("Not authenticated or token expires");
+      }
+      throw new Error(`Response status : ${resp.status}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+/**
+ *
+ * @param {TechnologyProjectCreate[]} techs
+ * @param {string} pid
+ */
+export async function addTechIntoProject(techs, pid) {
+  try {
+    const resp = await fetch(`${API_BASE_URL}/projects/${pid}/technologies`, {
+      method: "PATCH",
+      body: JSON.stringify(techs),
+      headers: {
+        Authorization: getAuthToken(),
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (resp.ok) {
+      const projectUpdated = await resp.json();
+      const projectToReturn = ProjectResponse.fromResponse(projectUpdated);
+      return projectToReturn;
+    } else {
+      if (resp.status === 401) {
+        // supprimer le token
+        deleteCookie(COOKIE_NAME_TOKEN);
+        throw new Error("Not authenticated or token expires");
+      }
+      throw new Error(`Response status : ${resp.status}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function removeTechIntoProject(slug, pid) {
+  try {
+    const resp = await fetch(
+      `${API_BASE_URL}/projects/${pid}/technologies/${slug}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: getAuthToken(),
+        },
+      }
+    );
+
+    if (resp.ok) {
+      const projectUpdated = await resp.json();
+      const projectToReturn = ProjectResponse.fromResponse(projectUpdated);
+      return projectToReturn;
+    } else {
+      if (resp.status === 401) {
+        // supprimer le token
+        deleteCookie(COOKIE_NAME_TOKEN);
+        throw new Error("Not authenticated or token expires");
+      }
+      throw new Error(`Response status : ${resp.status}`);
+    }
+  } catch (error) {
+    throw error;
   }
 }
 
@@ -76,6 +168,33 @@ export async function login(credentials) {
     const token = await resp.json();
     return token;
   }
-
   return null;
+}
+
+export function setCookie(name, value, days) {
+  const expire = new Date();
+  expire.setTime(expire.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${value};expires=${expire.toUTCString()};path=/;SameSite=Strict`;
+}
+
+export function getCookie(name) {
+  const nameEQ = name + "=";
+  const cookies = document.cookie.split(";");
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i].trim();
+    if (cookie.indexOf(nameEQ) === 0) {
+      return cookie.substring(nameEQ.length);
+    }
+  }
+  return null;
+}
+
+function getAuthToken() {
+  const token = getCookie(COOKIE_NAME_TOKEN);
+  const authHeader = `Bearer ${token}`;
+  return authHeader;
+}
+
+function deleteCookie(name) {
+  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;SameSite=Strict`;
 }

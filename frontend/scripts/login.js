@@ -1,5 +1,5 @@
-import { login } from "../function.js";
-import { logObj, TYPE } from "../log.js";
+import { COOKIE_NAME_TOKEN, getCookie, login, setCookie } from "../function.js";
+import { log, logObj, TYPE } from "../log.js";
 
 async function renduLogin() {
   return `
@@ -27,8 +27,9 @@ async function renduLogin() {
     `;
 }
 
-const token = localStorage.getItem("token-portfolio");
-if (token === undefined) {
+const token = getCookie(COOKIE_NAME_TOKEN);
+logObj(TYPE.DEBUG, token, "Token in cookie");
+if (token === undefined || token === null) {
   document.body.innerHTML = await renduLogin();
   addEventListener("DOMContentLoaded", (event) => {
     const loginForm = document.getElementById("login-form");
@@ -51,9 +52,10 @@ if (token === undefined) {
         document.getElementById("span-error").innerHTML =
           "Identifiants de connexions invalides";
       } else {
-        localStorage.setItem("token-portfolio", token.access_token);
+        log(TYPE.DEBUG, "Connexion reussie");
 
-        logObj(TYPE.DEBUG, token, "Token d'acces : ");
+        setCookie(COOKIE_NAME_TOKEN, token.access_token, 1);
+        window.location.href = window.location.href;
       }
     });
   });

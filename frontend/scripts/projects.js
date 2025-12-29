@@ -1,5 +1,39 @@
-import { fetchProjects, fetchTechs, updateProject } from "../function.js";
+import { Project, TechnologyProjectCreate } from "../class.js";
+import {
+  addTechIntoProject,
+  fetchProjects,
+  fetchTechs,
+  fetchTechsProject,
+  removeTechIntoProject,
+  updateProject,
+} from "../function.js";
 import { log, logObj, TYPE } from "../log.js";
+
+function setGlobalListerner() {
+  const allBtnEdit = document.querySelectorAll(".edit-project");
+  const allBtnDelete = document.querySelectorAll(".delete-project");
+  const btnSaveProject = document.getElementById("saveProject");
+
+  allBtnDelete.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const id = btn.id.split("-");
+      deleteProject(id[1]);
+    });
+  });
+
+  allBtnEdit.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const id = btn.id.split("-");
+      log(TYPE.DEBUG, `Edit du projet ${id[1]}`);
+      openProjectModal(technologies, id[1]);
+    });
+  });
+
+  btnSaveProject.addEventListener("click", (e) => {
+    const form = document.getElementById("projectForm");
+    saveProject(form);
+  });
+}
 
 async function openProjectModal(technologies, id = null) {
   const modal = new bootstrap.Modal(document.getElementById("projectModal"));
@@ -37,7 +71,7 @@ async function openProjectModal(technologies, id = null) {
             <input
                 class="form-check-input"
                         type="checkbox"
-                        value=""
+                        value="${t.slug}"
                         id="check-${t.id}"
                         name="stack-tech"
                         ${isSelected}
@@ -64,32 +98,79 @@ async function openProjectModal(technologies, id = null) {
   modal.show();
 }
 
-function saveProject(form) {
+async function saveProject(form) {
   const id = document.getElementById("projectId").value;
   const technologies = document.getElementsByName("stack-tech");
-  logObj(TYPE.DEBUG, technologies);
-  const project = {
-    title: document.getElementById("projectTitle").value,
-    description: document.getElementById("projectDescription").value,
-    status: document.getElementById("projectStatus"),
-    visibility: document.getElementById("projectVisibility"),
-    start_at: document.getElementById("projectDateStart"),
-    end_at: document.getElementById("projectDateEnd"),
-    cover_image_url: document.getElementById("projectCover"),
-    live_url: document.getElementById("projectUrl").value,
-    repo_url: document.getElementById("projectRepoUrl"),
-  };
+  const endDate = document.getElementById("projectDateEnd").value;
+  let techs = [];
+
+  technologies.forEach((t) => {
+    if (t.checked) {
+      console.log("Tech checked : ", t.value);
+      techs.push(new TechnologyProjectCreate(t.value));
+    }
+  });
+
+  const project = new Project(
+    document.getElementById("projectTitle").value,
+    document.getElementById("projectDescription").value,
+    document.getElementById("projectStatus").value,
+    document.getElementById("projectVisibility").value,
+    document.getElementById("projectDateStart").value,
+    endDate !== "" ? endDate : null,
+    document.getElementById("projectCover").value,
+    document.getElementById("projectUrl").value,
+    document.getElementById("projectRepoUrl").value
+  );
 
   if (id) {
     logObj(TYPE.DEBUG, project, "project a cree : ");
-    const projectUpdated = updateProject(id, project);
+    try {
+      const projectUpdated = await updateProject(id, project);
+      //   on va mettre a jour les technologies du projects aussi
+      let techsProject = await fetchTechsProject(projectUpdated.pid);
+      console.log("techs project : ", techsProject);
+      const techMapped = [];
+      for (const t of techsProject) {
+        techMapped.push(new TechnologyProjectCreate(t.slug));
+      }
+      //    les technologie a enlever
+      techMapped.forEach(async (t) => {
+        console.log("tech : ", t);
+        const isExists = techs.find((tp) => tp.slug === t.slug);
+        if (!isExists) {
+          // on enleve
+          await removeTechIntoProject(t.slug, projectUpdated.pid);
+        }
+      });
+
+      //   on collectionne les techonologie a ajouter
+      //   techs.forEach((t) => {
+      //     const isExists = techsProject.find((tp) => tp.slug === t.slug);
+      //     if (!isExists) {
+      //       // on ajoute
+      //     }
+      //   });
+      await addTechIntoProject(techs, projectUpdated.pid);
+    } catch (error) {
+      // on recharge la page
+      console.error(error);
+      window.location.href = window.location.href;
+      return;
+    }
   } else {
     projects.push(project);
   }
 
-  renderProjects();
-  updateStats();
-  bootstrap.Modal.getInstance(document.getElementById("projectModal")).hide();
+  //await renderProjects();
+  // updateStats();
+  //setGlobalListerner();
+
+  const modalEl = document.getElementById("projectModal");
+  const modal = bootstrap.Modal.getInstance(modalEl);
+  modal.hide();
+
+  window.location.href = window.location.href;
 }
 
 function deleteProject(pid) {
@@ -155,26 +236,4 @@ await renderProjects();
 document.getElementById("new-proj").addEventListener("click", (e) => {
   openProjectModal(technologies);
 });
-const allBtnEdit = document.querySelectorAll(".edit-project");
-const allBtnDelete = document.querySelectorAll(".delete-project");
-const btnSaveProject = document.getElementById("saveProject");
-
-allBtnDelete.forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    const id = btn.id.split("-");
-    deleteProject(id[1]);
-  });
-});
-
-allBtnEdit.forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    const id = btn.id.split("-");
-    log(TYPE.DEBUG, `Edit du projet ${id[1]}`);
-    openProjectModal(technologies, id[1]);
-  });
-});
-
-btnSaveProject.addEventListener("click", (e) => {
-  const form = document.getElementById("projectForm");
-  saveProject(form);
-});
+setGlobalListerner();
