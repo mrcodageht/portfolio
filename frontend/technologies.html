@@ -1,119 +1,178 @@
 <!DOCTYPE html>
 <html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CMS Portfolio - Backoffice</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
-        rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      rel="stylesheet"
+    />
     <link href="main.css" rel="stylesheet" />
     <script src="scripts/techs.js" defer type="module"></script>
     <script src="main.js" defer type="module"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- Sidebar -->
     <div class="sidebar">
-        <div class="sidebar-brand">
-            <i class="fas fa-briefcase"></i> Portfolio CMS
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="index.html" class="menu-link" data-view="dashboard"><i class="fas fa-home"></i> Dashboard</a>
-            </li>
-            <li><a href="projects.html" class="menu-link" data-view="projects"><i class="fas fa-project-diagram"></i>
-                    Projets</a>
-            </li>
-            <li><a href="technologies.html" class="menu-link active" data-view="technologies"><i
-                        class="fas fa-code"></i> Technologies</a></li>
-            <li><a href="collaborators.html" class="menu-link" data-view="collaborators"><i class="fas fa-users"></i>
-                    Collaborateurs</a>
-            </li>
-        </ul>
+      <div class="sidebar-brand">
+        <i class="fas fa-briefcase"></i> Portfolio CMS
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a href="index.html" class="menu-link" data-view="dashboard"
+            ><i class="fas fa-home"></i> Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="projects.html" class="menu-link" data-view="projects"
+            ><i class="fas fa-project-diagram"></i> Projets</a
+          >
+        </li>
+        <li>
+          <a
+            href="technologies.html"
+            class="menu-link active"
+            data-view="technologies"
+            ><i class="fas fa-code"></i> Technologies</a
+          >
+        </li>
+        <li>
+          <a
+            href="collaborators.html"
+            class="menu-link"
+            data-view="collaborators"
+            ><i class="fas fa-users"></i> Collaborateurs</a
+          >
+        </li>
+      </ul>
     </div>
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div
+      class="main-content d-flex justify-content-center align-items-center vh-100"
+      id="main-content-loader"
+    >
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
 
-        <div id="technologies" class="view-section active">
-            <div class="header d-flex justify-content-between align-items-center">
-                <div>
-                    <h1><i class="fas fa-code"></i> Gestion des Technologies</h1>
-                </div>
-                <button class="btn btn-primary" id="new-tech">
-                    <i class="fas fa-plus"></i> Nouvelle Technologie
-                </button>
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Icone</th>
-                                <th>Nom</th>
-                                <th>Catégorie</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="techList"></tbody>
-                    </table>
-                </div>
-            </div>
+    <div class="main-content d-none" id="main-content-unloader">
+      <div id="technologies" class="view-section active">
+        <div class="header d-flex justify-content-between align-items-center">
+          <div>
+            <h1><i class="fas fa-code"></i> Gestion des Technologies</h1>
+          </div>
+          <button class="btn btn-primary" id="new-tech">
+            <i class="fas fa-plus"></i> Nouvelle Technologie
+          </button>
         </div>
 
-        <!-- Modal  -->
-        <div class="modal fade" id="techModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="techModalTitle">Nouvelle Technologie</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="techForm">
-                            <input type="hidden" id="techId">
-                            <div class="mb-3">
-                                <label class="form-label">Nom</label>
-                                <input type="text" class="form-control" id="techName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Catégorie</label>
-                                <select class="form-select" id="techCategory" required>
-                                    <option value="" selected="true">Sélectionner... </option>
-                                    <option value="backend">Backend</option>
-                                    <option value="frontend">Frontend</option>
-                                    <option value="devops">DevOps</option>
-                                    <option value="db">Base de donnees</option>
-                                    <option value="tool">Outils</option>
-                                    <option value="mobile">Mobile</option>
-
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Lien d'icone</label>
-                                <input type="text" class="form-control" id="techIcon" required />
-                                <p class="from-text">ressource: <a href="https://dashboardicons.com"
-                                        target="_blank">Dashboard icons</a>
-                                </p>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="button" class="btn btn-primary" onclick="saveTech()">Enregistrer</button>
-                    </div>
-                </div>
-            </div>
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Icone</th>
+                  <th>Nom</th>
+                  <th>Catégorie</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="techList"></tbody>
+            </table>
+          </div>
         </div>
+      </div>
+
+      <!-- Modal  -->
+      <div class="modal fade" id="techModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="techModalTitle">
+                Nouvelle Technologie
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form id="techForm">
+                <input type="hidden" id="techId" />
+                <div class="mb-3">
+                  <label class="form-label">Nom</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="techName"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Catégorie</label>
+                  <select class="form-select" id="techCategory" required>
+                    <option value="" selected="true">Sélectionner...</option>
+                    <option value="backend">Backend</option>
+                    <option value="frontend">Frontend</option>
+                    <option value="devops">DevOps</option>
+                    <option value="db">Base de donnees</option>
+                    <option value="tool">Outils</option>
+                    <option value="mobile">Mobile</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Lien d'icone</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="techIcon"
+                    required
+                  />
+                  <p class="from-text">
+                    ressource:
+                    <a href="https://dashboardicons.com" target="_blank"
+                      >Dashboard icons</a
+                    >
+                  </p>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                onclick="saveTech()"
+              >
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-
-
-</body>
-
+    <script src="scripts/login.js" type="module"></script>
+  </body>
 </html>
