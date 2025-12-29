@@ -22,8 +22,8 @@ def validate_token(token: str) -> TokenDecoded:
         token_decoded = TokenDecoded(**decode_result)
 
         if token_decoded.exp < datetime.datetime.now(datetime.timezone.utc):
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Expired token")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Expired token")
 
         return token_decoded
     except ExpiredSignatureError:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Expired token")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Expired token")
