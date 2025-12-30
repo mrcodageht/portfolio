@@ -104,18 +104,19 @@ CREATE TABLE IF NOT EXISTS collaborators (
 -- ======================
 -- TABLE : project_image (UUID CHAR(36))
 -- ======================
-CREATE TABLE IF NOT EXISTS project_image (
+CREATE TABLE IF NOT EXISTS project_media (
     id CHAR(36) NOT NULL PRIMARY KEY DEFAULT(UUID()),
-    image_url TEXT NOT NULL,
+    media_url TEXT NOT NULL,
     alt_text TEXT NOT NULL,
     kind ENUM(
         'SCREENSHOT',
         'LOGO',
         'DIAGRAM',
-        'THUMB'
+        'THUMB',
+        'VIDEO'
     ) NOT NULL DEFAULT 'SCREENSHOT',
     project_pid CHAR(6) NOT NULL,
-    CONSTRAINT fk_projectimage_project FOREIGN KEY (project_pid) REFERENCES projects (pid) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fk_projectmedia_project FOREIGN KEY (project_pid) REFERENCES projects (pid) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- ======================

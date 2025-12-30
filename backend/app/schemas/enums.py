@@ -7,14 +7,19 @@ class Status(str, Enum):
     ARCHIVED = "archived"
     PLANNING = "planning"
 
+
 class Visibility(str, Enum):
     PUBLISHED = "published"
     PRIVATE = "private"
+
+
 class Kind(str, Enum):
     SCREENSHOT = "screenshot"
     LOGO = "logo"
     DIAGRAM = "diagram"
     THUMB = "thumb"
+    VIDEO = "video"
+
 
 class Type(str, Enum):
     BACKEND = "backend"

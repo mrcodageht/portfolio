@@ -449,9 +449,9 @@ VALUES (
 -- ======================
 -- Pour p1
 INSERT INTO
-    project_image (
+    project_media (
         id,
-        image_url,
+        media_url,
         alt_text,
         kind,
         project_pid
@@ -465,9 +465,9 @@ VALUES (
     );
 
 INSERT INTO
-    project_image (
+    project_media (
         id,
-        image_url,
+        media_url,
         alt_text,
         kind,
         project_pid
@@ -482,9 +482,9 @@ VALUES (
 
 -- Pour p2
 INSERT INTO
-    project_image (
+    project_media(
         id,
-        image_url,
+        media_url,
         alt_text,
         kind,
         project_pid
@@ -499,9 +499,9 @@ VALUES (
 
 -- Pour p3
 INSERT INTO
-    project_image (
+    project_media (
         id,
-        image_url,
+        media_url,
         alt_text,
         kind,
         project_pid
@@ -516,9 +516,9 @@ VALUES (
 
 -- p4
 INSERT INTO
-    project_image (
+    project_media (
         id,
-        image_url,
+        media_url,
         alt_text,
         kind,
         project_pid
@@ -533,9 +533,9 @@ VALUES (
 
 -- p5
 INSERT INTO
-    project_image (
+    project_media (
         id,
-        image_url,
+        media_url,
         alt_text,
         kind,
         project_pid
@@ -550,9 +550,9 @@ VALUES (
 
 -- p6
 INSERT INTO
-    project_image (
+    project_media (
         id,
-        image_url,
+        media_url,
         alt_text,
         kind,
         project_pid
