@@ -44,7 +44,7 @@ class TechnologyDao(DAOInterface[TechnologyModel]):
         if is_exists is not None:
             raise HTTPException(
                 detail=f"Technology '{techno.slug}' already exists",
-                status_code=status.HTTP_404_NOT_FOUND
+                status_code=status.HTTP_409_CONFLICT
             )
 
         try:
@@ -77,7 +77,7 @@ class TechnologyDao(DAOInterface[TechnologyModel]):
             if is_exists is not None:
                 raise HTTPException(
                     detail=f"Technology '{techno.slug}' already exists",
-                    status_code=status.HTTP_404_NOT_FOUND
+                    status_code=status.HTTP_409_CONFLICT
                 )
         
         for f,v in item.model_dump(exclude_unset=True).items():

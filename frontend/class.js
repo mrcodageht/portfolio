@@ -98,3 +98,12 @@ export class TechnologyProjectCreate {
     this.slug = slug;
   }
 }
+
+export class TechnologyAlreadyExists extends Error {
+  constructor(message, code = null) {
+    super(message);
+    this.name = this.constructor.name;
+    this.code = code;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}

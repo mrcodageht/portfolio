@@ -1,6 +1,8 @@
 import {
   ProjectResponse,
   Technology,
+  TechnologyAlreadyExists,
+  TechnologyCreate,
   TechnologyProjectCreate,
 } from "./class.js";
 import { log, logObj, TYPE } from "./log.js";
@@ -145,6 +147,93 @@ export async function removeTechIntoProject(slug, pid) {
       const projectUpdated = await resp.json();
       const projectToReturn = ProjectResponse.fromResponse(projectUpdated);
       return projectToReturn;
+    } else {
+      if (resp.status === 401) {
+        // supprimer le token
+        deleteCookie(COOKIE_NAME_TOKEN);
+        throw new Error("Not authenticated or token expires");
+      }
+      throw new Error(`Response status : ${resp.status}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ *
+ * @param {TechnologyCreate} tech
+ * @param {string} tid
+ * @returns
+ */
+export async function updateTechonology(tech, tid) {
+  try {
+    const resp = await fetch(`${API_BASE_URL}/technologies/${tid}`, {
+      method: "PUT",
+      body: JSON.stringify(tech),
+      headers: {
+        Authorization: getAuthToken(),
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (resp.ok) {
+      const technology = await resp.json();
+      return Technology.fromResponse(technology);
+    } else {
+      if (resp.status === 401) {
+        // supprimer le token
+        deleteCookie(COOKIE_NAME_TOKEN);
+        throw new Error("Not authenticated or token expires");
+      }
+      throw new Error(`Response status : ${resp.status}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function addTechnology(tech) {
+  try {
+    const resp = await fetch(`${API_BASE_URL}/technologies`, {
+      method: "POST",
+      body: JSON.stringify(tech),
+      headers: {
+        Authorization: getAuthToken(),
+        "Content-Type": "application/json",
+      },
+    });
+    if (resp.ok) {
+      const technology = await resp.json();
+      return Technology.fromResponse(technology);
+    } else {
+      if (resp.status === 401) {
+        // supprimer le token
+        deleteCookie(COOKIE_NAME_TOKEN);
+        throw new Error("Not authenticated or token expires");
+      } else if (resp.status === 409) {
+        throw new TechnologyAlreadyExists(
+          "Technology existe deja avec ce nom",
+          "ERR_409"
+        );
+      }
+      throw new Error(`Response status : ${resp.status}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function delTechnology(tid) {
+  try {
+    const resp = await fetch(`${API_BASE_URL}/technologies/${tid}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: getAuthToken(),
+      },
+    });
+    if (resp.ok) {
+      return;
     } else {
       if (resp.status === 401) {
         // supprimer le token

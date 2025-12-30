@@ -57,8 +57,10 @@ if (token === undefined || token === null) {
         setCookie(COOKIE_NAME_TOKEN, token.access_token, 1);
         const loader = document.getElementById("main-content-loader");
         const unloader = document.getElementById("main-content-unloader");
-        loader.classList.add("d-none");
-        unloader.classList.remove("d-none");
+        if (loader && unloader) {
+          loader.classList.add("d-none");
+          unloader.classList.remove("d-none");
+        }
         window.location.href = window.location.href;
       }
     });

@@ -112,6 +112,13 @@
               ></button>
             </div>
             <div class="modal-body">
+              <div
+                class="alert alert-danger d-none"
+                id="tech-error"
+                role="alert"
+              >
+                <!-- Alert will be injected here -->
+              </div>
               <form id="techForm">
                 <input type="hidden" id="techId" />
                 <div class="mb-3">
@@ -160,12 +167,40 @@
               >
                 Annuler
               </button>
+              <button type="button" class="btn btn-primary" id="btn-save-tech">
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="techModalDel" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="techModalTitle">
+                Suppression technology
+              </h5>
               <button
                 type="button"
-                class="btn btn-primary"
-                onclick="saveTech()"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p id="text-del"></p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
               >
-                Enregistrer
+                Annuler
+              </button>
+              <button type="button" class="btn btn-danger" id="btn-del-tech">
+                Supprimer
               </button>
             </div>
           </div>
