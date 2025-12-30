@@ -1,4 +1,6 @@
 import {
+  Collaborator,
+  CollaboratorCreate,
   ProjectResponse,
   Technology,
   TechnologyAlreadyExists,
@@ -244,6 +246,76 @@ export async function delTechnology(tid) {
     }
   } catch (error) {
     throw error;
+  }
+}
+
+/**
+ *
+ * @param {CollaboratorCreate} collab
+ */
+export async function addCollaborator(collab) {
+  const resp = await fetch(`${API_BASE_URL}/collaborators`, {
+    method: "POST",
+    body: JSON.stringify(collab),
+    headers: {
+      Authorization: getAuthToken(),
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (resp.ok) {
+    const data = await resp.json();
+    return Collaborator.fromResponse(data);
+  } else {
+    if (resp.status === 401) {
+      // supprimer le token
+      deleteCookie(COOKIE_NAME_TOKEN);
+      throw new Error("Not authenticated or token expires");
+    }
+    throw new Error(`Response status : ${resp.status}`);
+  }
+}
+
+export async function updateCollaborator(collab, cid) {
+  const resp = await fetch(`${API_BASE_URL}/collaborators/${cid}`, {
+    method: "PUT",
+    body: JSON.stringify(collab),
+    headers: {
+      Authorization: getAuthToken(),
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (resp.ok) {
+    const data = await resp.json();
+    return Collaborator.fromResponse(data);
+  } else {
+    if (resp.status === 401) {
+      // supprimer le token
+      deleteCookie(COOKIE_NAME_TOKEN);
+      throw new Error("Not authenticated or token expires");
+    }
+    throw new Error(`Response status : ${resp.status}`);
+  }
+}
+
+export async function delCollaborator(cid) {
+  const resp = await fetch(`${API_BASE_URL}/collaborators/${cid}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: getAuthToken(),
+    },
+  });
+
+  if (resp.ok) {
+    return;
+  } else {
+    if (resp.status === 401) {
+      // supprimer le token
+      deleteCookie(COOKIE_NAME_TOKEN);
+      throw new Error("Not authenticated or token expires");
+    }
+    throw new Error(`Response status : ${resp.status}`);
   }
 }
 

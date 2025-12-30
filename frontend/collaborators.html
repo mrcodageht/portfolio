@@ -71,7 +71,7 @@
           <div>
             <h1><i class="fas fa-users"></i> Gestion des Collaborateurs</h1>
           </div>
-          <button class="btn btn-primary" onclick="openCollabModal()">
+          <button class="btn btn-primary" id="btn-add-collab">
             <i class="fas fa-plus"></i> Nouveau Collaborateur
           </button>
         </div>
@@ -162,9 +162,41 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                onclick="saveCollab()"
+                id="btn-save-collab"
               >
                 Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="collabModalDel" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="techModalTitle">
+                Suppression Collaborator
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p id="text-del"></p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Annuler
+              </button>
+              <button type="button" class="btn btn-danger" id="btn-del-collab">
+                Supprimer
               </button>
             </div>
           </div>

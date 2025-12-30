@@ -107,3 +107,53 @@ export class TechnologyAlreadyExists extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
 }
+
+export class Collaborator {
+  constructor(
+    id,
+    first_name,
+    last_name,
+    role,
+    portfolio_url,
+    github_url,
+    linkedin_url
+  ) {
+    (this.id = id),
+      (this.first_name = first_name),
+      (this.last_name = last_name),
+      (this.role = role),
+      (this.portfolio_url = portfolio_url),
+      (this.github_url = github_url),
+      (this.linkedin_url = linkedin_url);
+  }
+
+  static fromResponse(data) {
+    return new Collaborator(
+      data.id,
+      data.first_name,
+      data.last_name,
+      data.role,
+      data.portfolio_url,
+      data.github_url,
+      data.linkedin_url
+    );
+  }
+}
+
+export class CollaboratorCreate {
+  constructor(
+    first_name,
+    last_name,
+    role,
+    portfolio_url,
+    github_url,
+    linkedin_url
+  ) {
+    (this.first_name = first_name),
+      (this.last_name = last_name),
+      (this.role = role),
+      (this.portfolio_url = portfolio_url),
+      (this.github_url = github_url),
+      (this.linkedin_url = linkedin_url);
+  }
+}

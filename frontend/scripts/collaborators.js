@@ -1,69 +1,96 @@
-import { fetchCollabs } from "../function.js";
+import { CollaboratorCreate } from "../class.js";
+import {
+  addCollaborator,
+  delCollaborator,
+  fetchCollabs,
+  updateCollaborator,
+} from "../function.js";
 import { log, logObj, TYPE } from "../log.js";
 
-
-
 async function openCollabModal(id = null) {
-    const modal = new bootstrap.Modal(document.getElementById('collabModal'));
-    const title = document.getElementById('collabModalTitle');
-    if (id) {
-        const collab = await fetchCollabs(id);
-        title.textContent = 'Modifier le Collaborateur';
-        document.getElementById('collabId').value = collab.id;
-        document.getElementById('collabFirstname').value = collab.first_name;
+  const modal = new bootstrap.Modal(document.getElementById("collabModal"));
+  const title = document.getElementById("collabModalTitle");
 
-        document.getElementById('collabLastname').value = collab.last_name;
-        document.getElementById('collabRole').value = collab.role;
-        document.getElementById('collabPortfolio').value = collab.portfolio_url || '';
-        document.getElementById('collabLinkedin').value = collab.linkedin_url || '';
-        document.getElementById('collabGithub').value = collab.github_url || '';
-    } else {
-        title.textContent = 'Nouveau Collaborateur';
-        document.getElementById('collabForm').reset();
-        document.getElementById('collabId').value = '';
-    }
+  if (id) {
+    const collab = await fetchCollabs(id);
+    title.textContent = "Modifier le Collaborateur";
+    document.getElementById("collabId").value = collab.id;
+    document.getElementById("collabFirstname").value = collab.first_name;
 
-    modal.show();
+    document.getElementById("collabLastname").value = collab.last_name;
+    document.getElementById("collabRole").value = collab.role;
+    document.getElementById("collabPortfolio").value =
+      collab.portfolio_url || "";
+    document.getElementById("collabLinkedin").value = collab.linkedin_url || "";
+    document.getElementById("collabGithub").value = collab.github_url || "";
+  } else {
+    title.textContent = "Nouveau Collaborateur";
+    document.getElementById("collabForm").reset();
+    document.getElementById("collabId").value = "";
+  }
+
+  modal.show();
 }
 
-function saveCollab() {
-    const id = document.getElementById('collabId').value;
-    const collab = {
-        id: id || Date.now(),
-        name: document.getElementById('collabName').value,
-        role: document.getElementById('collabRole').value,
-        email: document.getElementById('collabEmail').value,
-        linkedin: document.getElementById('collabLinkedin').value
-    };
+async function saveCollab() {
+  const id = document.getElementById("collabId").value;
+  const collab = new CollaboratorCreate(
+    document.getElementById("collabFirstname").value,
 
-    if (id) {
-        const index = collaborators.findIndex(c => c.id == id);
-        collaborators[index] = collab;
-    } else {
-        collaborators.push(collab);
+    document.getElementById("collabLastname").value,
+    document.getElementById("collabRole").value,
+    document.getElementById("collabPortfolio").value,
+    document.getElementById("collabGithub").value,
+    document.getElementById("collabLinkedin").value
+  );
+
+  if (id) {
+    try {
+      await updateCollaborator(collab, id);
+    } catch (error) {
+      console.error(error);
     }
+  } else {
+    try {
+      await addCollaborator(collab);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
-    renderCollaborators();
-    updateStats();
-    bootstrap.Modal.getInstance(document.getElementById('collabModal')).hide();
+  //   renderCollaborators();
+  //   updateStats();
+  bootstrap.Modal.getInstance(document.getElementById("collabModal")).hide();
+
+  window.location.href = window.location.href;
 }
 
 function deleteCollab(id) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer ce collaborateur ?')) {
-        collaborators = collaborators.filter(c => c.id !== id);
-        renderCollaborators();
-        updateStats();
+  const modal = new bootstrap.Modal(document.getElementById("collabModalDel"));
+
+  document.getElementById("text-del").innerHTML =
+    "Êtes-vous sûr de vouloir supprimer ce collaborateur ?";
+  modal.show();
+  btnDelCollab.addEventListener("click", async () => {
+    try {
+      await delCollaborator(id);
+
+      window.location.href = window.location.href;
+    } catch (error) {
+      console.log(error);
+      window.location.href = window.location.href;
     }
+  });
 }
 
 async function renderCollaborators() {
-    const list = document.getElementById('collabList');
-    const collabs = await fetchCollabs()
-    for (const c of collabs) {
-        const fullname = `${c.first_name} ${c.last_name}`
-        const idEdit = `edit_${c.id}`
-        const idDelete = `delete_${c.id}`
-        list.innerHTML += `
+  const list = document.getElementById("collabList");
+  const collabs = await fetchCollabs();
+  for (const c of collabs) {
+    const fullname = `${c.first_name} ${c.last_name}`;
+    const idEdit = `edit_${c.id}`;
+    const idDelete = `delete_${c.id}`;
+    list.innerHTML += `
             <tr>
                 <td><strong>${fullname}</strong></td>
                 <td>${c.role}</td>
@@ -87,26 +114,36 @@ async function renderCollaborators() {
                     </button>
                 </td>
             </tr>
-        `
-    }
+        `;
+  }
 }
 
+await renderCollaborators();
+const allBtnEdit = document.querySelectorAll(".edit-collab");
+const allBtnDelete = document.querySelectorAll(".delete-collab");
+const btnSaveCollab = document.getElementById("btn-save-collab");
+const btnAddCollab = document.getElementById("btn-add-collab");
+const btnDelCollab = document.getElementById("btn-del-collab");
 
-await renderCollaborators()
-const allBtnEdit = document.querySelectorAll(".edit-collab")
-const allBtnDelete = document.querySelectorAll(".delete-collab")
+allBtnDelete.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const id = btn.id.split("_")[1];
+    log(TYPE.DEBUG, `Open modal id : ${id}`);
+    deleteCollab(id);
+  });
+});
+allBtnEdit.forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const id = btn.id.split("_")[1];
+    log(TYPE.DEBUG, `Open modal id : ${id}`);
+    await openCollabModal(id);
+  });
+});
 
-allBtnDelete.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const id = btn.id.split("_")[1]
-        log(TYPE.DEBUG, `Open modal id : ${id}`)
-        deleteCollab(id)
-    })
-})
-allBtnEdit.forEach(btn => {
-    btn.addEventListener('click', async () => {
-        const id = btn.id.split("_")[1]
-        log(TYPE.DEBUG, `Open modal id : ${id}`)
-        await openCollabModal(id)
-    })
-})
+btnSaveCollab.addEventListener("click", async () => {
+  await saveCollab();
+});
+
+btnAddCollab.addEventListener("click", () => {
+  openCollabModal().then((r) => {});
+});
