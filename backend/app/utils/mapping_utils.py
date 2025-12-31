@@ -1,11 +1,11 @@
 """
     All mappings function
 """
-from app.models.project_model import CollaboratorModel, ProjectModel, TechnologyModel
+from app.models.project_model import CollaboratorModel, ProjectModel, TechnologyModel, ProjectMediaModel
 from app.schemas.collaborator_schema import CollaboratorPublic
 from app.schemas.project_schema import ProjectPublic, ProjectPublicWithCollaborators, ProjectPublicWithCollaboratorsAndTechnologies, ProjectPublicWithTechnologies
 from app.schemas.technology_schema import TechnologyPublic
-
+from app.schemas.project_media_schema import ProjectMediaPublic
 
 def map_to_project(project_model: type[ProjectModel]) -> ProjectPublic:
     return ProjectPublic(
@@ -94,10 +94,10 @@ def map_to_project_with_technologies_and_collaborators(
     collabs_mapped = [map_to_collaborator_public(c) for c in collabs]
     techs_mapped = [map_to_technology_pub(t) for t in techs]
     ppwcat = ProjectPublicWithCollaboratorsAndTechnologies(
-        title=project_model.title,
+        title=str(project_model.title),
         pid=str(project_model.pid),
-        slug=project_model.slug,
-        description=project_model.description,
+        slug=str(project_model.slug),
+        description=str(project_model.description),
         start_at=project_model.start_at,
         end_at=project_model.end_at,
         status=project_model.status,
@@ -109,3 +109,11 @@ def map_to_project_with_technologies_and_collaborators(
         technologies=techs_mapped
     )
     return ppwcat
+
+def map_to_project_media_public(project_media: ProjectMediaModel):
+    return ProjectMediaPublic(
+        alt_text=str(project_media.alt_text),
+        kind=project_media.kind,
+        id=str(project_media.id),
+        media_url=str(project_media.media_url)
+    )

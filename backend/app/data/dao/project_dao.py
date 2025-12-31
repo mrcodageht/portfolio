@@ -8,7 +8,7 @@ from starlette import status as s
 
 from app.data.dao.dao_interface import DAOInterface, T
 from app.data.database import get_db
-from app.models.project_model import ProjectImageModel, ProjectModel, TechnologyModel
+from app.models.project_model import ProjectModel, TechnologyModel, ProjectMediaModel
 from app.schemas.enums import Status, Visibility
 from app.schemas.project_schema import ProjectBase, ProjectTechnologyCreate, ProjectUpdate
 
@@ -88,7 +88,7 @@ class ProjectDao:
                 status_code=s.HTTP_404_NOT_FOUND
             )
         try:
-            images = self.db.query(ProjectImageModel).filter(ProjectImageModel.project_pid==id).all()
+            images = self.db.query(ProjectMediaModel).filter(ProjectMediaModel.project_pid==id).all()
             for im in images:
                 self.db.delete(im)
             self.db.delete(project_existing)

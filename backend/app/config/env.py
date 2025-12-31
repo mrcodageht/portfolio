@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     DEFAULT_ADMIN_PASSWORD: str 
     
     KEY_INIT: str
+    SERVER_MEDIA: str = "http://localhost:8071"
 
 
 settings = Settings()

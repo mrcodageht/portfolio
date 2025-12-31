@@ -45,6 +45,8 @@ services:
     restart: always
     ports:
       - ${PORT:-8079}:8079
+    volumes:
+      - ./medias:/code/medias
     develop:
       watch:
         - action: sync+restart
@@ -94,6 +96,15 @@ services:
         - action: sync
           path: ./frontend/
           target: /usr/share/nginx/html/
+
+  medias:
+    container_name: medias
+    image: nginx:alpine
+    ports:
+      - "8071:80"
+    volumes:
+      - ./medias/:/usr/share/nginx/html/medias
+    restart: always
 
 volumes:
   db_data:

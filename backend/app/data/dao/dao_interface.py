@@ -12,7 +12,7 @@ class DAOInterface(Generic[T], ABC):
     """
 
     @abstractmethod
-    def find_all(self) -> List[T]:
+    def find_all(self) -> list[T]:
         """Retourne toutes les instances de T."""
         raise NotImplementedError
 
@@ -27,7 +27,7 @@ class DAOInterface(Generic[T], ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def create_all(self, items: List[T]) -> T:
+    def create_all(self, items: list[T]) -> T:
         """Crée une nouvelle instance et la retourne (avec id si applicable)."""
         raise NotImplementedError
 
@@ -40,7 +40,7 @@ class DAOInterface(Generic[T], ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def update_all(self, ids: List[Any], items: List[T]) -> Optional[T]:
+    def update_all(self, ids: List[Any], items: list[T]) -> Optional[T]:
         """
         Met à jour l'entité identifiée par id avec les données d'item.
         Retourne l'entité mise à jour, ou None si l'entité n'existe pas.
@@ -56,7 +56,7 @@ class DAOInterface(Generic[T], ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def delete_all(self, ids: List[Any]) -> bool:
+    def delete_all(self, ids: list[Any]) -> bool:
         """
         Supprime l'entité identifiée par id.
         Retourne True si suppression réussie, False si l'entité n'existait pas.

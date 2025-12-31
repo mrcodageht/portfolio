@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, UploadFile, File
 from starlette import status as s
 from starlette.responses import JSONResponse
 from starlette.exceptions import HTTPException
@@ -7,21 +7,23 @@ from fastapi.encoders import jsonable_encoder as je
 
 from app.exceptions.global_projects_exceptions import *
 from app.schemas.enums import Visibility, Status
-from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithCollaboratorsAndTechnologies, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
+from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
 from app.services.project_service import ProjectService
 from app.services.services_user import require_admin
+from app.schemas.enums import Kind
+from app.schemas.project_media_schema import ProjectMediaPublic, ProjectMedia
+from app.services.project_media_service import ProjectMediaService
 
 router = APIRouter(prefix="/projects", tags=["project"])
 
-@router.get("")
+@router.get("", response_model=ProjectPublic)
 def get_projects(
         status : Status | None = None,
         visibility : Visibility | None = None,
         collabs: bool | None = None,
         techs: bool | None = None,
         service: ProjectService = Depends(ProjectService)
-
-) -> ProjectPublic | ProjectPublicWithTechnologies | ProjectPublicWithCollaboratorsAndTechnologies:
+):
     if techs is None:
         techs = False
     if collabs is None:
@@ -120,6 +122,33 @@ def remove_technology_project(
         pid=pid,
         slug=slug
     )
+
+# Section manage media for projects
+
+@router.get("/{pid}/medias", response_model=list[ProjectMediaPublic], status_code=s.HTTP_200_OK)
+def get_medias_project(
+    pid: str,
+    kind: Kind | None = None,
+    project_media_service: ProjectMediaService = Depends(ProjectMediaService)
+):
+    return project_media_service.get_all_by_pid(pid=pid, kind=kind)
+
+@router.post("/{pid}/medias", response_model=ProjectMediaPublic, status_code=s.HTTP_201_CREATED)
+async def add_medias_project(
+    pid: str,
+    media_create: ProjectMedia = Depends(ProjectMedia.as_form),
+    file: UploadFile = File(...),
+    project_media_service: ProjectMediaService = Depends(ProjectMediaService)
+):
+    return project_media_service.save(pid=pid, media_create=media_create, file=file)
+
+@router.delete("/{pid}/media/{mid}",status_code=s.HTTP_204_NO_CONTENT)
+def delete_media_project(
+    pid: str,
+    mid: str
+):
+    pass
+
 
 def get_project_service():
     return ProjectService()
