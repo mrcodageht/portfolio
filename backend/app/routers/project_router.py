@@ -125,7 +125,8 @@ def remove_technology_project(
 
 # Section manage media for projects
 
-@router.get("/{pid}/medias", response_model=list[ProjectMediaPublic], status_code=s.HTTP_200_OK)
+@router.get("/{pid}/medias", response_model=list[ProjectMediaPublic], status_code=s.HTTP_200_OK, dependencies=[Depends(require_admin)]
+)
 def get_medias_project(
     pid: str,
     kind: Kind | None = None,
@@ -133,7 +134,8 @@ def get_medias_project(
 ):
     return project_media_service.get_all_by_pid(pid=pid, kind=kind)
 
-@router.post("/{pid}/medias", response_model=ProjectMediaPublic, status_code=s.HTTP_201_CREATED)
+@router.post("/{pid}/medias", response_model=ProjectMediaPublic, status_code=s.HTTP_201_CREATED, dependencies=[Depends(require_admin)]
+)
 async def add_medias_project(
     pid: str,
     media_create: ProjectMedia = Depends(ProjectMedia.as_form),
@@ -142,12 +144,13 @@ async def add_medias_project(
 ):
     return project_media_service.save(pid=pid, media_create=media_create, file=file)
 
-@router.delete("/{pid}/media/{mid}",status_code=s.HTTP_204_NO_CONTENT)
+@router.delete("/media/{mid}",status_code=s.HTTP_204_NO_CONTENT, dependencies=[Depends(require_admin)]
+)
 def delete_media_project(
-    pid: str,
-    mid: str
+    mid: str,
+    project_media_service: ProjectMediaService = Depends(ProjectMediaService)
 ):
-    pass
+    project_media_service.delete(id=mid)
 
 
 def get_project_service():

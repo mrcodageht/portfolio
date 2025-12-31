@@ -42,3 +42,6 @@ class ProjectMediaService:
         print(f"{media_created.media_url} - {media_created.id}")
         print(f"url {media_to_create.media_url} ")
         return map_to_project_media_public(self.pmd.update(media_created.id, media_to_create))
+    
+    def delete(self, id: str):
+        self.pmd.delete(id=id)

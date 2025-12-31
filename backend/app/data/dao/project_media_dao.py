@@ -86,13 +86,29 @@ class ProjectMediaDao(DAOInterface[ProjectMediaModel]):
         except Exception as e:
             print(f"{e}")
             raise HTTPException(
-                detail="Media not have been created successfully",
+                detail="Media not have been updated successfully",
                 status_code=status.HTTP_400_BAD_REQUEST
             )
 
 
     def delete(self, id: str) -> bool:
-        pass
+        media = self.db.query(ProjectMediaModel).filter_by(id=id).first()
+        if media is None:
+            raise HTTPException(
+                detail=f"Media not found with the id '{id}'",
+                status_code=status.HTTP_404_NOT_FOUND
+            )
+            
+        try:
+            self.db.delete(media)
+            self.db.commit()
+            return True
+        except Exception as e:
+            print(f"{e}")
+            raise HTTPException(
+                detail="Media not have been deleted successfully",
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
 
     def create_all(self, items):
         raise NotImplementedError
