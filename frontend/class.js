@@ -157,3 +157,28 @@ export class CollaboratorCreate {
       (this.linkedin_url = linkedin_url);
   }
 }
+
+export class MediaProject{
+  constructor(alt_text, kind, id, media_url) { 
+      this.alt_text = alt_text,
+      this.kind = kind,
+      this.id = id,
+      this.media_url = media_url
+  }
+
+  static fromResponse(data) {
+    return new MediaProject(
+      data.alt_text,
+      data.kind,
+      data.id, data.media_url
+    )
+  }
+}
+
+export class MediaCreate{
+  constructor(alt_text, kind, media){
+    this.alt_text = alt_text;
+    this.kind = kind;
+    this.media = media;
+  }
+}

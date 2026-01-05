@@ -1,6 +1,7 @@
 import {
   Collaborator,
   CollaboratorCreate,
+  MediaProject,
   ProjectResponse,
   Technology,
   TechnologyAlreadyExists,
@@ -20,10 +21,14 @@ export async function fetchProjects(id = null) {
     resp = await fetch(`${API_BASE_URL}/projects?techs=true`);
   }
 
-  const projects = await resp.json();
+  const data = await resp.json();
 
-  logObj(TYPE.DEBUG, projects);
-  return projects;
+  logObj(TYPE.DEBUG, data);
+  const projects = [];
+  /* for (const d of data) {
+    projects.push(ProjectResponse.fromResponse(d));
+  } */
+  return data;
 }
 
 export async function fetchTechs(id = null) {
@@ -301,6 +306,62 @@ export async function updateCollaborator(collab, cid) {
 
 export async function delCollaborator(cid) {
   const resp = await fetch(`${API_BASE_URL}/collaborators/${cid}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: getAuthToken(),
+    },
+  });
+
+  if (resp.ok) {
+    return;
+  } else {
+    if (resp.status === 401) {
+      // supprimer le token
+      deleteCookie(COOKIE_NAME_TOKEN);
+      throw new Error("Not authenticated or token expires");
+    }
+    throw new Error(`Response status : ${resp.status}`);
+  }
+}
+
+export async function fetchMediasProject(pid) {
+  const resp = await fetch(`${API_BASE_URL}/projects/${pid}/medias`);
+
+  if (resp.ok) {
+    const data = await resp.json();
+    const medias = [];
+    for (const d of data) {
+      medias.push(MediaProject.fromResponse(d));
+    }
+    console.table(medias);
+    return medias;
+  }
+}
+
+export async function addMediaToProject(media, pid) {
+  const resp = await fetch(`${API_BASE_URL}/projects/${pid}/medias`, {
+    method: "POST",
+    body: media,
+    headers: {
+      Authorization: getAuthToken(),
+    },
+  });
+
+  if (resp.ok) {
+    const data = await resp.json();
+    return MediaProject.fromResponse(data);
+  } else {
+    if (resp.status === 401) {
+      // supprimer le token
+      deleteCookie(COOKIE_NAME_TOKEN);
+      throw new Error("Not authenticated or token expires");
+    }
+    throw new Error(`Response status : ${resp.status}`);
+  }
+}
+
+export async function deleteMediaProject(id) {
+  const resp = await fetch(`${API_BASE_URL}/projects/medias/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: getAuthToken(),
