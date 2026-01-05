@@ -37,11 +37,10 @@ class ProjectMediaService:
         UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-
-        media_to_create.media_url =f"{settings.SERVER_MEDIA}/{UPLOAD_DIR}/{filename}"
+        path =f"{settings.SERVER_MEDIA}/{UPLOAD_DIR}/{filename}"
         print(f"{media_created.media_url} - {media_created.id}")
         print(f"url {media_to_create.media_url} ")
-        return map_to_project_media_public(self.pmd.update(media_created.id, media_to_create))
+        return map_to_project_media_public(self.pmd.update(id=media_created.id, item=media_to_create, path=path))
     
     def delete(self, id: str):
         self.pmd.delete(id=id)

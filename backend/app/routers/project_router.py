@@ -125,8 +125,7 @@ def remove_technology_project(
 
 # Section manage media for projects
 
-@router.get("/{pid}/medias", response_model=list[ProjectMediaPublic], status_code=s.HTTP_200_OK, dependencies=[Depends(require_admin)]
-)
+@router.get("/{pid}/medias", response_model=list[ProjectMediaPublic], status_code=s.HTTP_200_OK)
 def get_medias_project(
     pid: str,
     kind: Kind | None = None,
@@ -144,7 +143,7 @@ async def add_medias_project(
 ):
     return project_media_service.save(pid=pid, media_create=media_create, file=file)
 
-@router.delete("/media/{mid}",status_code=s.HTTP_204_NO_CONTENT, dependencies=[Depends(require_admin)]
+@router.delete("/medias/{mid}",status_code=s.HTTP_204_NO_CONTENT, dependencies=[Depends(require_admin)]
 )
 def delete_media_project(
     mid: str,

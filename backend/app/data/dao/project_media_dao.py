@@ -65,7 +65,7 @@ class ProjectMediaDao(DAOInterface[ProjectMediaModel]):
             )
             
 
-    def update(self, id: str, item: ProjectMediaPublic) -> ProjectMediaModel:
+    def update(self, id: str, item: ProjectMediaPublic, path: str | None = None) -> ProjectMediaModel:
         
         media = self.db.query(ProjectMediaModel).filter_by(id=id).first()
         if media is None:
@@ -79,6 +79,9 @@ class ProjectMediaDao(DAOInterface[ProjectMediaModel]):
                 if f != "id":
                     setattr(media, f, v)
                 print(f"{f} => {v}")
+            
+            if path is not None:
+                media.media_url = path
             
             self.db.commit()
             self.db.refresh(media)
