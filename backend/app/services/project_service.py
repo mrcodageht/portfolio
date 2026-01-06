@@ -122,6 +122,7 @@ class ProjectService:
 
     def add_technologies_in_project(self, pid: str, techs: list[ProjectTechnologyCreate])-> ProjectPublicWithTechnologies:
         project = self.project_dao.find_by_id(pid=pid)
+        print(f"pid => {pid}")
         if project is None:
            raise HTTPException(
                detail=f"Project not found with the pid '{pid}'",

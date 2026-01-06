@@ -43,7 +43,7 @@ class ProjectDao:
 
     def find_by_id(self, pid: str) -> type[ProjectModel]:
         project = (self.db.query(ProjectModel)
-            .filter_by(pid=pid).first())
+            .filter(ProjectModel.pid==pid).first())
         return project
     
     def find_by_slug(self, slug:str)-> ProjectModel:
@@ -102,16 +102,17 @@ class ProjectDao:
             )
         
     def add_technologies(self, pid: str ,techs: list[TechnologyModel]) -> ProjectModel:
-        project_existing = self.db.query(ProjectModel).join(ProjectModel.technologies).filter(ProjectModel.pid==pid).first()
+        project_existing = self.db.query(ProjectModel).filter(ProjectModel.pid==pid).first()
         if project_existing is None:
             raise HTTPException(
-                detail=f"Project not found with the pid '{id}'",
+                detail=f"Project not found with the pid '{pid}'",
                 status_code=s.HTTP_404_NOT_FOUND
             )
         
         try:
             for t in techs:
-                project_existing.technologies.append(t)
+                if t not in project_existing.technologies:
+                    project_existing.technologies.append(t)
             self.db.commit()
             self.db.refresh(project_existing)
             return project_existing

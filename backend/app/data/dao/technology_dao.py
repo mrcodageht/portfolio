@@ -27,13 +27,9 @@ class TechnologyDao(DAOInterface[TechnologyModel]):
         return techno
     
     def find_by_project(self, project_id) -> list[TechnologyModel]:
-        project = self.db.query(ProjectModel).join(ProjectModel.technologies).filter(ProjectModel.pid == project_id).first()
-        if project is None:
-            raise HTTPException(
-                detail=f"Project not found with the pid {project_id}",
-                status_code=status.HTTP_404_NOT_FOUND
-            )
-        return project.technologies
+        techs = self.db.query(TechnologyModel).join(TechnologyModel.projects).filter(ProjectModel.pid == project_id).all()
+       
+        return techs
 
     def create(self, item: TechnologyCreate) -> TechnologyModel:
         techno: ProjectModel = TechnologyModel(**item.model_dump(exclude_unset=True))
