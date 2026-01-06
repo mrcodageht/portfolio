@@ -1,8 +1,6 @@
 services:
   db:
-    build:
-      context: .
-      dockerfile: ./config/db.Dockerfile
+    image: mysql:8.0 
     restart: always
     container_name: "portfoliodb"
     environment:
@@ -14,6 +12,9 @@ services:
     command: --log-bin-trust-function-creators=1
     volumes:
       - db_data:/var/lib/mysql
+      - ./config/scripts/init.sql:/docker-entrypoint-initdb.d/00-init.sql
+      - ./config/scripts/seed.sql:/docker-entrypoint-initdb.d/01-seed.sql
+      - ./config/conf.d/db.cnf:/etc/mysql/conf.d/db.cnf:ro
 
     healthcheck:
       test:
