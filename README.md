@@ -77,7 +77,7 @@ l'ensemble des fichiers nécessaires pour :
 
 -   Configurer l'environnement
 -   Démarrer l'application via Docker
--   Adapter les variables selon votre installation
+-   Adapter les variables selon votre installation<br>
 **N.B:** L'utilisateur admin du systeme n'est pas initialise automatique pour creer le default Admin vous devez fournir les informations dans le fichier .env.backend et aussi une cle screte. Vous devez faire un appel au endpoint /init en fournissant la cle secrete pour initialiser votre compte administrative sans cette modif vous ne pourrez recuperer des jetons et le cms ne sera pas fonctionnel.
 
 
