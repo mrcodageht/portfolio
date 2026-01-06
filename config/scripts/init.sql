@@ -1,5 +1,5 @@
 -- Utilise ta DB
-CREATE DATABASE IF NOT EXISTS portfoliodb;
+CREATE DATABASE IF NOT EXISTS portfoliodb DEFAULT CHARACTER SET = utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE portfoliodb;
 
