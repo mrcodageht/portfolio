@@ -106,6 +106,57 @@ export async function updateProject(pid, project) {
   }
 }
 /**
+ * Suppression d'un projet par son pid
+ * @param {string} pid 
+ */
+export async function delProject(pid) {
+  const resp = await fetch(`${API_BASE_URL}/projects/${pid}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: getAuthToken()
+    }
+  })
+  if (resp.ok) {
+    return
+  } else {
+    if (resp.status === 401) {
+      // supprimer le token
+      deleteCookie(COOKIE_NAME_TOKEN);
+      throw new Error("Not authenticated or token expires");
+    }
+    throw new Error(`Response status : ${resp.status}`);
+  } 
+}
+
+export async function addProject(project) {
+  try{
+  const resp = await fetch(`${API_BASE_URL}/projects`, {
+    method: "POST", 
+    body: JSON.stringify(project),
+    headers: {
+      Authorization: getAuthToken(),
+      "Content-Type":"application/json"
+    }
+  })
+  if (resp.ok) {
+      const data = await resp.json();
+      return ProjectResponse.fromResponse(data);
+    } else {
+      if (resp.status === 401) {
+        // supprimer le token
+        deleteCookie(COOKIE_NAME_TOKEN);
+        throw new Error("Not authenticated or token expires");
+      }
+      throw new Error(`Response status : ${resp.status}`);
+    }
+  } catch (error) {
+    throw error;
+  }
+
+}
+
+
+/**
  *
  * @param {TechnologyProjectCreate[]} techs
  * @param {string} pid

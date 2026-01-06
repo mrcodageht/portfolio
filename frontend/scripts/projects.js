@@ -1,6 +1,8 @@
 import { Project, TechnologyProjectCreate } from "../class.js";
 import {
+  addProject,
   addTechIntoProject,
+  delProject,
   fetchProjects,
   fetchTechs,
   fetchTechsProject,
@@ -93,6 +95,29 @@ async function openProjectModal(technologies, id = null) {
     title.textContent = "Nouveau Projet";
     document.getElementById("projectForm").reset();
     document.getElementById("projectId").value = "";
+    const dropdownTech = document.getElementById("dropdown-tech");
+    const stacks = document.getElementById("stacks");
+    stacks.innerHTML = "";
+
+    dropdownTech.innerHTML = ""; // reset
+
+    for (const t of technologies) {
+      
+      dropdownTech.innerHTML += `
+        <div class="form-check">
+            <input
+                class="form-check-input"
+                        type="checkbox"
+                        value="${t.slug}"
+                        id="check-${t.id}"
+                        name="stack-tech"
+                      />
+                      <label class="form-check-label" for="checkDefault">
+                        ${t.name}
+                      </label>
+                    </div>
+    `;
+    }
   }
 
   modal.show();
@@ -144,13 +169,6 @@ async function saveProject(form) {
         }
       });
 
-      //   on collectionne les techonologie a ajouter
-      //   techs.forEach((t) => {
-      //     const isExists = techsProject.find((tp) => tp.slug === t.slug);
-      //     if (!isExists) {
-      //       // on ajoute
-      //     }
-      //   });
       await addTechIntoProject(techs, projectUpdated.pid);
     } catch (error) {
       // on recharge la page
@@ -159,12 +177,17 @@ async function saveProject(form) {
       return;
     }
   } else {
+    try {
+      const projectCreated = await addProject(project)
+      
+      await addTechIntoProject(techs, projectCreated.pid);
+    } catch (error) {
+      console.error(error);
+      window.location.href = window.location.href;
+      return;
+    }
     projects.push(project);
   }
-
-  //await renderProjects();
-  // updateStats();
-  //setGlobalListerner();
 
   const modalEl = document.getElementById("projectModal");
   const modal = bootstrap.Modal.getInstance(modalEl);
@@ -174,11 +197,21 @@ async function saveProject(form) {
 }
 
 function deleteProject(pid) {
-  if (confirm("Êtes-vous sûr de vouloir supprimer ce projet ?")) {
-    projects = projects.filter((p) => p.pid !== pid);
-    renderProjects();
-    updateStats();
-  }
+
+  const modal = new bootstrap.Modal(document.getElementById("projectModalDel"));
+
+  document.getElementById("text-del").innerHTML = "Êtes-vous sûr de vouloir supprimer ce projet ?"
+  document.getElementById("btn-del-proj").addEventListener('click', async () => {
+    console.log("Demande de suppression");
+    try {
+      await delProject(pid)
+    } catch (error) {
+        console.error(error);
+      }
+    window.location.href = window.location.href;
+  })
+  
+  modal.show()
 }
 
 async function renderProjects() {
@@ -187,6 +220,8 @@ async function renderProjects() {
   const projects = await fetchProjects();
   logObj(TYPE.INFO, projects);
   for (const p of projects) {
+
+  
     let idEdit = `edit-${p.pid}`;
     let idDelete = `delete-${p.pid}`;
     let badgeClass = "";
@@ -197,23 +232,22 @@ async function renderProjects() {
     } else if (p.status === "finished") {
       badgeClass = "text-bg-secondary";
     }
-    const iconVisibility =
-      p.visibility === "private"
-        ? '<i class="fa-solid fa-lock"></i>'
-        : '<i class="fa-solid fa-lock-open"></i>';
-    list.innerHTML += `
+    
+        list.innerHTML += `
                 <tr>
                     <td><strong>${p.title}</strong></td>
 
-                    <td>${p.technologies
-                      .map((t) => `<span class="badge-tech">${t.name}</span>`)
-                      .join("")}</td>
+                    
                     
                     <td>${new Date(p.start_at).toLocaleDateString("fr-FR")}</td>
                     <td>
                         <span class="badge rounded-pill ${badgeClass}">${
       p.status
     }</span>
+                    </td>
+                    <td>
+                    
+                    <a class="btn btn-primary voir-tech" data-tech-id="${p.pid}">Voir techs</a>
                     </td>
                     <td class="table-actions">
                         <button class="btn btn-sm btn-warning edit-project" id="${idEdit}">
@@ -229,6 +263,24 @@ async function renderProjects() {
     /* document.getElementById(idEdit).addEventListener('click', e => openProjectModal(p.pid))
         document.getElementById(idDelete).addEventListener('click', e => deleteProject(p.pid)) */
   }
+
+  document.querySelectorAll(".voir-tech").forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+
+  const modal = new bootstrap.Modal(document.getElementById("projectModalTech"));
+      const pid = e.currentTarget.getAttribute("data-tech-id")
+
+      const bodyTech = document.getElementById("body-tech-proj")
+      bodyTech.innerHTML = ""
+      const techs = await fetchTechsProject(pid)
+      techs.forEach(t => {
+       bodyTech.innerHTML +=` 
+        <span class="badge-tech">${t.name}</span>
+        `
+      })
+      modal.show()
+    })
+  })
 }
 
 const technologies = await fetchTechs();

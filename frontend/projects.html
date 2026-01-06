@@ -56,9 +56,9 @@
                   <tr>
                     <!-- <th>Visibilite</th> -->
                     <th>Titre</th>
-                    <th>Technologies</th>
                     <th>Date debut</th>
                     <th>Status</th>
+                    <th>Technologies</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -192,6 +192,61 @@
         </div>
       </div>
     </div>
+    <!-- Modal suppression -->
+<div class="modal fade" id="projectModalDel" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="techModalTitle">
+                Suppression Projet
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p id="text-del"></p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Annuler
+              </button>
+              <button type="button" class="btn btn-danger" id="btn-del-proj">
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+<div class="modal fade" id="projectModalTech" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" >
+                Les technologies
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body" id="body-tech-proj">
+              
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="scripts/login.js" type="module"></script>
     <script src="scripts/sidebar.js"></script>
