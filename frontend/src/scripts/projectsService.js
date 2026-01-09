@@ -1,4 +1,4 @@
-import { Project, TechnologyProjectCreate } from "../class.js";
+import { Project, TechnologyProjectCreate } from "./class.js";
 import {
   addProject,
   addTechIntoProject,
@@ -8,10 +8,10 @@ import {
   fetchTechsProject,
   removeTechIntoProject,
   updateProject,
-} from "../function.js";
-import { log, logObj, TYPE } from "../log.js";
+} from "/src/scripts/function.js";
+import { log, logObj, TYPE } from "./log.js";
 
-function setGlobalListerner() {
+export async function setGlobalListerner() {
   const allBtnEdit = document.querySelectorAll(".edit-project");
   const allBtnDelete = document.querySelectorAll(".delete-project");
   const btnSaveProject = document.getElementById("saveProject");
@@ -35,6 +35,10 @@ function setGlobalListerner() {
     const form = document.getElementById("projectForm");
     saveProject(form);
   });
+const technologies = await fetchTechs();
+document.getElementById("new-proj").addEventListener("click", (e) => {
+  openProjectModal(technologies);
+});
 }
 
 async function openProjectModal(technologies, id = null) {
@@ -214,7 +218,7 @@ function deleteProject(pid) {
   modal.show()
 }
 
-async function renderProjects() {
+export async function initTabProjects() {
   const list = document.getElementById("projectsList");
   list.innerHTML = "";
   const projects = await fetchProjects();
@@ -283,9 +287,4 @@ async function renderProjects() {
   })
 }
 
-const technologies = await fetchTechs();
-await renderProjects();
-document.getElementById("new-proj").addEventListener("click", (e) => {
-  openProjectModal(technologies);
-});
-setGlobalListerner();
+

@@ -1,0 +1,42 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="url(#gradient)"/>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563eb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Briefcase Icon -->
+  <g filter="url(#shadow)">
+    <!-- Main briefcase body -->
+    <rect x="96" y="200" width="320" height="220" rx="20" fill="white" opacity="0.95"/>
+    
+    <!-- Briefcase handle -->
+    <path d="M 200 200 L 200 160 Q 200 140 220 140 L 292 140 Q 312 140 312 160 L 312 200" 
+          fill="none" stroke="white" stroke-width="20" stroke-linecap="round" opacity="0.95"/>
+    
+    <!-- Briefcase lock/detail -->
+    <circle cx="256" cy="310" r="24" fill="#2563eb" opacity="0.3"/>
+    <rect x="244" y="310" width="24" height="40" rx="4" fill="#2563eb" opacity="0.3"/>
+    
+    <!-- Top accent line -->
+    <rect x="96" y="200" width="320" height="30" rx="20" fill="white" opacity="0.2"/>
+    
+    <!-- Side details -->
+    <rect x="96" y="220" width="8" height="180" fill="#1e293b" opacity="0.1"/>
+    <rect x="408" y="220" width="8" height="180" fill="#1e293b" opacity="0.1"/>
+  </g>
+  
+  <!-- Small decorative dots -->
+  <circle cx="140" cy="360" r="6" fill="white" opacity="0.4"/>
+  <circle cx="372" cy="360" r="6" fill="white" opacity="0.4"/>
+</svg>

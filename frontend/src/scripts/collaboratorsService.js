@@ -1,11 +1,42 @@
-import { CollaboratorCreate } from "../class.js";
+import { CollaboratorCreate } from "/src/scripts/class.js";
 import {
   addCollaborator,
   delCollaborator,
   fetchCollabs,
   updateCollaborator,
-} from "../function.js";
-import { log, logObj, TYPE } from "../log.js";
+} from "/src/scripts/function.js";
+import { log, logObj, TYPE } from "/src/scripts/log.js";
+
+export function setupAllEventListener() {
+  const allBtnEdit = document.querySelectorAll(".edit-collab");
+const allBtnDelete = document.querySelectorAll(".delete-collab");
+const btnSaveCollab = document.getElementById("btn-save-collab");
+const btnAddCollab = document.getElementById("btn-add-collab");
+
+allBtnDelete.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const id = btn.id.split("_")[1];
+    log(TYPE.DEBUG, `Open modal id : ${id}`);
+    deleteCollab(id);
+  });
+});
+allBtnEdit.forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const id = btn.id.split("_")[1];
+    log(TYPE.DEBUG, `Open modal id : ${id}`);
+    await openCollabModal(id);
+  });
+});
+
+btnSaveCollab.addEventListener("click", async () => {
+  await saveCollab();
+});
+
+btnAddCollab.addEventListener("click", () => {
+  openCollabModal().then((r) => {});
+});
+
+}
 
 async function openCollabModal(id = null) {
   const modal = new bootstrap.Modal(document.getElementById("collabModal"));
@@ -71,7 +102,7 @@ function deleteCollab(id) {
   document.getElementById("text-del").innerHTML =
     "Êtes-vous sûr de vouloir supprimer ce collaborateur ?";
   modal.show();
-  btnDelCollab.addEventListener("click", async () => {
+  document.getElementById("btn-del-collab").addEventListener("click", async () => {
     try {
       await delCollaborator(id);
 
@@ -83,7 +114,7 @@ function deleteCollab(id) {
   });
 }
 
-async function renderCollaborators() {
+export async function initTabCollabs() {
   const list = document.getElementById("collabList");
   const collabs = await fetchCollabs();
   for (const c of collabs) {
@@ -102,7 +133,7 @@ async function renderCollaborators() {
                         <img alt="github url ${fullname}" src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/github.svg" width=20 height=20/>
                     </a>
                     <a href="${c.portfolio_url}" target="_blank" style="text-decoration: none">
-                        <img alt="portfolio url ${fullname}"  src="/code.png" width=20 height=20/>
+                        <img alt="portfolio url ${fullname}"  src="/public/code-solid.svg" width=20 height=20/>
                     </a>
                 </td>
                 <td class="table-actions">
@@ -117,33 +148,3 @@ async function renderCollaborators() {
         `;
   }
 }
-
-await renderCollaborators();
-const allBtnEdit = document.querySelectorAll(".edit-collab");
-const allBtnDelete = document.querySelectorAll(".delete-collab");
-const btnSaveCollab = document.getElementById("btn-save-collab");
-const btnAddCollab = document.getElementById("btn-add-collab");
-const btnDelCollab = document.getElementById("btn-del-collab");
-
-allBtnDelete.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const id = btn.id.split("_")[1];
-    log(TYPE.DEBUG, `Open modal id : ${id}`);
-    deleteCollab(id);
-  });
-});
-allBtnEdit.forEach((btn) => {
-  btn.addEventListener("click", async () => {
-    const id = btn.id.split("_")[1];
-    log(TYPE.DEBUG, `Open modal id : ${id}`);
-    await openCollabModal(id);
-  });
-});
-
-btnSaveCollab.addEventListener("click", async () => {
-  await saveCollab();
-});
-
-btnAddCollab.addEventListener("click", () => {
-  openCollabModal().then((r) => {});
-});

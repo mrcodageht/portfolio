@@ -1,31 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mrcfolio - Medias</title>
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      rel="stylesheet"
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
-      rel="stylesheet"
-    />
-    <link href="main.css" rel="stylesheet" />
-  </head>
+import { initMedia, setupAllEventListener } from "../scripts/mediasService"
+import { unloader } from "../utils"
 
-  <body>
-    <!-- Sidebar -->
-    <div class="sidebar"></div>
+export async function renderMedias() {
+    document.getElementById("main").innerHTML = `
 
-    <!-- Main Content -->
     <div
       class="main-content d-flex justify-content-center align-items-center vh-100"
       id="main-content-loader"
@@ -168,10 +146,8 @@
         </div>
       </div>
     </div>
-    <script src="scripts/medias.js" defer type="module"></script>
-    <script src="main.js" defer type="module"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script src="scripts/login.js" type="module"></script>
-    <script src="scripts/sidebar.js"></script>
-  </body>
-</html>
+    `
+  await initMedia()
+  await setupAllEventListener()    
+   unloader()
+}

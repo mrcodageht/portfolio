@@ -3,39 +3,42 @@ import {
   deleteMediaProject,
   fetchMediasProject,
   fetchProjects,
-} from "../function.js";
+} from "/src/scripts/function.js";
 
-document.getElementById("query").addEventListener("input", async (e) => {
-  console.log("Selected proj : ", e.target.value);
-  await rendu(e.target.value);
 
-  const allBtndel = document.querySelectorAll(".delMedia");
+export async function setupAllEventListener() {
+  document.getElementById("query").addEventListener("input", async (e) => {
+    console.log("Selected proj : ", e.target.value);
+    await rendu(e.target.value);
 
-  allBtndel.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const modal = new bootstrap.Modal(
-        document.getElementById("mediaModalDel")
-      );
-      const id = btn.id.split("_")[1];
-      document.getElementById("text-del").innerHTML =
-        "Êtes-vous sûr de vouloir supprimer ce media ?";
-      document
-        .getElementById("btn-del-media")
-        .addEventListener("click", async () => {
-          await deleteMedia(id);
-        });
-      modal.show();
+    const allBtndel = document.querySelectorAll(".delMedia");
+
+    allBtndel.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const modal = new bootstrap.Modal(
+          document.getElementById("mediaModalDel")
+        );
+        const id = btn.id.split("_")[1];
+        document.getElementById("text-del").innerHTML =
+          "Êtes-vous sûr de vouloir supprimer ce media ?";
+        document
+          .getElementById("btn-del-media")
+          .addEventListener("click", async () => {
+            await deleteMedia(id);
+          });
+        modal.show();
+      });
     });
   });
-});
 
-document.getElementById("btn-add-media").addEventListener("click", () => {
-  openModalMedia();
-});
+  document.getElementById("btn-add-media").addEventListener("click", () => {
+    openModalMedia();
+  });
 
-document.getElementById("btn-save-media").addEventListener("click", () => {
-  saveMedia();
-});
+  document.getElementById("btn-save-media").addEventListener("click", () => {
+    saveMedia();
+  });
+}
 
 async function openModalMedia() {
   const modal = new bootstrap.Modal(document.getElementById("mediaModal"));
@@ -102,9 +105,11 @@ const rendu = async (pid) => {
   mediasCont.innerHTML = "";
 
   const data = await fetchMediasProject(pid);
+  
+  if (data.length > 0) {
 
-  for (const d of data) {
-    mediasCont.innerHTML += `
+    for (const d of data) {
+      mediasCont.innerHTML += `
         <div class="card" style="width: 18rem">
             ${mediaRendu(d)}
               <div class="card-body">
@@ -114,20 +119,25 @@ const rendu = async (pid) => {
                 <div class="d-flex justify-content-between align-items-center">
                 <span class="badge text-bg-info">${d.kind}</span>
 
-                <button class="btn btn-danger fs-6 delMedia" id="delete_${
-                  d.id
-                }"><i class="fa-solid fa-trash"></i></button>
+                <button class="btn btn-danger fs-6 delMedia" id="delete_${d.id
+        }"><i class="fa-solid fa-trash"></i></button>
                 </div>
               </div>
             </div>
         `;
+    }
+  } else {
+    mediasCont.innerHTML = `
+    <p class="text-center w-100 text-secondary">
+            Pas de media pour ce projet.
+          </p>
+    ` 
   }
 };
 
-const init = async () => {
+export const initMedia = async () => {
   const select = document.getElementById("query");
   const projects = await fetchProjects();
-  console.table(projects);
 
   select.innerHTML = `<option value="">Selectionner un projet</option>`;
 
@@ -138,4 +148,3 @@ const init = async () => {
   });
 };
 
-init().then((r) => {});
