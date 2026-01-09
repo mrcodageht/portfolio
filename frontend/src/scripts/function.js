@@ -1,3 +1,4 @@
+import { reload } from "../utils.js";
 import {
   Collaborator,
   CollaboratorCreate,
@@ -10,7 +11,7 @@ import {
 } from "./class.js";
 import { log, logObj, TYPE } from "./log.js";
 
-const API_BASE_URL = "http://localhost:8079/api/v1";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export const COOKIE_NAME_TOKEN = "portfolio-token";
 
 export async function fetchProjects(id = null) {
@@ -23,7 +24,7 @@ export async function fetchProjects(id = null) {
 
   const data = await resp.json();
 
-  logObj(TYPE.DEBUG, data);
+  logObj(TYPE.DEBUG, data,"","fetch project");
   const projects = [];
   /* for (const d of data) {
     projects.push(ProjectResponse.fromResponse(d));
@@ -97,6 +98,7 @@ export async function updateProject(pid, project) {
       if (resp.status === 401) {
         // supprimer le token
         deleteCookie(COOKIE_NAME_TOKEN);
+        await reload()
         throw new Error("Not authenticated or token expires");
       }
       throw new Error(`Response status : ${resp.status}`);
@@ -122,6 +124,7 @@ export async function delProject(pid) {
     if (resp.status === 401) {
       // supprimer le token
       deleteCookie(COOKIE_NAME_TOKEN);
+      await reload()
       throw new Error("Not authenticated or token expires");
     }
     throw new Error(`Response status : ${resp.status}`);
@@ -145,6 +148,7 @@ export async function addProject(project) {
       if (resp.status === 401) {
         // supprimer le token
         deleteCookie(COOKIE_NAME_TOKEN);
+        await reload()
         throw new Error("Not authenticated or token expires");
       }
       throw new Error(`Response status : ${resp.status}`);
@@ -180,6 +184,7 @@ export async function addTechIntoProject(techs, pid) {
       if (resp.status === 401) {
         // supprimer le token
         deleteCookie(COOKIE_NAME_TOKEN);
+        await reload()
         throw new Error("Not authenticated or token expires");
       }
       throw new Error(`Response status : ${resp.status}`);
@@ -209,6 +214,7 @@ export async function removeTechIntoProject(slug, pid) {
       if (resp.status === 401) {
         // supprimer le token
         deleteCookie(COOKIE_NAME_TOKEN);
+        await reload()
         throw new Error("Not authenticated or token expires");
       }
       throw new Error(`Response status : ${resp.status}`);
@@ -242,6 +248,7 @@ export async function updateTechonology(tech, tid) {
       if (resp.status === 401) {
         // supprimer le token
         deleteCookie(COOKIE_NAME_TOKEN);
+        await reload()
         throw new Error("Not authenticated or token expires");
       }
       throw new Error(`Response status : ${resp.status}`);
@@ -268,6 +275,7 @@ export async function addTechnology(tech) {
       if (resp.status === 401) {
         // supprimer le token
         deleteCookie(COOKIE_NAME_TOKEN);
+        await reload()
         throw new Error("Not authenticated or token expires");
       } else if (resp.status === 409) {
         throw new TechnologyAlreadyExists(
@@ -296,6 +304,7 @@ export async function delTechnology(tid) {
       if (resp.status === 401) {
         // supprimer le token
         deleteCookie(COOKIE_NAME_TOKEN);
+        await reload()
         throw new Error("Not authenticated or token expires");
       }
       throw new Error(`Response status : ${resp.status}`);
@@ -326,6 +335,7 @@ export async function addCollaborator(collab) {
     if (resp.status === 401) {
       // supprimer le token
       deleteCookie(COOKIE_NAME_TOKEN);
+      await reload()
       throw new Error("Not authenticated or token expires");
     }
     throw new Error(`Response status : ${resp.status}`);
@@ -349,6 +359,7 @@ export async function updateCollaborator(collab, cid) {
     if (resp.status === 401) {
       // supprimer le token
       deleteCookie(COOKIE_NAME_TOKEN);
+      await reload()
       throw new Error("Not authenticated or token expires");
     }
     throw new Error(`Response status : ${resp.status}`);
@@ -369,6 +380,7 @@ export async function delCollaborator(cid) {
     if (resp.status === 401) {
       // supprimer le token
       deleteCookie(COOKIE_NAME_TOKEN);
+      await reload()
       throw new Error("Not authenticated or token expires");
     }
     throw new Error(`Response status : ${resp.status}`);
@@ -384,9 +396,8 @@ export async function fetchMediasProject(pid) {
     for (const d of data) {
       medias.push(MediaProject.fromResponse(d));
     }
-    console.table(medias);
     return medias;
-  }
+  } 
 }
 
 export async function addMediaToProject(media, pid) {
@@ -405,6 +416,7 @@ export async function addMediaToProject(media, pid) {
     if (resp.status === 401) {
       // supprimer le token
       deleteCookie(COOKIE_NAME_TOKEN);
+      await reload()
       throw new Error("Not authenticated or token expires");
     }
     throw new Error(`Response status : ${resp.status}`);
@@ -425,13 +437,14 @@ export async function deleteMediaProject(id) {
     if (resp.status === 401) {
       // supprimer le token
       deleteCookie(COOKIE_NAME_TOKEN);
+      await reload()
       throw new Error("Not authenticated or token expires");
     }
     throw new Error(`Response status : ${resp.status}`);
   }
 }
 
-export async function login(credentials) {
+export async function postLogin(credentials) {
   const resp = await fetch(`${API_BASE_URL}/users/login`, {
     method: "POST",
     body: credentials,

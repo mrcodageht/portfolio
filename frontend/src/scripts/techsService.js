@@ -1,18 +1,41 @@
-import { TechnologyCreate } from "../class.js";
+import { TechnologyCreate } from "/src/scripts/class.js";
 import {
   addTechnology,
   delTechnology,
   fetchTechs,
   updateTechonology,
-} from "../function.js";
+} from "/src/scripts/function.js";
 
-function setupAllEventListener() {
+export function setupAllEventListener() {
+const allBtnDelete = document.querySelectorAll(".delete-tech");
+
+const allBtnEdit = document.querySelectorAll(".edit-tech");
+const btnSaveTech = document.getElementById("btn-save-tech");
+
+
   document.body.addEventListener("click", (e) => {
     if (e.target.id === "new-tech") {
       openTechModal();
       return;
     }
   });
+allBtnDelete.forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    const id = btn.id.split("-");
+    deleteTech(id[1]);
+  });
+});
+allBtnEdit.forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const id = btn.id.split("-");
+    await openTechModal(id[1]);
+  });
+});
+
+btnSaveTech.addEventListener("click", () => {
+  saveTech();
+});
+
 }
 
 async function openTechModal(id = null) {
@@ -98,7 +121,7 @@ function deleteTech(id) {
   document.getElementById("text-del").innerHTML =
     "Êtes-vous sûr de vouloir supprimer cette technologie ?";
   modal.show();
-  btnDelTech.addEventListener("click", async () => {
+  document.getElementById("btn-del-tech").addEventListener("click", async () => {
     try {
       await delTechnology(id);
 
@@ -110,7 +133,7 @@ function deleteTech(id) {
   });
 }
 
-async function renderTechnologies() {
+export async function initTabTechs() {
   const list = document.getElementById("techList");
   const technologies = await fetchTechs();
   list.innerHTML = "";
@@ -137,29 +160,6 @@ async function renderTechnologies() {
                 </tr>
             `;
   }
+
 }
 
-await renderTechnologies();
-setupAllEventListener();
-const allBtnDelete = document.querySelectorAll(".delete-tech");
-
-const allBtnEdit = document.querySelectorAll(".edit-tech");
-const btnSaveTech = document.getElementById("btn-save-tech");
-const btnDelTech = document.getElementById("btn-del-tech");
-
-allBtnDelete.forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    const id = btn.id.split("-");
-    deleteTech(id[1]);
-  });
-});
-allBtnEdit.forEach((btn) => {
-  btn.addEventListener("click", async () => {
-    const id = btn.id.split("-");
-    await openTechModal(id[1]);
-  });
-});
-
-btnSaveTech.addEventListener("click", () => {
-  saveTech();
-});
