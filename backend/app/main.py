@@ -1,3 +1,4 @@
+from app.schemas.token_schema import KeyInit
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from starlette import status
@@ -13,12 +14,8 @@ from app.services.services_user import UserService
 from starlette.middleware.cors import CORSMiddleware
 
 generated_key = settings.KEY_INIT
-app = FastAPI(
-    title=settings.PROJECT_NAME,
-    version=settings.API_VERSION
-)
-origins = ["*"
-]
+app = FastAPI(title=settings.PROJECT_NAME, version=settings.API_VERSION)
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,22 +26,24 @@ app.add_middleware(
 )
 #
 
+
 @app.get("/", response_class=HTMLResponse)
 def root():
     return landing_page.landing_page
 
+
 @app.post("/api/v1/init", status_code=status.HTTP_204_NO_CONTENT)
-def init(key: str, service: UserService = Depends(UserService)):
-    if key == generated_key:
+def init(payload: KeyInit, service: UserService = Depends(UserService)):
+    if payload.key == generated_key:
         service.create_default_admin()
     else:
         raise HTTPException(
-            detail=f"Not authorized.",
-            status_code= status.HTTP_403_FORBIDDEN
+            detail=f"Not authorized.", status_code=status.HTTP_403_FORBIDDEN
         )
-    
+
+
 @app.get("/api/v1/stats", response_model=Stats, status_code=status.HTTP_200_OK)
-def stats(services : RessourceService = Depends(RessourceService)):
+def stats(services: RessourceService = Depends(RessourceService)):
     return services.get_stats()
 
 
@@ -57,5 +56,7 @@ app.include_router(user_router.router, prefix="/api/v1")
 def get_service():
     return UserService()
 
+
 def get_ressource():
     return RessourceService()
+
