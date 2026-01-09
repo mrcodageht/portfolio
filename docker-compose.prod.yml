@@ -48,17 +48,6 @@ services:
       - ${PORT:-8079}:8079
     volumes:
       - ./medias:/code/medias
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/app
-          target: /code/app
-          ignore:
-            - "**/__pycache__"
-            - "**/*.pyc"
-            - "**/.pytest_cache"
-        - action: rebuild
-          path: ./backend/requirements.txt
 
   # container pour l'authentification
   auth:
@@ -72,33 +61,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./auth/app/
-          target: /code/app
-          ignore:
-            - "**/__pycache__"
-            - "**/*.pyc"
-            - "**/.pytest_cache"
-        - action: rebuild
-          path: ./auth/requirements.txt
 
   front-portfolio:
     container_name: front-portfolio
     build:
       context: ./frontend/
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.prod
     ports:
       - "8073:80"
     restart: always
-    volumes:
-      - ./frontend/:/usr/share/nginx/html/
-    develop:
-      watch:
-        - action: sync
-          path: ./frontend/
-          target: /usr/share/nginx/html/
 
   medias:
     container_name: medias
