@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../main.js";
 import { reload } from "../utils.js";
 import {
   Collaborator,
@@ -11,7 +12,6 @@ import {
 } from "./class.js";
 import { log, logObj, TYPE } from "./log.js";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export const COOKIE_NAME_TOKEN = "portfolio-token";
 
 export async function fetchProjects(id = null) {

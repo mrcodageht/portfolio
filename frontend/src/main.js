@@ -4,8 +4,9 @@ import { renderSidebar } from "./components/sidebar.js";
 import './style.css'
 import { login } from "./views/login.js";
 
-log(TYPE.DEBUG, "Script charge!");
 
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL??'/api/v1';
 
 login().then(() => {
   router()
