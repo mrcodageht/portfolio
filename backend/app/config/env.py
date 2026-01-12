@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     
     KEY_INIT: str
     SERVER_MEDIA: str = "http://localhost:8071"
+    AUTO_SETUP: bool = True
 
 
 settings = Settings()

@@ -1,3 +1,4 @@
+import { navigateTo } from "../components/sidebar";
 import { TechnologyCreate } from "/src/scripts/class.js";
 import {
   addTechnology,
@@ -32,8 +33,8 @@ allBtnEdit.forEach((btn) => {
   });
 });
 
-btnSaveTech.addEventListener("click", () => {
-  saveTech();
+btnSaveTech.addEventListener("click", async () => {
+  await saveTech();
 });
 
 }
@@ -45,14 +46,7 @@ async function openTechModal(id = null) {
   const modal = new bootstrap.Modal(document.getElementById("techModal"));
   const title = document.getElementById("techModalTitle");
   const selectList = document.getElementById("techCategory");
-  // let compt = 0
-  // for (const t of technologies) {
-  //     compt++
-  //     selectList.innerHTML += `
-  //         <option value="">${t.type}</option>
-
-  //     `
-  // }
+  
   if (id) {
     const tech = await fetchTechs(id);
     title.textContent = "Modifier la Technologie";
@@ -107,12 +101,8 @@ async function saveTech() {
       console.error(error);
     }
   }
-
-  //renderTechnologies();
-  //updateStats();
   bootstrap.Modal.getInstance(document.getElementById("techModal")).hide();
-
-  window.location.href = window.location.href;
+  navigateTo("technologies")
 }
 
 function deleteTech(id) {
@@ -122,14 +112,13 @@ function deleteTech(id) {
     "Êtes-vous sûr de vouloir supprimer cette technologie ?";
   modal.show();
   document.getElementById("btn-del-tech").addEventListener("click", async () => {
-    try {
-      await delTechnology(id);
-
-      window.location.href = window.location.href;
-    } catch (error) {
-      console.log(error);
-      window.location.href = window.location.href;
-    }
+    delTechnology(id).then(() => {
+      modal.hide()
+      navigateTo("technologies")
+    }).catch(err => {
+      navigateTo("technologies")
+      console.error(err)
+    })
   });
 }
 
@@ -137,8 +126,6 @@ export async function initTabTechs() {
   const list = document.getElementById("techList");
   const technologies = await fetchTechs();
   list.innerHTML = "";
-
-  //<td>${t.level}</td>
   for (const t of technologies) {
     let idEdit = `edit-${t.id}`;
     let idDelete = `delete-${t.id}`;

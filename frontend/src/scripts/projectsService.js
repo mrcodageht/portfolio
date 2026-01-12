@@ -1,3 +1,4 @@
+import { navigateTo } from "../components/sidebar.js";
 import { Project, TechnologyProjectCreate } from "./class.js";
 import {
   addProject,
@@ -9,7 +10,6 @@ import {
   removeTechIntoProject,
   updateProject,
 } from "/src/scripts/function.js";
-import { log, logObj, TYPE } from "./log.js";
 
 export async function setGlobalListerner() {
   const allBtnEdit = document.querySelectorAll(".edit-project");
@@ -26,14 +26,15 @@ export async function setGlobalListerner() {
   allBtnEdit.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const id = btn.id.split("-");
-      log(TYPE.DEBUG, `Edit du projet ${id[1]}`);
       openProjectModal(technologies, id[1]);
     });
   });
 
   btnSaveProject.addEventListener("click", (e) => {
     const form = document.getElementById("projectForm");
-    saveProject(form);
+    saveProject(form).then(() => {
+      navigateTo("projects")
+    })
   });
 const technologies = await fetchTechs();
 document.getElementById("new-proj").addEventListener("click", (e) => {
@@ -128,6 +129,10 @@ async function openProjectModal(technologies, id = null) {
 }
 
 async function saveProject(form) {
+const modalEl = document.getElementById("projectModal");
+  const modal = bootstrap.Modal.getInstance(modalEl);
+
+
   const id = document.getElementById("projectId").value;
   const technologies = document.getElementsByName("stack-tech");
   const endDate = document.getElementById("projectDateEnd").value;
@@ -135,7 +140,6 @@ async function saveProject(form) {
 
   technologies.forEach((t) => {
     if (t.checked) {
-      console.log("Tech checked : ", t.value);
       techs.push(new TechnologyProjectCreate(t.value));
     }
   });
@@ -153,19 +157,15 @@ async function saveProject(form) {
   );
 
   if (id) {
-    logObj(TYPE.DEBUG, project, "project a cree : ");
-    try {
       const projectUpdated = await updateProject(id, project);
       //   on va mettre a jour les technologies du projects aussi
       let techsProject = await fetchTechsProject(projectUpdated.pid);
-      console.log("techs project : ", techsProject);
       const techMapped = [];
       for (const t of techsProject) {
         techMapped.push(new TechnologyProjectCreate(t.slug));
       }
       //    les technologie a enlever
       techMapped.forEach(async (t) => {
-        console.log("tech : ", t);
         const isExists = techs.find((tp) => tp.slug === t.slug);
         if (!isExists) {
           // on enleve
@@ -174,30 +174,18 @@ async function saveProject(form) {
       });
 
       await addTechIntoProject(techs, projectUpdated.pid);
-    } catch (error) {
-      // on recharge la page
-      console.error(error);
-      window.location.href = window.location.href;
-      return;
-    }
+      modal.hide();
+    return
   } else {
-    try {
       const projectCreated = await addProject(project)
       
       await addTechIntoProject(techs, projectCreated.pid);
-    } catch (error) {
-      console.error(error);
-      window.location.href = window.location.href;
-      return;
-    }
     projects.push(project);
+    
+    modal.hide();
+    return
   }
 
-  const modalEl = document.getElementById("projectModal");
-  const modal = bootstrap.Modal.getInstance(modalEl);
-  modal.hide();
-
-  window.location.href = window.location.href;
 }
 
 function deleteProject(pid) {
@@ -206,13 +194,14 @@ function deleteProject(pid) {
 
   document.getElementById("text-del").innerHTML = "Êtes-vous sûr de vouloir supprimer ce projet ?"
   document.getElementById("btn-del-proj").addEventListener('click', async () => {
-    console.log("Demande de suppression");
-    try {
-      await delProject(pid)
-    } catch (error) {
-        console.error(error);
-      }
-    window.location.href = window.location.href;
+    delProject(pid).then(() => {
+        modal.hide()
+        navigateTo("projects")
+    }).catch(err => {
+      console.error(err);
+      modal.hide()
+        navigateTo("projects")
+      })
   })
   
   modal.show()
@@ -222,22 +211,29 @@ export async function initTabProjects() {
   const list = document.getElementById("projectsList");
   list.innerHTML = "";
   const projects = await fetchProjects();
-  logObj(TYPE.INFO, projects);
-  for (const p of projects) {
+  if (projects.length < 1) {
+    list.innerHTML = `
+      <tr class="w-100">
+        <span class="text-center w-100 text-secondary">Pas de projects</span>
+      </tr>
+    `
+    
+  } else {
+    for (const p of projects) {
 
   
-    let idEdit = `edit-${p.pid}`;
-    let idDelete = `delete-${p.pid}`;
-    let badgeClass = "";
-    if (p.status === "in_progress") {
-      badgeClass = "text-bg-success";
-    } else if (p.status === "planning") {
-      badgeClass = "text-bg-warning";
-    } else if (p.status === "finished") {
-      badgeClass = "text-bg-secondary";
-    }
+      let idEdit = `edit-${p.pid}`;
+      let idDelete = `delete-${p.pid}`;
+      let badgeClass = "";
+      if (p.status === "in_progress") {
+        badgeClass = "text-bg-success";
+      } else if (p.status === "planning") {
+        badgeClass = "text-bg-warning";
+      } else if (p.status === "finished") {
+        badgeClass = "text-bg-secondary";
+      }
     
-        list.innerHTML += `
+      list.innerHTML += `
                 <tr>
                     <td><strong>${p.title}</strong></td>
 
@@ -245,9 +241,8 @@ export async function initTabProjects() {
                     
                     <td>${new Date(p.start_at).toLocaleDateString("fr-FR")}</td>
                     <td>
-                        <span class="badge rounded-pill ${badgeClass}">${
-      p.status
-    }</span>
+                        <span class="badge rounded-pill ${badgeClass}">${p.status
+        }</span>
                     </td>
                     <td>
                     
@@ -264,27 +259,28 @@ export async function initTabProjects() {
                 </tr>
             `;
 
-    /* document.getElementById(idEdit).addEventListener('click', e => openProjectModal(p.pid))
-        document.getElementById(idDelete).addEventListener('click', e => deleteProject(p.pid)) */
-  }
+      /* document.getElementById(idEdit).addEventListener('click', e => openProjectModal(p.pid))
+          document.getElementById(idDelete).addEventListener('click', e => deleteProject(p.pid)) */
+    }
 
-  document.querySelectorAll(".voir-tech").forEach(btn => {
-    btn.addEventListener('click', async (e) => {
+    document.querySelectorAll(".voir-tech").forEach(btn => {
+      btn.addEventListener('click', async (e) => {
 
-  const modal = new bootstrap.Modal(document.getElementById("projectModalTech"));
-      const pid = e.currentTarget.getAttribute("data-tech-id")
+        const modal = new bootstrap.Modal(document.getElementById("projectModalTech"));
+        const pid = e.currentTarget.getAttribute("data-tech-id")
 
-      const bodyTech = document.getElementById("body-tech-proj")
-      bodyTech.innerHTML = ""
-      const techs = await fetchTechsProject(pid)
-      techs.forEach(t => {
-       bodyTech.innerHTML +=` 
+        const bodyTech = document.getElementById("body-tech-proj")
+        bodyTech.innerHTML = ""
+        const techs = await fetchTechsProject(pid)
+        techs.forEach(t => {
+          bodyTech.innerHTML += ` 
         <span class="badge-tech">${t.name}</span>
         `
+        })
+        modal.show()
       })
-      modal.show()
     })
-  })
+  }
 }
 
 

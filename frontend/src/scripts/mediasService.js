@@ -1,3 +1,4 @@
+import { navigateTo } from "../components/sidebar";
 import {
   addMediaToProject,
   deleteMediaProject,
@@ -8,7 +9,6 @@ import {
 
 export async function setupAllEventListener() {
   document.getElementById("query").addEventListener("input", async (e) => {
-    console.log("Selected proj : ", e.target.value);
     await rendu(e.target.value);
 
     const allBtndel = document.querySelectorAll(".delMedia");
@@ -24,7 +24,10 @@ export async function setupAllEventListener() {
         document
           .getElementById("btn-del-media")
           .addEventListener("click", async () => {
-            await deleteMedia(id);
+            deleteMedia(id).then(() => {
+              modal.hide()
+              navigateTo("medias")
+            })
           });
         modal.show();
       });
@@ -36,14 +39,15 @@ export async function setupAllEventListener() {
   });
 
   document.getElementById("btn-save-media").addEventListener("click", () => {
-    saveMedia();
+    saveMedia().then(() => {
+      navigateTo("medias")
+    }).catch(err => console.error(err));
   });
 }
 
 async function openModalMedia() {
   const modal = new bootstrap.Modal(document.getElementById("mediaModal"));
   const mediaProjectSelect = document.getElementById("mediaProject");
-  const title = document.getElementById("mediaModalTitle");
   const projects = await fetchProjects();
 
   mediaProjectSelect.innerHTML = "";
@@ -60,11 +64,8 @@ async function openModalMedia() {
 async function deleteMedia(id) {
   try {
     await deleteMediaProject(id);
-
-    window.location.href = window.location.href;
   } catch (error) {
     console.log(error);
-    window.location.href = window.location.href;
   }
 }
 
@@ -75,14 +76,8 @@ async function saveMedia() {
   fd.append("alt_text", document.getElementById("mediaAltText").value);
   fd.append("kind", document.getElementById("mediaKind").value);
   fd.append("file", document.getElementById("mediaFile").files[0]);
-  try {
-    await addMediaToProject(fd, projectId);
-  } catch (err) {
-    console.error(err);
-    return;
-  }
-  window.location.href = window.location.href;
-
+  
+  await addMediaToProject(fd, projectId);
   modal.hide();
 }
 

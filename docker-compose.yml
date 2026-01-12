@@ -48,6 +48,12 @@ services:
       - ${PORT:-8079}:8079
     volumes:
       - ./medias:/code/medias
+    healthcheck:
+      test: curl -f http://localhost:8079/api/v1/healthcheck || exit 1
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
     develop:
       watch:
         - action: sync+restart
@@ -90,16 +96,18 @@ services:
       context: ./frontend/
       dockerfile: Dockerfile.dev
     ports:
-      - "8073:80"
+      - "8073:5173"
     restart: always
-    volumes:
-      - ./frontend/:/usr/share/nginx/html/
     develop:
       watch:
         - action: sync
-          path: ./frontend/
-          target: /usr/share/nginx/html/
-
+          path: ./frontend/public/
+          target: /app/public
+        - action: sync
+          path: ./frontend/src/
+          target: /app/src/
+        - action: rebuild
+          path: ./frontend/package.json
   medias:
     container_name: medias
     image: nginx:alpine

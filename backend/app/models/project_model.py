@@ -119,3 +119,4 @@ class UserModel(Base):
     hashed_password = Column(String)
     created_at = Column(TIMESTAMP, server_default=func.now())
     admin = Column(Boolean)
+    is_valid = Column(Boolean, default=True)

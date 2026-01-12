@@ -1,7 +1,9 @@
+import { COOKIE_NAME_TOKEN } from "../main.js";
 import { router } from "../router.js";
+import { deleteCookie } from "../scripts/function.js";
 
 export async function renderSidebar() {
-    document.querySelector('.sidebar').innerHTML =  /* html */ `
+  document.querySelector(".sidebar").innerHTML = /* html */ `
         <div class="sidebar-brand">
             <i class="fas fa-briefcase"></i> Mrcfolio CMS
         </div>
@@ -40,41 +42,42 @@ export async function renderSidebar() {
             </li>
         </ul>
         <div class="d-flex justify-content-center align-items-end w-100 mt-5">
-            <button class="btn btn-danger w-100 mx-2">Deconnexion</button>
+            <button class="btn btn-danger w-100 mx-2" id="btn-logout">Deconnexion</button>
         </div>
     
     `;
-    
-    setupNavigation()
-    setupAllEventListener()
-    setNav()
-    
+
+  setupNavigation();
+  setupAllEventListener();
+  setNav();
 }
 const cleanNav = () => {
-    document.querySelectorAll(".menu-link").forEach(m => m.classList.remove('active')) 
-}
+  document
+    .querySelectorAll(".menu-link")
+    .forEach((m) => m.classList.remove("active"));
+};
 
 export function setNav(url = undefined) {
-    cleanNav()
-    url = window.location.pathname
-    const sidebar = document.querySelector('.sidebar')
-    if (sidebar == undefined && sidebar == null) {
-        return
-    }
-    if (url === "/projects") {
-        document.getElementById("project-link").classList.add('active')
-    }else if ( url === "/collaborators") {
-        document.getElementById("collab-link").classList.add('active')
-    }else if (url === "/medias") {
-        document.getElementById("media-link").classList.add('active')
-    }else if ( url === "/technologies") {
-        document.getElementById("tech-link").classList.add('active')
-    }else if ( url ==="/" ) {
-        document.getElementById("dashboard-link").classList.add('active')
-    }
+  cleanNav();
+  url = window.location.pathname;
+  const sidebar = document.querySelector(".sidebar");
+  if (sidebar == undefined && sidebar == null) {
+    return;
+  }
+  if (url === "/projects") {
+    document.getElementById("project-link").classList.add("active");
+  } else if (url === "/collaborators") {
+    document.getElementById("collab-link").classList.add("active");
+  } else if (url === "/medias") {
+    document.getElementById("media-link").classList.add("active");
+  } else if (url === "/technologies") {
+    document.getElementById("tech-link").classList.add("active");
+  } else if (url === "/") {
+    document.getElementById("dashboard-link").classList.add("active");
+  }
 }
 
-function navigateTo(view) {
+export function navigateTo(view) {
   const map = {
     dashboard: "/",
     projects: "/projects",
@@ -85,11 +88,11 @@ function navigateTo(view) {
 
   history.pushState({}, "", map[view]);
   router();
-    setNav()
+  setNav();
 }
 
 function setupNavigation() {
-  document.querySelector(".sidebar").addEventListener("click", e => {
+  document.querySelector(".sidebar").addEventListener("click", (e) => {
     const link = e.target.closest(".menu-link");
     if (!link) return;
 
@@ -98,62 +101,61 @@ function setupNavigation() {
     navigateTo(view);
   });
 }
-function setupAllEventListener() {
-    document.addEventListener("DOMContentLoaded", function () {
-  const hamburger = document.createElement("button");
-  hamburger.className = "hamburger-btn";
-  hamburger.innerHTML = '<i class="fas fa-bars"></i>';
-  hamburger.setAttribute("aria-label", "Toggle menu");
-  document.body.appendChild(hamburger);
 
-  const overlay = document.createElement("div");
-  overlay.className = "sidebar-overlay";
-  document.body.appendChild(overlay);
-
-  const hamburgerBtn = document.querySelector(".hamburger-btn");
+function toggleSidebar() {
   const sidebar = document.querySelector(".sidebar");
-  const sidebarOverlay = document.querySelector(".sidebar-overlay");
-  const menuLinks = document.querySelectorAll(".sidebar-menu a");
+  sidebar.classList.toggle("active");
+  sidebarOverlay.classList.toggle("active");
 
-  function toggleSidebar() {
-    sidebar.classList.toggle("active");
-    sidebarOverlay.classList.toggle("active");
-
-    const icon = hamburgerBtn.querySelector("i");
-    if (sidebar.classList.contains("active")) {
-      icon.className = "fas fa-times";
-    } else {
-      icon.className = "fas fa-bars";
-    }
-  }
-
-  function closeSidebar() {
-    sidebar.classList.remove("active");
-    sidebarOverlay.classList.remove("active");
-    const icon = hamburgerBtn.querySelector("i");
+  const icon = hamburgerBtn.querySelector("i");
+  if (sidebar.classList.contains("active")) {
+    icon.className = "fas fa-times";
+  } else {
     icon.className = "fas fa-bars";
   }
+}
 
-  hamburgerBtn.addEventListener("click", toggleSidebar);
-  sidebarOverlay.addEventListener("click", closeSidebar);
+function closeSidebar() {
+  const sidebar = document.querySelector(".sidebar");
 
-  menuLinks.forEach((link) => {
-    link.addEventListener("click", function () {
-      if (window.innerWidth <= 992) {
+  sidebar.classList.remove("active");
+  sidebarOverlay.classList.remove("active");
+  const icon = hamburgerBtn.querySelector("i");
+  icon.className = "fas fa-bars";
+}
+function setupAllEventListener() {
+    const hamburger = document.createElement("button");
+    hamburger.className = "hamburger-btn";
+    hamburger.innerHTML = '<i class="fas fa-bars"></i>';
+    hamburger.setAttribute("aria-label", "Toggle menu");
+    document.body.appendChild(hamburger);
+
+    const overlay = document.createElement("div");
+    overlay.className = "sidebar-overlay";
+    document.body.appendChild(overlay);
+
+    const hamburgerBtn = document.querySelector(".hamburger-btn");
+    const sidebarOverlay = document.querySelector(".sidebar-overlay");
+    const menuLinks = document.querySelectorAll(".sidebar-menu a");
+
+    hamburgerBtn.addEventListener("click", toggleSidebar);
+    sidebarOverlay.addEventListener("click", closeSidebar);
+
+    menuLinks.forEach((link) => {
+      link.addEventListener("click", function () {
+        if (window.innerWidth <= 992) {
+          closeSidebar();
+        }
+      });
+    });
+
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 992) {
         closeSidebar();
       }
     });
-  });
-
-  window.addEventListener("resize", function () {
-    if (window.innerWidth > 992) {
-      closeSidebar();
-    }
-  });
-});
-
+  document.getElementById("btn-logout").addEventListener('click', () => {
+    deleteCookie(COOKIE_NAME_TOKEN)
+      window.location.href = window.location.href
+    })
 }
-
-
-
-

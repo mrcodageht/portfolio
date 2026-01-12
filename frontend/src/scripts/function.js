@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../main.js";
+import { API_BASE_URL, COOKIE_NAME_TOKEN } from "../main.js";
 import { reload } from "../utils.js";
 import {
   Collaborator,
@@ -10,9 +10,7 @@ import {
   TechnologyCreate,
   TechnologyProjectCreate,
 } from "./class.js";
-import { log, logObj, TYPE } from "./log.js";
 
-export const COOKIE_NAME_TOKEN = "portfolio-token";
 
 export async function fetchProjects(id = null) {
   let resp = null;
@@ -23,12 +21,6 @@ export async function fetchProjects(id = null) {
   }
 
   const data = await resp.json();
-
-  logObj(TYPE.DEBUG, data,"","fetch project");
-  const projects = [];
-  /* for (const d of data) {
-    projects.push(ProjectResponse.fromResponse(d));
-  } */
   return data;
 }
 
@@ -40,7 +32,6 @@ export async function fetchTechs(id = null) {
     resp = await fetch(`${API_BASE_URL}/technologies`);
   }
   const techs = await resp.json();
-  logObj(TYPE.DEBUG, techs);
   return techs;
 }
 
@@ -60,21 +51,18 @@ export async function fetchTechsProject(pid) {
 export async function fetchCollabs(id = null) {
   let resp = null;
   if (id) {
-    log(TYPE.DEBUG, `id : ${id}`);
     resp = await fetch(`${API_BASE_URL}/collaborators/${id}`);
   } else {
     resp = await fetch(`${API_BASE_URL}/collaborators`);
   }
 
   const collabs = await resp.json();
-  logObj(TYPE.DEBUG, collabs);
   return collabs;
 }
 
 export async function fetchStats() {
   const resp = await fetch(`${API_BASE_URL}/stats`);
   const stats = await resp.json();
-  logObj(TYPE.DEBUG, stats);
   return stats;
 }
 
@@ -481,6 +469,6 @@ function getAuthToken() {
   return authHeader;
 }
 
-function deleteCookie(name) {
+export function deleteCookie(name) {
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;SameSite=Strict`;
 }

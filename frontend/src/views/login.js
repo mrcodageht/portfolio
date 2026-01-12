@@ -1,8 +1,8 @@
 
+import { COOKIE_NAME_TOKEN } from "../main";
 import { postLogin } from "../scripts/function";
-import { COOKIE_NAME_TOKEN, getCookie, setCookie } from "/src/scripts/function.js";
+import { getCookie, setCookie } from "/src/scripts/function.js";
 
-import { log, logObj, TYPE } from "/src/scripts/log.js";
 export async function renderLogin() {
     
     document.body.innerHTML = `
@@ -52,7 +52,6 @@ const loginForm = document.getElementById("login-form");
           document.getElementById("span-error").innerHTML =
             "Identifiants de connexions invalides";
         } else {
-          log(TYPE.DEBUG, "Connexion reussie");
 
           setCookie(COOKIE_NAME_TOKEN, token.access_token, 1);
           const loader = document.getElementById("main-content-loader");
