@@ -128,7 +128,7 @@ export async function initTabCollabs() {
                         <img alt="github url ${fullname}" src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/github.svg" width=20 height=20/>
                     </a>
                     <a href="${c.portfolio_url}" target="_blank" style="text-decoration: none">
-                        <img alt="portfolio url ${fullname}"  src="/public/code-solid.svg" width=20 height=20/>
+                        <img alt="portfolio url ${fullname}"  src="/code-solid.svg" width=20 height=20/>
                     </a>
                 </td>
                 <td class="table-actions">
