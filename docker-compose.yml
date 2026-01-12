@@ -98,8 +98,6 @@ services:
     ports:
       - "8073:5173"
     restart: always
-    volumes:
-      - ./frontend/:/usr/share/nginx/html/
     develop:
       watch:
         - action: sync

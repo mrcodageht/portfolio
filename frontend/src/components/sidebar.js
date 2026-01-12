@@ -74,7 +74,7 @@ export function setNav(url = undefined) {
     }
 }
 
-function navigateTo(view) {
+export function navigateTo(view) {
   const map = {
     dashboard: "/",
     projects: "/projects",

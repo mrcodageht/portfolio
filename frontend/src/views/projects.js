@@ -37,7 +37,9 @@ export async function renderProjects() {
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="projectsList"></tbody>
+                <tbody id="projectsList">
+                  
+                </tbody>
               </table>
             </div>
           </div>
