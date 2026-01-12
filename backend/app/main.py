@@ -47,6 +47,25 @@ def stats(services: RessourceService = Depends(RessourceService)):
     return services.get_stats()
 
 
+@app.get("/api/v1/healthcheck", status_code=status.HTTP_200_OK)
+def healthcheck(service: UserService = Depends(UserService)):
+    default_admin = service.default_admin()
+    if not default_admin:
+        if settings.AUTO_SETUP:
+            service.create_default_admin()
+            return {"message": "L'app was setup automatically and is healthy"}
+        raise HTTPException(
+            detail="App is unhealthy",
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE
+        )
+    elif not default_admin.is_valid:
+        raise HTTPException(
+            detail="App is unhealthy and the default admin must be create or setup",
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE
+        )
+    return {"message": "L'app is healthy"}
+
+
 app.include_router(project_router.router, prefix="/api/v1")
 app.include_router(technology_router.router, prefix="/api/v1")
 app.include_router(collaborator_router.router, prefix="/api/v1")
@@ -59,4 +78,3 @@ def get_service():
 
 def get_ressource():
     return RessourceService()
-

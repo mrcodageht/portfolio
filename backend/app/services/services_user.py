@@ -4,7 +4,7 @@ from starlette import status
 
 from app.data.dao.user_dao import UserDao
 from app.models.project_model import UserModel
-from app.schemas.user_schema import UserCreation, UserPublic
+from app.schemas.user_schema import UserCreation, UserResetPassword, UserChangePassword
 from app.services.services_auth import validate_token, get_password_hash
 from app.config.env import settings
 
@@ -43,6 +43,17 @@ class UserService:
                     admin=True,
                 )
             )
+            
+    def default_admin(self) -> UserModel:
+        user = self.dao.get_user_by_email(settings.DEFAULT_ADMIN_EMAIL)
+        return user
+
+    def update_password(self, payload_reset: UserResetPassword | None = None, payload_change: UserChangePassword | None = None ) -> bool:
+        if payload_reset:
+            hashed_password = get_password_hash(payload_reset.new_password)
+            user = self.dao.update_password(hashed_password=hashed_password)
+            return user.hashed_password == hashed_password
+        return False
 
 def get_dao():
     return UserDao()
