@@ -1,6 +1,7 @@
 
+import { COOKIE_NAME_TOKEN } from "../main";
 import { postLogin } from "../scripts/function";
-import { COOKIE_NAME_TOKEN, getCookie, setCookie } from "/src/scripts/function.js";
+import { getCookie, setCookie } from "/src/scripts/function.js";
 
 export async function renderLogin() {
     

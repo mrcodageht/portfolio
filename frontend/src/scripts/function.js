@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../main.js";
+import { API_BASE_URL, COOKIE_NAME_TOKEN } from "../main.js";
 import { reload } from "../utils.js";
 import {
   Collaborator,
@@ -11,7 +11,6 @@ import {
   TechnologyProjectCreate,
 } from "./class.js";
 
-export const COOKIE_NAME_TOKEN = "portfolio-token";
 
 export async function fetchProjects(id = null) {
   let resp = null;
@@ -470,6 +469,6 @@ function getAuthToken() {
   return authHeader;
 }
 
-function deleteCookie(name) {
+export function deleteCookie(name) {
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;SameSite=Strict`;
 }
