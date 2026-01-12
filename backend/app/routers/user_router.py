@@ -24,7 +24,13 @@ def login_user(form_data: OAuth2PasswordRequestForm = Depends(), service: AuthSe
 
 @router.patch("/change-password")
 def change_password(payload: UserChangePassword,service: UserService = Depends(UserService)):
-    pass
+    is_change = service.update_password(payload_change=payload)
+    if is_change:
+        return {"message":"Your password has been reset successfully"}
+    return {"message":"Your password has not been reset successfully"}
+
+
+    
 
 @router.patch("/reset-password", status_code=status.HTTP_200_OK)
 def reset_password(payload: UserResetPassword, service: UserService = Depends(UserService)):

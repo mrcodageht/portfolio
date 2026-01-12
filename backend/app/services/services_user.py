@@ -7,6 +7,7 @@ from app.models.project_model import UserModel
 from app.schemas.user_schema import UserCreation, UserResetPassword, UserChangePassword
 from app.services.services_auth import validate_token, get_password_hash
 from app.config.env import settings
+from app.services.services_auth import verify_password
 
 oauth2_scheme: OAuth2PasswordBearer = OAuth2PasswordBearer(tokenUrl="/api/v1/users/login")
 class UserService:
@@ -50,10 +51,22 @@ class UserService:
 
     def update_password(self, payload_reset: UserResetPassword | None = None, payload_change: UserChangePassword | None = None ) -> bool:
         if payload_reset:
-            hashed_password = get_password_hash(payload_reset.new_password)
-            user = self.dao.update_password(hashed_password=hashed_password)
-            return user.hashed_password == hashed_password
+            return self.is_change(new_password=payload_reset.new_password)
+        if payload_change:
+            user = self.dao.get_user_by_email(settings.DEFAULT_ADMIN_EMAIL)
+            if verify_password(payload_change.old_password, user.hashed_password):
+                return self.is_change(new_password=payload_change.new_password)
+            else:
+                raise HTTPException(
+                    detail="The old password is not correct",
+                    status_code=status.HTTP_400_BAD_REQUEST
+                )
         return False
+    
+    def is_change(self, new_password: str) -> bool:
+        hashed_password = get_password_hash(new_password)
+        user = self.dao.update_password(hashed_password=hashed_password)
+        return user.hashed_password == hashed_password
 
 def get_dao():
     return UserDao()
@@ -65,3 +78,5 @@ def require_admin(token: str = Depends(oauth2_scheme), service: UserService = De
     if not token_decoded.admin:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin privileges required")
     return user
+
+
