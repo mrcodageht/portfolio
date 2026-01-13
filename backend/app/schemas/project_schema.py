@@ -48,3 +48,10 @@ class ProjectUpdate(ProjectBase):
     cover_image_url: Optional[str] = None
     live_url: Optional[str] = None
     repo_url: Optional[str] = None
+
+class ProjectGithub(BaseModel):
+    name: Optional[str]
+    description: Optional[str]
+    created_at: Optional[datetime]
+    svn_url: Optional[str]
+    private: Optional[bool]
