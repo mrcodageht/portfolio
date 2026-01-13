@@ -18,9 +18,15 @@ export async function renderProjects() {
           <div>
             <h1><i class="fas fa-project-diagram"></i> Gestion des Projets</h1>
           </div>
+          <div class="d-flex justify-content-end gap-2">
           <button class="btn btn-primary" id="new-proj">
-            <i class="fas fa-plus"></i> Nouveau Projet
+            <i class="fas fa-plus"></i>
           </button>
+ <button class="btn btn-dark" id="new-proj-github">
+            <i class="fa-brands fa-github"></i> Github
+          </button>
+
+          </div>
         </div>
 
         <div class="card">
@@ -61,6 +67,8 @@ export async function renderProjects() {
             ></button>
           </div>
           <div class="modal-body">
+            <div class="alert alert-danger d-none" id="error-modal" role="alert">
+</div>
             <form id="projectForm">
               <input type="hidden" id="projectId" />
               <div class="mb-3">
@@ -216,6 +224,30 @@ export async function renderProjects() {
             </div>
             <div class="modal-body" id="body-tech-proj">
               
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="modal-git" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" >
+                Chercher votre repo
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body" id="body-proj-repo">
+            <div class="d-flex justify-content-around align-items-center gap-2">
+              <input class="form-control" id="repo-value" placeholder="Entrez le nom du repo" />
+              <input type="button" class="btn btn-primary" id="q-repo" value="rechercher"/>
+              </div>
             </div>
             
           </div>

@@ -4,7 +4,9 @@ import {
   Collaborator,
   CollaboratorCreate,
   MediaProject,
+  ProjectAlreadyExists,
   ProjectResponse,
+  RepoNotFound,
   Technology,
   TechnologyAlreadyExists,
   TechnologyCreate,
@@ -46,6 +48,15 @@ export async function fetchTechsProject(pid) {
     return techs;
   }
   throw new Error(`Response status : ${resp.status}`);
+}
+
+export async function fetchRepoGithub(repoName) {
+  const resp = await fetch(`${API_BASE_URL}/projects/github/${repoName}`)
+  if (resp.ok) {
+    const data = await resp.json()
+    return data
+  }
+  throw new RepoNotFound(`Aucun repo git a ete trouve avec ce nom '${repoName}'`, "ERR_404")
 }
 
 export async function fetchCollabs(id = null) {
@@ -138,6 +149,8 @@ export async function addProject(project) {
         deleteCookie(COOKIE_NAME_TOKEN);
         await reload()
         throw new Error("Not authenticated or token expires");
+      } else if (resp.status === 409) {
+        throw new ProjectAlreadyExists("Un projet existe deja avec ce titre", "ERR_409")
       }
       throw new Error(`Response status : ${resp.status}`);
     }
