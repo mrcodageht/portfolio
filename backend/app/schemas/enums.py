@@ -19,6 +19,7 @@ class Kind(str, Enum):
     DIAGRAM = "diagram"
     THUMB = "thumb"
     VIDEO = "video"
+    COVER = "cover"
 
 
 class Type(str, Enum):
