@@ -114,7 +114,8 @@ CREATE TABLE IF NOT EXISTS project_media (
         'LOGO',
         'DIAGRAM',
         'THUMB',
-        'VIDEO'
+        'VIDEO',
+        'COVER'
     ) NOT NULL DEFAULT 'SCREENSHOT',
     project_pid CHAR(6) NOT NULL,
     CONSTRAINT fk_projectmedia_project FOREIGN KEY (project_pid) REFERENCES projects (pid) ON DELETE CASCADE ON UPDATE CASCADE

@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     SERVER_MEDIA: str = "http://localhost:8071"
     AUTO_SETUP: bool = True
 
+    GITHUB_API_URL: str="https://api.github.com"
+    GITHUB_TOKEN: str
+    GITHUB_USER: str
+
 
 settings = Settings()
 
