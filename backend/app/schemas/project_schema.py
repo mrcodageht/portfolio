@@ -46,9 +46,19 @@ class ProjectUpdate(BaseModel):
     live_url: Optional[str] = None
     repo_url: Optional[str] = None
 
-class ProjectGithub(BaseModel):
+class ProjectExternal(BaseModel):
     name: Optional[str]
     description: Optional[str]
-    created_at: Optional[datetime]
+    created_at: Optional[str]
+    status: str | None = str(Status.IN_PROGRESS)
+    visibility: str | None = "published"
+
+class ProjectGithub(ProjectExternal):
     svn_url: Optional[str]
     private: Optional[bool]
+    
+class ProjectGitlab(ProjectExternal):
+   path: Optional[str]
+   web_url: Optional[str] 
+
+
