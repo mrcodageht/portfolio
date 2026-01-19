@@ -1,5 +1,5 @@
 import { navigateTo } from "../components/sidebar.js";
-import { cleanToatsError, errorToasts, toasts } from "../utils.js";
+import { cleanToatsError, errorToasts, PROVIDER, toasts } from "../utils.js";
 import { Project, TechnologyProjectCreate } from "./class.js";
 import { fetchRepoGithub } from "./function.js";
 import {
@@ -34,29 +34,33 @@ export async function setGlobalListerner() {
   });
 
   btnSaveProject.addEventListener("click", async (e) => {
-      const form = document.getElementById("projectForm");
+    const form = document.getElementById("projectForm");
     await saveProject(form)
     cleanToatsError()
 
   });
 
-  document.getElementById("new-proj-github").addEventListener('click', () => {
-    const modal = new bootstrap.Modal(document.getElementById("modal-git"));
-    document.getElementById('q-repo').addEventListener('click', async () => {
-      const repoInput = document.getElementById('repo-value')
-      const repoName = repoInput.value
-      console.log("repo name : ", repoName);
-      repoInput?.blur()
-      modal.hide()
-      await openModalProjectGithub(technologies,repoName)
+  document.querySelectorAll(".proj-ext").forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = new bootstrap.Modal(document.getElementById("modal-git"));
+      cleanToatsError("error-global")
+      document.getElementById('q-repo').addEventListener('click', async () => {
+        const repoInput = document.getElementById('repo-value')
+        const repoName = repoInput.value
+        console.log("repo name : ", repoName);
+        repoInput?.blur()
+        modal.hide()
+        const provider = btn.id==="gitlab"?PROVIDER.GITLAB:PROVIDER.GITHUB
+        await openModalProjectGithub(technologies, repoName, provider)
+      })
+      modal.show()
     })
-  modal.show()
   })
-document.getElementById("new-proj").addEventListener("click", (e) => {
-  openProjectModal(technologies);
-});
-  
-  
+  document.getElementById("new-proj").addEventListener("click", (e) => {
+    openProjectModal(technologies);
+  });
+
+
 }
 
 async function openProjectModal(technologies, id = null) {
@@ -125,7 +129,7 @@ async function openProjectModal(technologies, id = null) {
     dropdownTech.innerHTML = ""; // reset
 
     for (const t of technologies) {
-      
+
       dropdownTech.innerHTML += `
         <div class="form-check">
             <input
@@ -146,35 +150,41 @@ async function openProjectModal(technologies, id = null) {
   modal.show();
 }
 
-async function openModalProjectGithub(technologies, repoName) {
+async function openModalProjectGithub(technologies, repoName, provider = PROVIDER.GITHUB) {
   const modal = new bootstrap.Modal(document.getElementById("projectModal"));
   const modalGit = new bootstrap.Modal(document.getElementById("modal-git"));
-  const project = await fetchRepoGithub(repoName);
-    //document.getElementById("projectId").value = project.pid;
-    document.getElementById("projectTitle").value = project.title;
-    document.getElementById("projectDescription").value = project.description;
-    document.getElementById("projectStatus").value = project.status;
-    document.getElementById("projectVisibility").value = project.visibility;
-    document.getElementById("projectUrl").value = project.live_url || "";
-    document.getElementById("projectRepoUrl").value = project.repo_url || "";
-    document.getElementById("projectCover").value =
-      project.cover_image_url || "";
-    const dropdownTech = document.getElementById("dropdown-tech");
-    const stacks = document.getElementById("stacks");
-    stacks.innerHTML = "";
+  const project = await fetchRepoGithub(repoName, provider)
+  .catch(err => {
+    console.error(err)
+    errorToasts(err.message, "error-global")
+    return
+  })
 
-    dropdownTech.innerHTML = ""; // reset
+  //document.getElementById("projectId").value = project.pid;
+  document.getElementById("projectTitle").value = project.title;
+  document.getElementById("projectDescription").value = project.description;
+  document.getElementById("projectStatus").value = project.status;
+  document.getElementById("projectVisibility").value = project.visibility;
+  document.getElementById("projectUrl").value = project.live_url || "";
+  document.getElementById("projectRepoUrl").value = project.repo_url || "";
+  document.getElementById("projectCover").value =
+    project.cover_image_url || "";
+  const dropdownTech = document.getElementById("dropdown-tech");
+  const stacks = document.getElementById("stacks");
+  stacks.innerHTML = "";
 
-    for (const t of technologies) {
-      let isSelected = "";
-      // for (const tp of project.technologies) {
-      //   if (tp.name === t.name) {
-      //     stacks.innerHTML += `${t.name},`;
-      //     isSelected = "checked";
-      //     break;
-      //   }
-      // }
-      dropdownTech.innerHTML += `
+  dropdownTech.innerHTML = ""; // reset
+
+  for (const t of technologies) {
+    let isSelected = "";
+    // for (const tp of project.technologies) {
+    //   if (tp.name === t.name) {
+    //     stacks.innerHTML += `${t.name},`;
+    //     isSelected = "checked";
+    //     break;
+    //   }
+    // }
+    dropdownTech.innerHTML += `
         <div class="form-check">
             <input
                 class="form-check-input"
@@ -189,20 +199,20 @@ async function openModalProjectGithub(technologies, repoName) {
                       </label>
                     </div>
     `;
-    }
+  }
 
-    document.getElementById("projectDateStart").value = project.start_at
-      ? new Date(project.start_at).toISOString().split("T")[0]
-      : "";
-    document.getElementById("projectDateEnd").value = project.end_at
-      ? new Date(project.end_at).toISOString().split("T")[0]
-      : "";
+  document.getElementById("projectDateStart").value = project.start_at
+    ? new Date(project.start_at).toISOString().split("T")[0]
+    : "";
+  document.getElementById("projectDateEnd").value = project.end_at
+    ? new Date(project.end_at).toISOString().split("T")[0]
+    : "";
   modalGit.hide()
   modal.show()
 }
 
 async function saveProject(form) {
-const modalEl = document.getElementById("projectModal");
+  const modalEl = document.getElementById("projectModal");
   const modal = bootstrap.Modal.getInstance(modalEl);
 
 
@@ -230,30 +240,30 @@ const modalEl = document.getElementById("projectModal");
   );
 
   if (id) {
-      const projectUpdated = await updateProject(id, project);
-      //   on va mettre a jour les technologies du projects aussi
-      let techsProject = await fetchTechsProject(projectUpdated.pid);
-      const techMapped = [];
-      for (const t of techsProject) {
-        techMapped.push(new TechnologyProjectCreate(t.slug));
+    const projectUpdated = await updateProject(id, project);
+    //   on va mettre a jour les technologies du projects aussi
+    let techsProject = await fetchTechsProject(projectUpdated.pid);
+    const techMapped = [];
+    for (const t of techsProject) {
+      techMapped.push(new TechnologyProjectCreate(t.slug));
+    }
+    //    les technologie a enlever
+    techMapped.forEach(async (t) => {
+      const isExists = techs.find((tp) => tp.slug === t.slug);
+      if (!isExists) {
+        // on enleve
+        await removeTechIntoProject(t.slug, projectUpdated.pid);
       }
-      //    les technologie a enlever
-      techMapped.forEach(async (t) => {
-        const isExists = techs.find((tp) => tp.slug === t.slug);
-        if (!isExists) {
-          // on enleve
-          await removeTechIntoProject(t.slug, projectUpdated.pid);
-        }
-      });
+    });
 
-      await addTechIntoProject(techs, projectUpdated.pid);
-      modal.hide();
+    await addTechIntoProject(techs, projectUpdated.pid);
+    modal.hide();
     return
   } else {
     addProject(project).then(async (projectCreated) => {
 
       await addTechIntoProject(techs, projectCreated.pid);
-      modal.hide(); 
+      modal.hide();
       navigateTo("projects")
     }).catch(err => {
       console.error(err.message);
@@ -271,20 +281,20 @@ function deleteProject(pid) {
   document.getElementById("text-del").innerHTML = "Êtes-vous sûr de vouloir supprimer ce projet ?"
   document.getElementById("btn-del-proj").addEventListener('click', async () => {
     delProject(pid).then(() => {
-        modal.hide()
-        navigateTo("projects")
+      modal.hide()
+      navigateTo("projects")
     }).catch(err => {
       console.error(err);
       modal.hide()
-        navigateTo("projects")
-      })
+      navigateTo("projects")
+    })
   })
-  
+
   modal.show()
 }
 
 function openModalGithub() {
-  
+
 }
 
 export async function initTabProjects() {
@@ -297,11 +307,11 @@ export async function initTabProjects() {
         <span class="text-center w-100 text-secondary">Pas de projects</span>
       </tr>
     `
-    
+
   } else {
     for (const p of projects) {
 
-  
+
       let idEdit = `edit-${p.pid}`;
       let idDelete = `delete-${p.pid}`;
       let badgeClass = "";
@@ -312,7 +322,7 @@ export async function initTabProjects() {
       } else if (p.status === "finished") {
         badgeClass = "text-bg-secondary";
       }
-    
+
       list.innerHTML += `
                 <tr>
                     <td><strong>${p.title}</strong></td>
