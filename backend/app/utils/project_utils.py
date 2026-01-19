@@ -68,9 +68,8 @@ def fetch_gitlab_user(url, header):
     if response.status_code == s.HTTP_200_OK:
         data = response.json()
         return UserGitlab(**data)
-    else:
-        print("Error", response)
-        raise HTTPException(f"Error to fetch data to gitlab : status code {response.status_code}", s.HTTP_500_INTERNAL_SERVER_ERROR)
+    print("Error", response)
+    raise HTTPException(f"Error to fetch data to gitlab : status code {response.status_code}", s.HTTP_500_INTERNAL_SERVER_ERROR)
     
 # end def
     

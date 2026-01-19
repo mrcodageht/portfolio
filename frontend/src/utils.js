@@ -30,8 +30,8 @@ export async function toasts(params) {
     `
 }
 
-export async function errorToasts(message) {
-    const errorModal = document.getElementById("error-modal")
+export async function errorToasts(message, elementId="error-modal") {
+    const errorModal = document.getElementById(elementId)
 
     if (errorModal === undefined) return
     
@@ -39,11 +39,15 @@ export async function errorToasts(message) {
     errorModal.classList.remove('d-none')
 }
 
-export async function cleanToatsError() {
-    const errorModal = document.getElementById("error-modal")
+export async function cleanToatsError(elementId="error-modal") {
+    const errorModal = document.getElementById(elementId)
 
     if (errorModal === undefined) return
     errorModal.innerText = ""
     errorModal.classList.add('d-none')
-
 }
+
+export const PROVIDER = {
+    GITLAB: 'gitlab',
+    GITHUB: 'github'
+} 
