@@ -1,4 +1,6 @@
 
+from starlette import status as s
+import requests
 from fastapi import Depends, HTTPException
 
 from app.data.dao.collaborator_dao import CollaboratorDao
@@ -6,13 +8,14 @@ from app.data.dao.technology_dao import TechnologyDao
 from app.exceptions.global_projects_exceptions import ProjectAlreadyExistsWithSlugException,  ProjectNotFoundWithPidException
 from app.utils.mapping_utils import map_to_project, map_to_project_with_collaborators, map_to_project_with_technologies, map_to_project_with_technologies_and_collaborators
 
-from ..data.dao.project_dao import ProjectDao
-from ..models.project_model import ProjectModel, TechnologyModel
+from app.data.dao.project_dao import ProjectDao
+from app.models.project_model import ProjectModel, TechnologyModel
 from app.schemas.enums import Status, Visibility
-from app.schemas.project_schema import ProjectPublic, ProjectGithub ,ProjectBase, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
-from starlette import status as s
-import requests
+from app.schemas.project_schema import ProjectPublic ,ProjectBase, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
 from app.config.env import settings
+from app.utils.project_utils import get_external_project
+from app.utils.project_utils import fetch_gitlab_user
+from app.schemas.user_schema import UserGitlab
 
 
 class ProjectService:
@@ -156,45 +159,27 @@ class ProjectService:
         return map_to_project_with_technologies(project_model=project, techs=project.technologies)
 
 
-    def get_github_repo(self, repo: str):
-        authHeader=f"Bearer {settings.GITHUB_TOKEN}"
-        urlRepo = f"{settings.GITHUB_API_URL}/repos/{settings.GITHUB_USER}/{repo}"
-        try:
-            response = requests.get(
-                url=urlRepo,
-                headers={
-                    "Accept": "application/vnd.github+json",
-                    "User-Agent": "Thunder Client (https://www.thunderclient.com)",
-                    "Authorization": authHeader,
-                },
-                timeout=3
-            )
-            if response.status_code == s.HTTP_200_OK:
-                repo_data = response.json()
-                repo_github = ProjectGithub(**repo_data)
-                visibility_proj = Visibility.PUBLISHED
-                if repo_github.private:
-                    visibility_proj = Visibility.PRIVATE
-                return ProjectUpdate(
-                    title=repo_github.name,
-                    slug=repo_github.name,
-                    description=repo_github.description,
-                    start_at=repo_github.created_at,
-                    status=Status.IN_PROGRESS,
-                    visibility=visibility_proj,
-                    repo_url=repo_github.svn_url
-                )
-            elif response.status_code == s.HTTP_404_NOT_FOUND:
-                raise HTTPException(detail=f"Repo github not found with the name '{repo}'", status_code=s.HTTP_404_NOT_FOUND)
-            raise HTTPException(detail="Error to fetch data", status_code=response.status_code)
-        except HTTPException as e:
-            raise e
-        except Exception as e:
-            print(f"Error : {e}")
-            raise HTTPException(
-                detail=f"Failed to fetch data to github",
-                status_code=s.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+    def get_provider_repo(self, query: str, provider: str):
+        url=""
+        header={}
+        if provider == "gitlab":
+            auth_header = f"Bearer {settings.GITLAB_TOKEN}"
+            header={
+                "Authorization": auth_header,
+            }
+            user_gitlab: UserGitlab = fetch_gitlab_user(url=f"{settings.GITLAB_API_URL}/user",header=header)
+            
+            url = f"{settings.GITLAB_API_URL}/users/{user_gitlab.id}/projects?search={query}"
+            
+        else:
+            auth_header=f"Bearer {settings.GITHUB_TOKEN}"
+            url = f"{settings.GITHUB_API_URL}/repos/{settings.GITHUB_USER}/{query}"
+            header={
+                "Accept": "application/vnd.github+json",
+                "Authorization": auth_header,
+            }
+
+        return get_external_project(url=url, header=header, provider=provider, q=query)
 
 def get_project_dao():
     return ProjectDao
