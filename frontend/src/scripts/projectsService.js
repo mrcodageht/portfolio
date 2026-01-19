@@ -78,8 +78,7 @@ async function openProjectModal(technologies, id = null) {
     document.getElementById("projectVisibility").value = project.visibility;
     document.getElementById("projectUrl").value = project.live_url || "";
     document.getElementById("projectRepoUrl").value = project.repo_url || "";
-    document.getElementById("projectCover").value =
-      project.cover_image_url || "";
+    
     const dropdownTech = document.getElementById("dropdown-tech");
     const stacks = document.getElementById("stacks");
     stacks.innerHTML = "";
@@ -167,8 +166,7 @@ async function openModalProjectGithub(technologies, repoName, provider = PROVIDE
   document.getElementById("projectVisibility").value = project.visibility;
   document.getElementById("projectUrl").value = project.live_url || "";
   document.getElementById("projectRepoUrl").value = project.repo_url || "";
-  document.getElementById("projectCover").value =
-    project.cover_image_url || "";
+  
   const dropdownTech = document.getElementById("dropdown-tech");
   const stacks = document.getElementById("stacks");
   stacks.innerHTML = "";
@@ -234,7 +232,6 @@ async function saveProject(form) {
     document.getElementById("projectVisibility").value,
     document.getElementById("projectDateStart").value,
     endDate !== "" ? endDate : null,
-    document.getElementById("projectCover").value,
     document.getElementById("projectUrl").value,
     document.getElementById("projectRepoUrl").value
   );

@@ -6,7 +6,6 @@ export class Project {
     visibility,
     start_at,
     end_at,
-    cover_image_url,
     live_url,
     repo_url
   ) {
@@ -16,7 +15,6 @@ export class Project {
       (this.visibility = visibility),
       (this.start_at = start_at),
       (this.end_at = end_at),
-      (this.cover_image_url = cover_image_url),
       (this.live_url = live_url),
       (this.repo_url = repo_url);
   }
@@ -30,7 +28,6 @@ export class ProjectResponse extends Project {
     visibility,
     start_at,
     end_at,
-    cover_image_url,
     live_url,
     repo_url,
     slug,
@@ -43,7 +40,6 @@ export class ProjectResponse extends Project {
       visibility,
       start_at,
       end_at,
-      cover_image_url,
       live_url,
       repo_url
     );
@@ -58,7 +54,6 @@ export class ProjectResponse extends Project {
       data.visibility,
       data.start_at,
       data.end_at,
-      data.cover_image_url,
       data.live_url,
       data.repo_url,
       data.slug,

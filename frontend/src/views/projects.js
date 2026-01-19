@@ -151,11 +151,7 @@ export async function renderProjects() {
                   />
                 </div>
               </div>
-              <div class="mb-3">
-                <label class="form-label">Couverture</label>
-                <input type="url" class="form-control" id="projectCover" />
-              </div>
-
+              
               <div class="mb-3">
                 <label class="form-label">URL du projet</label>
                 <input type="url" class="form-control" id="projectUrl" />
