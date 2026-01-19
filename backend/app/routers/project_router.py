@@ -165,7 +165,7 @@ def get_project_gitlab(project_name: str, service: ProjectService = Depends(Proj
     """
     Purpose: one
     """
-    pass
+    return service.get_provider_repo(query=project_name, provider="gitlab")
     
 # end def
 

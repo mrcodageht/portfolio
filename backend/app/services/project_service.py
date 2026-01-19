@@ -1,4 +1,6 @@
 
+from starlette import status as s
+import requests
 from fastapi import Depends, HTTPException
 
 from app.data.dao.collaborator_dao import CollaboratorDao
@@ -6,14 +8,14 @@ from app.data.dao.technology_dao import TechnologyDao
 from app.exceptions.global_projects_exceptions import ProjectAlreadyExistsWithSlugException,  ProjectNotFoundWithPidException
 from app.utils.mapping_utils import map_to_project, map_to_project_with_collaborators, map_to_project_with_technologies, map_to_project_with_technologies_and_collaborators
 
-from ..data.dao.project_dao import ProjectDao
-from ..models.project_model import ProjectModel, TechnologyModel
+from app.data.dao.project_dao import ProjectDao
+from app.models.project_model import ProjectModel, TechnologyModel
 from app.schemas.enums import Status, Visibility
-from app.schemas.project_schema import ProjectPublic, ProjectGithub ,ProjectBase, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
-from starlette import status as s
-import requests
+from app.schemas.project_schema import ProjectPublic ,ProjectBase, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
 from app.config.env import settings
 from app.utils.project_utils import get_external_project
+from app.utils.project_utils import fetch_gitlab_user
+from app.schemas.user_schema import UserGitlab
 
 
 class ProjectService:
@@ -161,7 +163,14 @@ class ProjectService:
         url=""
         header={}
         if provider == "gitlab":
-            pass
+            auth_header = f"Bearer {settings.GITLAB_TOKEN}"
+            header={
+                "Authorization": auth_header,
+            }
+            user_gitlab: UserGitlab = fetch_gitlab_user(url=f"{settings.GITLAB_API_URL}/user",header=header)
+            
+            url = f"{settings.GITLAB_API_URL}/users/{user_gitlab.id}/projects?search={query}"
+            
         else:
             auth_header=f"Bearer {settings.GITHUB_TOKEN}"
             url = f"{settings.GITHUB_API_URL}/repos/{settings.GITHUB_USER}/{query}"
