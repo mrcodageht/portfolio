@@ -333,7 +333,7 @@ export async function initTabProjects() {
                     </td>
                     <td>
                     
-                    <a class="btn btn-primary voir-tech" data-tech-id="${p.pid}">Voir techs</a>
+                    <a class="btn btn-prlry voir-tech" data-tech-id="${p.pid}">Voir techs</a>
                     </td>
                     <td class="table-actions">
                         <button class="btn btn-sm btn-warning edit-project" id="${idEdit}">
