@@ -9,7 +9,7 @@ from app.schemas.project_media_schema import ProjectMediaPublic
 
 def map_to_project(project_model: type[ProjectModel]) -> ProjectPublic:
     return ProjectPublic(
-        title=project_model.title,
+        title=str(project_model.title),
         pid=str(project_model.pid),
         slug=project_model.slug,
         description=project_model.description,
@@ -17,7 +17,6 @@ def map_to_project(project_model: type[ProjectModel]) -> ProjectPublic:
         end_at=project_model.end_at,
         status=project_model.status,
         visibility=project_model.visibility,
-        cover_image_url=project_model.cover_image_url,
         live_url=project_model.live_url,
         repo_url=project_model.repo_url,
     )
@@ -57,7 +56,6 @@ def map_to_project_with_technologies(project_model: ProjectModel, techs: list[Te
         end_at=project_model.end_at,
         status=project_model.status,
         visibility=project_model.visibility,
-        cover_image_url=project_model.cover_image_url,
         live_url=project_model.live_url,
         repo_url=project_model.repo_url,
         technologies=techs_mapped,
@@ -78,7 +76,6 @@ def map_to_project_with_collaborators(
         end_at=project_model.end_at,
         status=project_model.status,
         visibility=project_model.visibility,
-        cover_image_url=project_model.cover_image_url,
         live_url=project_model.live_url,
         repo_url=project_model.repo_url,
         collaborators=collabs_mapped
@@ -102,7 +99,6 @@ def map_to_project_with_technologies_and_collaborators(
         end_at=project_model.end_at,
         status=project_model.status,
         visibility=project_model.visibility,
-        cover_image_url=project_model.cover_image_url,
         live_url=project_model.live_url,
         repo_url=project_model.repo_url,
         collaborators=collabs_mapped,

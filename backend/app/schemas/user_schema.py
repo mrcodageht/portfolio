@@ -22,3 +22,8 @@ class UserChangePassword(BaseModel):
 
 class UserResetPassword(KeyInit):
     new_password: str
+
+class UserGitlab(BaseModel):
+    id: int
+    username: str
+    name: str

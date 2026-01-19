@@ -70,7 +70,7 @@ def create(project : ProjectBase, service = Depends(ProjectService)):
         res = {"details":err.message}
         raise HTTPException(
             detail=err.message,
-            status_code=s.HTTP_400_BAD_REQUEST
+            status_code=s.HTTP_409_CONFLICT
         )
 
 
@@ -150,6 +150,33 @@ def delete_media_project(
     project_media_service: ProjectMediaService = Depends(ProjectMediaService)
 ):
     project_media_service.delete(id=mid)
+    
+
+"""
+Section manage projects via account git repositories
+"""
+
+@router.get("/github/{repo}", status_code=s.HTTP_200_OK)
+def get_github_repo(repo: str, service: ProjectService = Depends(ProjectService)):
+    return service.get_provider_repo(query=repo, provider="github")
+
+@router.get("/gitlab/{project_name}", status_code=s.HTTP_200_OK)
+def get_project_gitlab(project_name: str, service: ProjectService = Depends(ProjectService)):
+    """
+    Purpose: one
+    """
+    return service.get_provider_repo(query=project_name, provider="gitlab")
+    
+# end def
+
+@router.get("/gitlab/contributed_project", status_code=s.HTTP_200_OK)
+def get_contributed_projects(service: ProjectService = Depends(ProjectService)):
+    """
+    Purpose: one
+    """
+
+    
+# end def
 
 
 def get_project_service():

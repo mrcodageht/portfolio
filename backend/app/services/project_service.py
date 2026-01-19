@@ -1,4 +1,6 @@
 
+from starlette import status as s
+import requests
 from fastapi import Depends, HTTPException
 
 from app.data.dao.collaborator_dao import CollaboratorDao
@@ -6,11 +8,14 @@ from app.data.dao.technology_dao import TechnologyDao
 from app.exceptions.global_projects_exceptions import ProjectAlreadyExistsWithSlugException,  ProjectNotFoundWithPidException
 from app.utils.mapping_utils import map_to_project, map_to_project_with_collaborators, map_to_project_with_technologies, map_to_project_with_technologies_and_collaborators
 
-from ..data.dao.project_dao import ProjectDao
-from ..models.project_model import ProjectModel, TechnologyModel
+from app.data.dao.project_dao import ProjectDao
+from app.models.project_model import ProjectModel, TechnologyModel
 from app.schemas.enums import Status, Visibility
-from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
-from starlette import status as s
+from app.schemas.project_schema import ProjectPublic ,ProjectBase, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
+from app.config.env import settings
+from app.utils.project_utils import get_external_project
+from app.utils.project_utils import fetch_gitlab_user
+from app.schemas.user_schema import UserGitlab
 
 
 class ProjectService:
@@ -154,6 +159,27 @@ class ProjectService:
         return map_to_project_with_technologies(project_model=project, techs=project.technologies)
 
 
+    def get_provider_repo(self, query: str, provider: str):
+        url=""
+        header={}
+        if provider == "gitlab":
+            auth_header = f"Bearer {settings.GITLAB_TOKEN}"
+            header={
+                "Authorization": auth_header,
+            }
+            user_gitlab: UserGitlab = fetch_gitlab_user(url=f"{settings.GITLAB_API_URL}/user",header=header)
+            
+            url = f"{settings.GITLAB_API_URL}/users/{user_gitlab.id}/projects?search={query}"
+            
+        else:
+            auth_header=f"Bearer {settings.GITHUB_TOKEN}"
+            url = f"{settings.GITHUB_API_URL}/repos/{settings.GITHUB_USER}/{query}"
+            header={
+                "Accept": "application/vnd.github+json",
+                "Authorization": auth_header,
+            }
+
+        return get_external_project(url=url, header=header, provider=provider, q=query)
 
 def get_project_dao():
     return ProjectDao

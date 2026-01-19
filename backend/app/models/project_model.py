@@ -95,7 +95,6 @@ class ProjectModel(Base):
         nullable=False,
         default=Visibility.PRIVATE,
     )
-    cover_image_url = Column(String)  # corrigé
     live_url = Column(String)
     repo_url = Column(String)
 
