@@ -1,17 +1,15 @@
-from typing import Any, Optional, List
+from typing import Optional
 
-from click import option
 from fastapi import Depends, HTTPException
 from sqlalchemy import func
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 from starlette import status as s
 
-from app.data.dao.dao_interface import DAOInterface, T
 from app.data.database import get_db
 from app.models.project_model import ProjectModel, TechnologyModel, ProjectMediaModel
 from app.schemas.enums import Status, Visibility
-from app.schemas.project_schema import ProjectBase, ProjectTechnologyCreate, ProjectUpdate
-
+from app.schemas.project_schema import ProjectBase, ProjectUpdate
+from app.models.project_model import CollaboratorModel
 
 
 class ProjectDao:
@@ -63,11 +61,11 @@ class ProjectDao:
             raise Exception("the project not have been created successfully.")
 
 
-    def update(self, id: str, item: ProjectUpdate) -> Optional[type[ProjectModel]]:
-        project_existing = self.find_by_id(pid=id)
+    def update(self, pid: str, item: ProjectUpdate) -> Optional[type[ProjectModel]]:
+        project_existing = self.find_by_id(pid=pid)
         if project_existing is None:
             raise HTTPException(
-                detail=f"Project not found with the pid '{id}'",
+                detail=f"Project not found with the pid '{pid}'",
                 status_code=s.HTTP_404_NOT_FOUND
             )
 
@@ -79,16 +77,20 @@ class ProjectDao:
             return project_existing
         except Exception as ex:
             print(f"xx> Error : {ex}")
+            raise HTTPException(
+                detail="Failed to update the project",
+                status_code=s.HTTP_500_INTERNAL_SERVER_ERROR
+            ) from ex
 
-    def delete(self, id: str) -> bool:
-        project_existing = self.find_by_id(pid=id)
+    def delete(self, pid: str) -> bool:
+        project_existing = self.find_by_id(pid=pid)
         if project_existing is None:
             raise HTTPException(
-                detail=f"Project not found with the pid '{id}'",
+                detail=f"Project not found with the pid '{pid}'",
                 status_code=s.HTTP_404_NOT_FOUND
             )
         try:
-            images = self.db.query(ProjectMediaModel).filter(ProjectMediaModel.project_pid==id).all()
+            images = self.db.query(ProjectMediaModel).filter(ProjectMediaModel.project_pid==pid).all()
             for im in images:
                 self.db.delete(im)
             self.db.delete(project_existing)
@@ -97,9 +99,9 @@ class ProjectDao:
         except Exception as ex:
             print(f"Error : {ex}")
             raise HTTPException(
-                detail=f"Failed to delete the project with the pid '{id}'",
+                detail=f"Failed to delete the project with the pid '{pid}'",
                 status_code=s.HTTP_400_BAD_REQUEST
-            )
+            ) from ex
         
     def add_technologies(self, pid: str ,techs: list[TechnologyModel]) -> ProjectModel:
         project_existing = self.db.query(ProjectModel).filter(ProjectModel.pid==pid).first()
@@ -117,11 +119,12 @@ class ProjectDao:
             self.db.refresh(project_existing)
             return project_existing
         except Exception as e:
+            self.db.rollback()
             print(f"Error => {e}")
             raise HTTPException(
                 detail="Failed to update the project",
                 status_code=s.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            ) from e
 
     def remove_technologies(self, pid: str, tech: TechnologyModel):
         project_existing = self.db.query(ProjectModel).join(ProjectModel.technologies).filter(ProjectModel.pid==pid).first()
@@ -147,7 +150,7 @@ class ProjectDao:
                 raise HTTPException(
                     detail="Failed to update the project",
                     status_code=s.HTTP_500_INTERNAL_SERVER_ERROR
-                )
+                ) from e
 
         raise HTTPException(
             detail=f"Technology with the slug '{tech.slug}' not exists in this project",
@@ -158,12 +161,40 @@ class ProjectDao:
         count = self.db.query(ProjectModel).count()
         return count
 
+    def add_collaborator(self, project: ProjectModel, collab: CollaboratorModel):
+        try:
+            if collab not in project.collaborators:
+                project.collaborators.append(collab)
+            self.db.commit()
+            self.db.refresh(project)
+            return project
+        except Exception as e:
+            self.db.rollback()
+            print(f"Error => {e}")
+            raise HTTPException(
+                detail="Failed to update the project",
+                status_code=s.HTTP_500_INTERNAL_SERVER_ERROR
+            ) from e
 
-    def create_all(self, items: List[ProjectBase]):
-        raise NotImplementedError
 
-    def update_all(self, ids, items):
-        raise NotImplementedError
+    def remove_collaborator(self, project: ProjectModel, collab: CollaboratorModel):
+        try:
+            project.collaborators.remove(collab)
+            self.db.commit()
+            self.db.refresh(project)
+            return project
+        except Exception as e:
+            self.db.rollback()
+            print(e)
+            raise HTTPException(
+                detail="Failed to update the project",
+                status_code=s.HTTP_500_INTERNAL_SERVER_ERROR
+            ) from e
 
-    def delete_all(self, ids: List[int]):
-        raise NotImplementedError
+        
+        
+
+
+
+
+
