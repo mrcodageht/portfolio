@@ -68,8 +68,25 @@ export async function fetchCollabs(id = null) {
     resp = await fetch(`${API_BASE_URL}/collaborators`);
   }
 
-  const collabs = await resp.json();
-  return collabs;
+  const collaborators = []
+  const collabs_data = await resp.json();
+  for(const c of collabs_data){
+    collaborators.push(Collaborator.fromResponse(c))
+  }
+  return collaborators;
+}
+
+export async function fetchCollabsProject(pid){
+  const resp = await fetch(`${API_BASE_URL}/collaborators/project/${pid}`)
+  if(resp.ok){
+    const collabs = []
+    const collaborators = await resp.json()
+    for(const c of collaborators){
+      collabs.push(Collaborator.fromResponse(c))
+    }
+    return collabs;
+  }
+  throw new Error(`Response status : ${resp.status}`)
 }
 
 export async function fetchStats() {
@@ -161,7 +178,6 @@ export async function addProject(project) {
 
 }
 
-
 /**
  *
  * @param {TechnologyProjectCreate[]} techs
@@ -194,6 +210,52 @@ export async function addTechIntoProject(techs, pid) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function addCollaboratorIntoProject(pid, cid) {
+  const resp = await fetch(`${API_BASE_URL}/projects/${pid}/collaborators/${cid}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: getAuthToken(),
+      },
+    })
+  
+    if (resp.ok) {
+      const projectUpdated = await resp.json();
+      const projectToReturn = ProjectResponse.fromResponse(projectUpdated);
+      return projectToReturn;
+    } else {
+      if (resp.status === 401) {
+        // supprimer le token
+        deleteCookie(COOKIE_NAME_TOKEN);
+        await reload()
+        throw new Error("Not authenticated or token expires");
+      }
+      throw new Error(`Response status : ${resp.status}`);
+    }
+}
+
+export async function removeCollaboratorIntoProject(pid, cid) {
+  const resp = await fetch(`${API_BASE_URL}/projects/${pid}/collaborators/${cid}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: getAuthToken(),
+      },
+    })
+  
+    if (resp.ok) {
+      const projectUpdated = await resp.json();
+      const projectToReturn = ProjectResponse.fromResponse(projectUpdated);
+      return projectToReturn;
+    } else {
+      if (resp.status === 401) {
+        // supprimer le token
+        deleteCookie(COOKIE_NAME_TOKEN);
+        await reload()
+        throw new Error("Not authenticated or token expires");
+      }
+      throw new Error(`Response status : ${resp.status}`);
+    }
 }
 
 export async function removeTechIntoProject(slug, pid) {

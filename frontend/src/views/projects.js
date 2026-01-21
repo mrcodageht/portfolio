@@ -2,7 +2,7 @@ import { unloader } from "../utils"
 import { initTabProjects, setGlobalListerner } from "../scripts/projectsService"
 
 export async function renderProjects() {
-    document.getElementById('main').innerHTML = `
+  document.getElementById("main").innerHTML = `
      <div
       class="main-content d-flex justify-content-center align-items-center vh-100"
       id="main-content-loader"
@@ -23,10 +23,10 @@ export async function renderProjects() {
           <button class="btn btn-primary" id="new-proj">
             <i class="fas fa-plus"></i>
           </button>
- <button class="btn btn-dark border-0 proj-ext" style="background-color: #cb4e18" id="gitlab">
+          <button class="btn btn-dark border-0 proj-ext" style="background-color: #cb4e18" id="gitlab">
             <i class="fa-brands fa-gitlab"></i>
           </button>
- <button class="btn btn-dark proj-ext" id="github">
+          <button class="btn btn-dark proj-ext" id="github">
             <i class="fa-brands fa-github"></i> Github
           </button>
           </div>
@@ -48,14 +48,16 @@ export async function renderProjects() {
                   </tr>
                 </thead>
                 <tbody id="projectsList">
-                  
+
                 </tbody>
               </table>
             </div>
           </div>
         </div>
+        
       </div>
     </div>
+     
 
     <!-- Modal -->
     <div class="modal fade" id="projectModal" tabindex="-1">
@@ -72,7 +74,7 @@ export async function renderProjects() {
           </div>
           <div class="modal-body">
             <div class="alert alert-danger d-none" id="error-modal" role="alert">
-</div>
+            </div>
             <form id="projectForm">
               <input type="hidden" id="projectId" />
               <div class="mb-3">
@@ -151,7 +153,7 @@ export async function renderProjects() {
                   />
                 </div>
               </div>
-              
+
               <div class="mb-3">
                 <label class="form-label">URL du projet</label>
                 <input type="url" class="form-control" id="projectUrl" />
@@ -223,9 +225,9 @@ export async function renderProjects() {
               ></button>
             </div>
             <div class="modal-body" id="body-tech-proj">
-              
+
             </div>
-            
+
           </div>
         </div>
       </div>
@@ -249,18 +251,47 @@ export async function renderProjects() {
               <input type="button" class="btn btn-primary" id="q-repo" value="rechercher"/>
               </div>
             </div>
-            
+
           </div>
         </div>
       </div>
     
-    `
+      <!-- Modal add collab into project -->
+      <div class="modal fade" id="modal-add-collab" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" >
+                Ajouter Collaborateur dans le projet
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body" id="body-proj-repo">
+                <table class="table table-hover table-striped">
+              <thead>
+                <tr>
+                  <th>Nom complet</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="collabList"></tbody>
+            </table> 
+            </div>
+
+          </div>
+        </div>
+      </div>
+    `;
   initTabProjects().then(async () => {
     setGlobalListerner().then(() => {
 
-    unloader()
+      unloader()
     })
   })
-  
-  
+
+
 }
