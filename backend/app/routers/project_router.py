@@ -1,12 +1,11 @@
-from typing import Annotated
-from fastapi import APIRouter, Depends, Query, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File
 from starlette import status as s
 from starlette.responses import JSONResponse
 from starlette.exceptions import HTTPException
 from fastapi.encoders import jsonable_encoder as je
 
-from app.exceptions.global_projects_exceptions import *
 from app.schemas.enums import Visibility, Status
+from app.exceptions.global_projects_exceptions import ProjectNotFoundWithPidException, ProjectAlreadyExistsWithSlugException
 from app.schemas.project_schema import ProjectPublic, ProjectBase, ProjectPublicWithTechnologies, ProjectTechnologyCreate, ProjectUpdate
 from app.services.project_service import ProjectService
 from app.services.services_user import require_admin
@@ -177,6 +176,26 @@ def get_contributed_projects(service: ProjectService = Depends(ProjectService)):
 
     
 # end def
+
+
+# Section for collaborators projects
+
+@router.patch("/{pid}/collaborators/{collab_id}", status_code=s.HTTP_200_OK)
+def add_collaborator_project(
+    pid: str,
+    collab_id: str,
+    service: ProjectService = Depends(ProjectService)
+):
+    return service.add_collaborator_in_project(pid=pid, collab_id=collab_id)
+
+
+@router.delete("/{pid}/collaborators/{collab_id}", status_code=s.HTTP_200_OK)
+def remove_collaborator_project(
+    pid: str,
+    collab_id: str,
+    service: ProjectService = Depends(ProjectService)
+):
+    return service.remove_collaborator_in_project(pid=pid, collab_id=collab_id)
 
 
 def get_project_service():

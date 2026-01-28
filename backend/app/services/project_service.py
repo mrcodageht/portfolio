@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException
 
 from app.data.dao.collaborator_dao import CollaboratorDao
 from app.data.dao.technology_dao import TechnologyDao
-from app.exceptions.global_projects_exceptions import ProjectAlreadyExistsWithSlugException,  ProjectNotFoundWithPidException
+from app.exceptions.global_projects_exceptions import ProjectAlreadyExistsWithSlugException,  ProjectNotFoundWithPidException, http_404_project_pid, http_404_collaborator_id, http_404_collaborator_project
 from app.utils.mapping_utils import map_to_project, map_to_project_with_collaborators, map_to_project_with_technologies, map_to_project_with_technologies_and_collaborators
 
 from app.data.dao.project_dao import ProjectDao
@@ -74,7 +74,7 @@ class ProjectService:
             pid: str, 
             techs: bool = False,
             collabs: bool = False
-) -> ProjectPublic:
+    ) -> ProjectPublic:
         project = self.project_dao.find_by_id(pid=pid)
         if project is None:
             raise ProjectNotFoundWithPidException(pid)
@@ -180,6 +180,38 @@ class ProjectService:
             }
 
         return get_external_project(url=url, header=header, provider=provider, q=query)
+
+
+    def add_collaborator_in_project(self, pid: str, collab_id: str):
+        project = self.project_dao.find_by_id(pid=pid)
+        if project is None:
+            raise http_404_project_pid(pid=pid)
+        
+        collab = self.collaborator_dao.find_by_id(id=collab_id)
+        if collab is None:
+            raise http_404_collaborator_id(collab_id)
+        
+        project = self.project_dao.add_collaborator(project=project, collab=collab)
+        collabs = self.collaborator_dao.find_by_project(project_id=pid)
+        return map_to_project_with_collaborators(project_model=project, collabs=collabs)
+
+
+    def remove_collaborator_in_project(self, pid: str, collab_id: str):
+        project = self.project_dao.find_by_id(pid=pid)
+        if project is None:
+            raise http_404_project_pid(pid)
+
+        collab = self.collaborator_dao.find_by_id(collab_id)
+        if collab is None:
+            raise http_404_collaborator_id(collab_id)
+        
+        if collab not in project.collaborators:
+            raise http_404_collaborator_project(collab_id)
+        
+        project = self.project_dao.remove_collaborator(project=project, collab=collab)
+        collabs = self.collaborator_dao.find_by_project(pid)
+
+        return map_to_project_with_collaborators(project_model=project, collabs=collabs)
 
 def get_project_dao():
     return ProjectDao

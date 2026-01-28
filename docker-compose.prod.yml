@@ -4,7 +4,7 @@ services:
     restart: always
     container_name: "portfoliodb"
     environment:
-      - MYSQL_ROOT_PASSWORD=ro0tPassw0rd
+      - MYSQL_ROOT_PASSWORD= # add root password
     env_file:
       - ./config/.env.data
     ports:
@@ -13,7 +13,7 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./config/scripts/init.sql:/docker-entrypoint-initdb.d/00-init.sql
-      - ./config/scripts/seed.sql:/docker-entrypoint-initdb.d/01-seed.sql
+      #- ./config/scripts/seed.sql:/docker-entrypoint-initdb.d/01-seed.sql 
       - ./config/conf.d/db.cnf:/etc/mysql/conf.d/db.cnf:ro
 
     healthcheck:
@@ -26,7 +26,7 @@ services:
           "127.0.0.1",
           "-u",
           "root",
-          "--password=ro0tPassw0rd",
+          "--password=", # add root password
         ]
       interval: 5s
       timeout: 3s
