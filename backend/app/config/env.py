@@ -2,16 +2,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(extra="ignore", env_file=".env.backend", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(extra="ignore", env_file=".env", env_file_encoding="utf-8")
 
     DATABASE_URL: str
-    SECRET_KEY: str
     PROJECT_NAME: str
     API_VERSION: str
 
     # container d'auth
-    TOKEN_ENDPOINT: str
-    TOKEN_VALIDATE_ENDPOINT: str 
+    AUTH_TOKEN_ENDPOINT: str
+    AUTH_TOKEN_VALIDATE_ENDPOINT: str 
 
 
     # admin
@@ -21,10 +20,10 @@ class Settings(BaseSettings):
     DEFAULT_ADMIN_PASSWORD: str 
     
     KEY_INIT: str
-    SERVER_MEDIA: str = "http://localhost:8071"
+    SERVER_MEDIA: str
     AUTO_SETUP: bool = True
 
-    GITHUB_API_URL: str="https://api.github.com"
+    GITHUB_API_URL: str
     GITHUB_TOKEN: str
     GITHUB_USER: str
     
