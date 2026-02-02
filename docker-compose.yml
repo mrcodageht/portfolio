@@ -4,10 +4,10 @@ services:
     restart: always
     container_name: "portfoliodb"
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - ${MYSQL_PORT:-3308}:3306
     command: --log-bin-trust-function-creators=1
@@ -37,24 +37,24 @@ services:
   app:
     container_name: app-portfolio
     environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - PROJECT_NAME=${PROJECT_NAME}
-      - API_VERSION=${API_VERSION}
-      - AUTH_TOKEN_ENDPOINT=${AUTH_TOKEN_ENDPOINT}
-      - AUTH_TOKEN_VALIDATE_ENDPOINT=${AUTH_TOKEN_VALIDATE_ENDPOINT}
-      - DEFAULT_ADMIN_LAST_NAME=${DEFAULT_ADMIN_LAST_NAME}
-      - DEFAULT_ADMIN_FIRST_NAME=${DEFAULT_ADMIN_FIRST_NAME}
-      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL}
-      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD}
-      - KEY_INIT=${KEY_INIT}
-      - SERVER_MEDIA=${SERVER_MEDIA}
-      - AUTO_SETUP=${AUTO_SETUP}
-      - GITHUB_API_URL=${GITHUB_API_URL}
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - GITHUB_USER=${GITHUB_USER}
-      - GITLAB_API_URL=${GITLAB_API_URL}
-      - GITLAB_TOKEN=${GITLAB_TOKEN}
-      - GITLAB_USER=${GITLAB_USER}
+      DATABASE_URL: ${DATABASE_URL}
+      PROJECT_NAME: ${PROJECT_NAME}
+      API_VERSION: ${API_VERSION}
+      AUTH_TOKEN_ENDPOINT: ${AUTH_TOKEN_ENDPOINT}
+      AUTH_TOKEN_VALIDATE_ENDPOINT: ${AUTH_TOKEN_VALIDATE_ENDPOINT}
+      DEFAULT_ADMIN_LAST_NAME: ${DEFAULT_ADMIN_LAST_NAME}
+      DEFAULT_ADMIN_FIRST_NAME: ${DEFAULT_ADMIN_FIRST_NAME}
+      DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD}
+      KEY_INIT: ${KEY_INIT}
+      SERVER_MEDIA: ${SERVER_MEDIA}
+      AUTO_SETUP: ${AUTO_SETUP}
+      GITHUB_API_URL: ${GITHUB_API_URL}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      GITHUB_USER: ${GITHUB_USER}
+      GITLAB_API_URL: ${GITLAB_API_URL}
+      GITLAB_TOKEN: ${GITLAB_TOKEN}
+      GITLAB_USER: ${GITLAB_USER}
     build:
       context: .
       dockerfile: ./backend/Dockerfile
@@ -67,7 +67,7 @@ services:
     volumes:
       - ./medias:/code/medias
     healthcheck:
-      test: curl -f http://localhost:8079/api/v1/healthcheck || exit 1
+      test: curl -f http://localhost:${PORT_APP}/api/v1/healthcheck || exit 1
       interval: 30s
       timeout: 3s
       retries: 3
@@ -88,11 +88,11 @@ services:
   auth:
     container_name: auth-portfolio
     environment:
-      - JWT_ALGORITHM=${JWT_ALGORITHM}
-      - JWT_SECRET=${JWT_SECRET}
-      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
-      - AUTH_PROJECT_NAME=${AUTH_PROJECT_NAME}
-      - AUTH_API_VERSION=${AUTH_API_VERSION}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      JWT_SECRET: ${JWT_SECRET}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+      AUTH_PROJECT_NAME: ${AUTH_PROJECT_NAME}
+      AUTH_API_VERSION: ${AUTH_API_VERSION}
     build:
       context: .
       dockerfile: ./auth/Dockerfile
@@ -115,7 +115,7 @@ services:
   front-portfolio:
     container_name: front-portfolio
     environment:
-      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     build:
       context: ./frontend/
       dockerfile: Dockerfile.dev
