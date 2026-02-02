@@ -64,6 +64,8 @@ export async function fetchCollabs(id = null) {
   let resp = null;
   if (id) {
     resp = await fetch(`${API_BASE_URL}/collaborators/${id}`);
+    const data = await resp.json()
+    return Collaborator.fromResponse(data)
   } else {
     resp = await fetch(`${API_BASE_URL}/collaborators`);
   }
