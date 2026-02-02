@@ -43,6 +43,9 @@ export async function setGlobalListerner() {
     btn.addEventListener("click", () => {
       const modal = new bootstrap.Modal(document.getElementById("modal-git"));
       cleanToatsError("error-global");
+
+
+      document.getElementById("repo-value").value=""
       document.getElementById("q-repo").addEventListener("click", async () => {
         const repoInput = document.getElementById("repo-value");
         const repoName = repoInput.value;
@@ -167,7 +170,6 @@ async function openModalProjectGithub(
     return;
   });
 
-  //document.getElementById("projectId").value = project.pid;
   document.getElementById("projectTitle").value = project.title;
   document.getElementById("projectDescription").value = project.description;
   document.getElementById("projectStatus").value = project.status;
@@ -293,8 +295,6 @@ function deleteProject(pid) {
 
   modal.show();
 }
-
-function openModalGithub() {}
 
 export async function initTabProjects() {
   const list = document.getElementById("projectsList");

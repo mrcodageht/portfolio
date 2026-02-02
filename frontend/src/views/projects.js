@@ -17,7 +17,7 @@ export async function renderProjects() {
             <div class="alert alert-danger d-none" id="error-global" role="alert"></div>
         <div class="header d-flex justify-content-between align-items-center">
           <div>
-            <h1><i class="fas fa-project-diagram"></i> Gestion des Projets</h1>
+            <h1><i class="fas fa-project-diagram"></i> Projets</h1>
           </div>
           <div class="d-flex justify-content-end gap-2">
           <button class="btn btn-primary" id="new-proj">

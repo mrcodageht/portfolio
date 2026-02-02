@@ -15,10 +15,10 @@ export async function renderCollaborators() {
       <div id="collaborators" class="view-section active">
         <div class="header d-flex justify-content-between align-items-center">
           <div>
-            <h1><i class="fas fa-users"></i> Gestion des Collaborateurs</h1>
+            <h1><i class="fas fa-users"></i> Collaborateurs</h1>
           </div>
           <button class="btn btn-primary" id="btn-add-collab">
-            <i class="fas fa-plus"></i> Nouveau Collaborateur
+            <i class="fas fa-plus"></i>
           </button>
         </div>
 
@@ -28,7 +28,7 @@ export async function renderCollaborators() {
               <thead>
                 <tr>
                   <th>Nom complet</th>
-                  <th>Rôle</th>
+                  <th class="d-none d-md-block">Rôle</th>
                   <th>Reseaux</th>
                   <th>Actions</th>
                 </tr>
