@@ -123,7 +123,7 @@ class ProjectService:
         return map_to_project(proj_updated)
 
     def delete(self, pid: str):
-        self.project_dao.delete(id=pid) 
+        self.project_dao.delete(pid=pid) 
 
     def add_technologies_in_project(self, pid: str, techs: list[ProjectTechnologyCreate])-> ProjectPublicWithTechnologies:
         project = self.project_dao.find_by_id(pid=pid)

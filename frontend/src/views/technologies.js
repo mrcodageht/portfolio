@@ -17,10 +17,10 @@ export async function renderTechnologies() {
       <div id="technologies" class="view-section active">
         <div class="header d-flex justify-content-between align-items-center">
           <div>
-            <h1><i class="fas fa-code"></i> Gestion des Technologies</h1>
+            <h1><i class="fas fa-code"></i> Technologies</h1>
           </div>
           <button class="btn btn-primary" id="new-tech">
-            <i class="fas fa-plus"></i> Nouvelle Technologie
+            <i class="fas fa-plus"></i>
           </button>
         </div>
 

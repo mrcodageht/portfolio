@@ -51,12 +51,16 @@ export async function fetchTechsProject(pid) {
 }
 
 export async function fetchRepoGithub(repoName, provider) {
-  const resp = await fetch(`${API_BASE_URL}/projects/${provider}/${repoName}`)
-  if (resp.ok) {
-    const data = await resp.json()
-    return data
+  try {
+    const resp = await fetch(`${API_BASE_URL}/projects/${provider}/${repoName}`)
+    if (resp.ok) {
+      const data = await resp.json()
+      return data
+    }
+  } catch (error) {
+    
+    throw new RepoNotFound(`Aucun repo git a ete trouve avec ce nom '${repoName}'`, "ERR_404")
   }
-  throw new RepoNotFound(`Aucun repo git a ete trouve avec ce nom '${repoName}'`, "ERR_404")
 }
 
 
@@ -64,6 +68,8 @@ export async function fetchCollabs(id = null) {
   let resp = null;
   if (id) {
     resp = await fetch(`${API_BASE_URL}/collaborators/${id}`);
+    const data = await resp.json()
+    return Collaborator.fromResponse(data)
   } else {
     resp = await fetch(`${API_BASE_URL}/collaborators`);
   }

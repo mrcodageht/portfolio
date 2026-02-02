@@ -119,7 +119,7 @@ export async function initTabCollabs() {
     list.innerHTML += `
             <tr>
                 <td><strong>${fullname}</strong></td>
-                <td>${c.role}</td>
+                <td class="d-none d-md-block">${c.role}</td>
             <td class="">
                     <a href="${c.linkedin_url}" target="_blank" style="text-decoration: none">
                         <img alt="linkedin url ${fullname}" src="https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/linkedin.svg" width=20 height=20/>

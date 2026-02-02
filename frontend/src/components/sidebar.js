@@ -117,7 +117,9 @@ function toggleSidebar() {
 
 function closeSidebar() {
   const sidebar = document.querySelector(".sidebar");
-
+  if (sidebar === undefined || sidebar === null) {
+    return
+  }
   sidebar.classList.remove("active");
   sidebarOverlay.classList.remove("active");
   const icon = hamburgerBtn.querySelector("i");

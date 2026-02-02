@@ -16,10 +16,10 @@ export async function renderMedias() {
       <div id="medias" class="view-section active">
         <div class="header d-flex justify-content-between align-items-center">
           <div>
-            <h1><i class="fa-solid fa-photo-film"></i> Gestion des Medias</h1>
+            <h1><i class="fa-solid fa-photo-film"></i> Medias</h1>
           </div>
           <button class="btn btn-primary" id="btn-add-media">
-            <i class="fas fa-plus"></i> Ajouter un media
+            <i class="fas fa-plus"></i>
           </button>
         </div>
         <div class="mb-3">

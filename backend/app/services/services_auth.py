@@ -25,7 +25,7 @@ class AuthService:
 
         try:
             response = requests.post(
-                settings.TOKEN_ENDPOINT,
+                settings.AUTH_TOKEN_ENDPOINT,
                 {
                     "username": user.email,
                     "admin": user.admin,
@@ -46,7 +46,7 @@ class AuthService:
 def validate_token(token: str) -> TokenDecoded:
     try:
         response = requests.post(
-            settings.TOKEN_VALIDATE_ENDPOINT,
+            settings.AUTH_TOKEN_VALIDATE_ENDPOINT,
             {
                 "token": token
             }
