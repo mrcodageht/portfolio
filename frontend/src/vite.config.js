@@ -1,13 +1,10 @@
-import { defineConfig } from "vite";
+// vite.config.js
+import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue'; // Import the plugin
 
-
 export default defineConfig({
-    server: {
-        allowedHosts: true,
-    },
-    plugins: [
+  plugins: [
     vue(), // Add the plugin to the plugins array
     // ... other plugins
   ],
-})
+});

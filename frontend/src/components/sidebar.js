@@ -1,4 +1,4 @@
-import { COOKIE_NAME_TOKEN } from "../main.js";
+import { COOKIE_NAME_TOKEN } from "../main-clone.js";
 import { router } from "../router.js";
 import { deleteCookie } from "../scripts/function.js";
 

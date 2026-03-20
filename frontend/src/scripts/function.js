@@ -1,4 +1,4 @@
-import { API_BASE_URL, COOKIE_NAME_TOKEN } from "../main.js";
+import { API_BASE_URL, COOKIE_NAME_TOKEN } from "../main-clone.js";
 import { PROVIDER, reload } from "../utils.js";
 import {
   Collaborator,

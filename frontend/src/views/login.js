@@ -1,5 +1,5 @@
 
-import { COOKIE_NAME_TOKEN } from "../main";
+import { COOKIE_NAME_TOKEN } from "../main-clone";
 import { postLogin } from "../scripts/function";
 import { getCookie, setCookie } from "/src/scripts/function.js";
 

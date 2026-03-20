@@ -1,15 +1,15 @@
-import { router } from "./router.js";
-import { renderSidebar } from "./components/sidebar.js";
-import './style.css'
-import { login } from "./views/login.js";
+import { createApp } from 'vue'
 
+// Vuetify
+import 'vuetify/styles'
 
+// Components
+import App from './App.vue'
+import { router } from './router'
+import { vuetify } from './plugins/vuetify'
+import { useTheme } from 'vuetify'
+import { createTheme } from 'vuetify/lib/composables/theme.mjs'
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-export const COOKIE_NAME_TOKEN = import.meta.env.VITE_COOKIE_NAME_TOKEN??'access_token';
+const theme = createTheme()
 
-login().then(() => {
-  router()
-  renderSidebar()
-})
-
+createApp(App).use(vuetify).use(router).use(theme).mount('#app')

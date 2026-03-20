@@ -1,21 +1,11 @@
-import { renderCollaborators } from "./views/collaborators.js";
-import { renderHome } from "./views/home.js";
-import { login, renderLogin } from "./views/login.js";
-import { renderMedias } from "./views/medias.js";
-import { renderProjects } from "./views/projects.js";
-import { renderTechnologies } from "./views/technologies.js";
+import { createMemoryHistory, createRouter } from 'vue-router'
+import HomePage from './views/HomePage.vue'
 
-const routes = {
-    "":renderHome,
-    "/": renderHome,
-    "/login": login,
-    "/projects": renderProjects,
-    "/collaborators": renderCollaborators,
-    "/technologies": renderTechnologies,
-    "/medias":renderMedias
-}
+const routes = [
+  { path: '', component: HomePage },
+]
 
-export function router() {
-    const path = window.location.pathname;
-    routes[path]?.();
-}
+export const router = createRouter({
+  history: createMemoryHistory(),
+  routes,
+})
