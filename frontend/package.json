@@ -15,9 +15,15 @@
     "vite": "^7.2.4"
   },
   "dependencies": {
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
+    "axios": "^1.13.6",
     "bootstrap": "^5.3.8",
+    "pinia": "^3.0.4",
     "vue": "^3.5.30",
+    "vue-cookies": "^1.8.6",
     "vue-router": "^4.6.4",
-    "vuetify": "^4.0.2"
+    "vuetify": "^4.0.2",
+    "vuex": "^4.0.2"
   }
 }
