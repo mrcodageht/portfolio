@@ -112,6 +112,7 @@ const getColorChip = (status) => {
   }
 }
 
+
 const getValueStatus = (status) => {
   switch (status) {
     case 'in_progress':
