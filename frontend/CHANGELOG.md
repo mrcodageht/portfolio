@@ -1,3 +1,9 @@
+## v2.0.1 (2026-04-14)
+
+### Refactor
+
+- **home/login**: mise en place de page login et la logique auth require pour acceder au dashboard
+
 ## v2.0.0 (2026-03-20)
 
 ### Fix
